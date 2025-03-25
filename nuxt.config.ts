@@ -19,7 +19,7 @@ export default defineNuxtConfig({
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "format-detection", content: "telephone=no" },
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.svg" },    {
+      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" },    {
         rel: 'stylesheet',
         href: 'https://fonts.googleapis.com/css2?family=Lexend+Tera:wght@100..900&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap',
       }],
