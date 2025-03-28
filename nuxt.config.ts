@@ -1,7 +1,13 @@
-import { defineNuxtConfig } from "nuxt/config";
+import { defineNuxtConfig } from "nuxt/config"
 
 export default defineNuxtConfig({
-  target: 'static',
+  // Replace 'target: static' with the Nuxt 3 equivalent
+  ssr: true,
+
+  nitro: {
+    preset: "static",
+  },
+
   postcss: {
     plugins: {
       "postcss-import": {},
@@ -10,19 +16,24 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+
   app: {
     head: {
-      title: "Buildr - Build the future of your business",
+      title: "Satisfy - Order your favorite meals from any food vendor on campus with just a few taps.",
       htmlAttrs: { lang: "en" },
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "format-detection", content: "telephone=no" },
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" },    {
-        rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Lexend+Tera:wght@100..900&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap',
-      }],
+      link: [
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        // Remove this if you're using the @nuxtjs/google-fonts module
+        // {
+        //   rel: 'stylesheet',
+        //   href: 'https://fonts.googleapis.com/css2?family=Lexend+Tera:wght@100..900&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap',
+        // }
+      ],
       script: [
         {
           src: "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js",
@@ -34,27 +45,30 @@ export default defineNuxtConfig({
 
   googleFonts: {
     families: {
-      'Lexend+Tera': [400, 500, 700], // Specify font weights as needed
+      Lexend: [400, 500, 700], // Changed from 'Lexend+Tera' to 'Lexend'
+      "Rethink Sans": [400, 500, 700, 800], // Added this to match your manual import
     },
-    display: 'swap', // Optional: Controls how the font is displayed
-    prefetch: true, // Optional: Prefetch the font for faster loading
-    preconnect: true, // Optional: Preconnect to the font server
-    preload: true, // Optional: Preload the font
+    display: "swap",
+    prefetch: true,
+    preconnect: true,
+    preload: true,
   },
+
   plugins: ["~/plugins/aos.client.ts"],
   css: ["/assets/css/main.css"],
-  modules: ['@kevinmarrec/nuxt-pwa', "@nuxtjs/tailwindcss", '@nuxtjs/google-fonts'],
+  modules: ["@kevinmarrec/nuxt-pwa", "@nuxtjs/tailwindcss", "@nuxtjs/google-fonts"],
+
   pwa: {
     workbox: {
-      enabled: true
+      enabled: true,
     },
     meta: {
-      title: "Buildr - Build the future of your business",
+      title: "Satisfy - Order your favorite meals from any food vendor on campus with just a few taps.",
       author: "Marquis",
       mobileAppIOS: false,
       mobileApp: true,
       description:
-        "specialize in software development, product design, and bespoke solutions to help businesses innovate and thrive in the digital age.",
+        "Order your favorite meals from any food vendor on campus with just a few taps.",
       theme_color: "#27396B",
       background_color: "#27396B",
       display: "standalone",
@@ -65,8 +79,8 @@ export default defineNuxtConfig({
       sizes: [64, 120, 144, 152, 192, 384, 512],
     },
     manifest: {
-      name: "Achilles Drill",
-      lang: "fa",
+      name: "Buildr", // Changed from "Achilles Drill" to match your app title
+      lang: "en", // Changed from "fa" to match your htmlAttrs
       useWebmanifestExtension: false,
     },
     runtimeCaching: [
@@ -88,12 +102,13 @@ export default defineNuxtConfig({
         strategyOptions: { cacheableResponse: { statuses: [0, 200] } },
       },
       {
-        urlPattern:
-          "https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js",
+        urlPattern: "https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js",
         handler: "cacheFirst",
         method: "GET",
         strategyOptions: { cacheableResponse: { statuses: [0, 200] } },
       },
     ],
-  }
-});
+  },
+
+  compatibilityDate: "2025-03-27",
+})
