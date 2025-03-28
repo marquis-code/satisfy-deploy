@@ -2,7 +2,7 @@ import { defineNuxtConfig } from "nuxt/config"
 
 export default defineNuxtConfig({
   // Replace 'target: static' with the Nuxt 3 equivalent
-  ssr: true,
+  ssr: false,
 
   nitro: {
     preset: "static",

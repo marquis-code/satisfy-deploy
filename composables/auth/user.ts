@@ -71,10 +71,11 @@ export const useUser = () => {
     localStorageData.token.value = token;
   };
   const createUser = (user: any) => {
-    console.log(user, 'from cpomposebe')
-    runtimeData.user.value = user?.user;
-    localStorageData.token.value = user?.accessToken;
-    runtimeData.token.value = user?.accessToken;
+    localStorageData.user.value = user?.data.vendor || user?.data.customer;
+    runtimeData.user.value = user?.data.vendor || user?.data.customer;
+
+    runtimeData.token.value = user?.data.token;
+    localStorageData.token.value = user?.data.token;
   };
 
   // const updateUser = (user: any) => {
