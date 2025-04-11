@@ -1,8 +1,6 @@
 <template>
   <div class="min-h-screen overflow-hidden bg-white">
     <WelcomeOverlay />
-    <!-- <Header /> -->
-    <!-- Food Particles Background -->
     <div class="fixed inset-0 pointer-events-none z-0">
       <div v-for="i in 12" :key="i" 
         class="absolute food-particle"
@@ -102,12 +100,7 @@
             <div class="relative w-full max-w-md">
               <!-- Main Phone -->
               <div class="relative z-20 animate-float animation-delay-300">
-                <!-- <img 
-                  src="@/assets/img/mockup.png" 
-                  alt="CTTaste App" 
-                  class="w-full h-auto drop-shadow-2xl"
-                />
-                 -->
+
                 <!-- Animated Screen Content -->
                 <div class="absolute inset-0 flex flex-col items-center justify-center p-10">
                   <div class="w-full space-y-3 animate-pulse-slow">
@@ -164,17 +157,7 @@
               </div>
             </div>
           </div>
-          
-          <!-- App Stores -->
-          <!-- <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <p class="text-gray-700 font-medium">Download our mobile app:</p>
-            <button class="bg-white p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-              <img src="/images/app-store.svg" alt="App Store" class="h-8" />
-            </button>
-            <button class="bg-white p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-              <img src="/images/play-store.svg" alt="Play Store" class="h-8" />
-            </button>
-          </div> -->
+
         </div>
       </div>
     </div>

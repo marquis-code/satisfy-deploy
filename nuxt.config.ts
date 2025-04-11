@@ -4,8 +4,9 @@ export default defineNuxtConfig({
   // Replace 'target: static' with the Nuxt 3 equivalent
   ssr: false,
 
+  // Nitro configuration for Vercel deployment
   nitro: {
-    preset: "static",
+    preset: "vercel",
   },
 
   postcss: {
@@ -109,6 +110,5 @@ export default defineNuxtConfig({
       },
     ],
   },
-
   compatibilityDate: "2025-03-27",
 })
