@@ -33,10 +33,6 @@
       <div class="container mx-auto px-4 pb-10">
       <FoodBannerCarousel />
      </div>
-      
-<!-- 
-      <div class="flex-1 flex flex-col items-center justify-center px-6 py-10 md:py-0">
-        <div class="container px-4 w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
 
           <div class="flex flex-col justify-center order-2 lg:order-1 animate-fade-in">
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-gray-800 mb-6 animate-slide-up">
@@ -130,6 +126,8 @@
           </div>
         </div>
       </div> -->
+=======
+>>>>>>> de644b6 (updsated main)
 
       <main class="container mx-auto px-4 pb-10">
         <!-- {{vendors}} -->
