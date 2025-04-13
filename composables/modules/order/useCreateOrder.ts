@@ -5,6 +5,7 @@ import type { OrderPayload } from "@/api_factory/modules/order"
 export const useCreateOrder = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const orderResponse = ref({})
 
   const createOrder = async (payload: OrderPayload) => {
     loading.value = true
@@ -13,6 +14,8 @@ export const useCreateOrder = () => {
     try {
       const res = (await order_api.$_create_order(payload)) as any
       if (res.type !== "ERROR") {
+        console.log(res.data,'order res')
+        orderResponse.value = res.data
         return res.data
       } else {
         error.value = res.message || "Failed to create order"
@@ -24,7 +27,7 @@ export const useCreateOrder = () => {
     }
   }
 
-  return { createOrder, loading, error }
+  return { createOrder, loading, error, orderResponse }
 }
 
 // import { ref } from 'vue'

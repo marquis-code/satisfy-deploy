@@ -8,11 +8,11 @@
         <img
           src="@/assets/img/meal.jpg"
           alt="Nigerian Food"
-          class="w-full h-full object-cover opacity-60 mix-blend-multiply"
+          class="w-full h-screen object-cover opacity-60 mix-blend-multiply"
         />
-        <div
+        <!-- <div
           class="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"
-        ></div>
+        ></div> -->
       </div>
 
       <!-- Restaurant Logo -->
@@ -171,33 +171,6 @@
             </button>
           </div>
 
-          <!-- <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div 
-                v-for="meal in filteredMeals" 
-                :key="meal._id"
-                class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 animate-fade-in"
-              >
-                <div class="flex h-full">
-                  <div class="w-1/3 overflow-hidden">
-                    <img :src="getMealImage(meal._id)" :alt="meal.name" class="w-full h-full object-cover" />
-                  </div>
-                  <div class="w-2/3 p-4 flex flex-col justify-between">
-                    <div>
-                      <h3 class="font-semibold text-gray-800 text-lg">{{ meal.name }}</h3>
-                      <p class="text-sm font-semibold text-green-600 mt-1">₦{{ formatPrice(meal.price) }}</p>
-                    </div>
-                    <button 
-                      @click="openAddToPackModal(meal)"
-                      class="self-end mt-2 px-3 py-1.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl flex items-center shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105"
-                    >
-                      <PlusIcon class="h-4 w-4 mr-1" />
-                      Add to Pack
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-
           <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div
               v-for="(meal, index) in filteredMeals"
@@ -206,13 +179,14 @@
               :class="{ 'animate-fade-in': true }"
               :style="{ animationDelay: `${index * 0.05}s` }"
             >
+            <!-- {{meal}} -->
               <div class="flex h-full">
                 <div class="w-1/3 overflow-hidden">
                   <!-- <img :src="getMealImage(meal._id)" :alt="meal.name" class="w-full h-full object-cover" /> -->
                   <img
-                    src="@/assets/img/food1.jpg"
+                    :src="meal.image"
                     :alt="meal.name"
-                    class="w-full h-full object-cover"
+                    class="w-full h-full rounded-l-xl object-cover"
                   />
                 </div>
                 <div class="w-2/3 p-4 flex flex-col justify-between">

@@ -248,11 +248,8 @@
                     v-model="location"
                     class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent appearance-none"
                   >
-                    <option value="">Select Location</option>
-                    <option value="Oluwo">Oluwo</option>
-                    <option value="Harmony">Harmony</option>
-                    <option value="Isolu">Isolu</option>
-                    <option value="FUNAAB">FUNAAB</option>
+                  <option disabled value="">Select Location</option>
+                    <option v-for="item in schools" :key="item" :value="item" >{{item}}</option>
                   </select>
                   <ChevronDownIcon
                     class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none"
@@ -580,8 +577,148 @@ const { showToast } = useCustomToast();
 const router = useRouter();
 const cart = useCart();
 const toast = useToast();
-const { createOrder, loading: orderLoading, error } = useCreateOrder();
+const { createOrder, loading: orderLoading, error, orderResponse } = useCreateOrder();
 const route = useRoute()
+
+const schools = ref( [
+  // Federal Universities
+  'Federal University of Technology, Akure (FUTA)',
+  'Obafemi Awolowo University (OAU)',
+  'University of Ibadan (UI)',
+  'University of Lagos (UNILAG)',
+  'University of Benin (UNIBEN)',
+  'Ahmadu Bello University (ABU)',
+  'Bayero University Kano (BUK)',
+  'Federal University of Agriculture, Abeokuta (FUNAAB)',
+  'Federal University Oye-Ekiti (FUOYE)',
+  'Federal University of Technology, Minna (FUTMINNA)',
+  'Federal University of Technology, Owerri (FUTO)',
+  'Federal University, Dutse (FUD)',
+  'Federal University, Lafia (FULAFIA)',
+  'Federal University, Lokoja (FULOKOJA)',
+  'Federal University, Otuoke (FUO)',
+  'Federal University, Wukari (FUWUKARI)',
+  'Michael Okpara University of Agriculture, Umudike (MOUAU)',
+  'Modibbo Adama University of Technology, Yola (MAUTECH)',
+  'National Open University of Nigeria (NOUN)',
+  'Nigeria Police Academy, Wudil',
+  'Nigerian Defence Academy (NDA)',
+  'Nnamdi Azikiwe University, Awka (UNIZIK)',
+  'University of Abuja (UNIABUJA)',
+  'University of Agriculture, Makurdi (UAM)',
+  'University of Calabar (UNICAL)',
+  'University of Ilorin (UNILORIN)',
+  'University of Jos (UNIJOS)',
+  'University of Maiduguri (UNIMAID)',
+  'University of Nigeria, Nsukka (UNN)',
+  'University of Port Harcourt (UNIPORT)',
+  'University of Uyo (UNIUYO)',
+  'Abubakar Tafawa Balewa University (ATBU)',
+  'Federal University Gashua (FUGASHUA)',
+  'Federal University Gusau (FUGUS)',
+  'Federal University Kashere (FUK)',
+  'Federal University Birnin Kebbi (FUBK)',
+  'Federal University Dustin-Ma (FUDMA)',
+  'Alex Ekwueme Federal University, Ndufu-Alike (AE-FUNAI)',
+  'Federal University of Petroleum Resources, Effurun (FUPRE)',
+  'Federal University of Health Sciences, Otukpo (FUHSO)',
+  
+  // State Universities
+  'Abia State University, Uturu (ABSU)',
+  'Adamawa State University, Mubi (ADSU)',
+  'Adekunle Ajasin University, Akungba (AAUA)',
+  'Akwa Ibom State University (AKSU)',
+  'Ambrose Alli University, Ekpoma (AAU)',
+  'Chukwuemeka Odumegwu Ojukwu University, Uli (COOU)',
+  'Bauchi State University, Gadau (BASUG)',
+  'Benue State University, Makurdi (BSU)',
+  'Yobe State University, Damaturu (YSU)',
+  'Cross River State University of Technology, Calabar (CRUTECH)',
+  'Delta State University, Abraka (DELSU)',
+  'Ebonyi State University, Abakaliki (EBSU)',
+  'Ekiti State University, Ado Ekiti (EKSU)',
+  'Enugu State University of Science and Technology (ESUT)',
+  'Gombe State University (GSU)',
+  'Ibrahim Badamasi Babangida University, Lapai (IBBUL)',
+  'Ignatius Ajuru University of Education, Port Harcourt (IAUE)',
+  'Imo State University, Owerri (IMSU)',
+  'Kaduna State University (KASU)',
+  'Kano University of Science and Technology, Wudil (KUST)',
+  'Kebbi State University of Science and Technology, Aliero (KSUSTA)',
+  'Kogi State University, Anyigba (KSU)',
+  'Kwara State University, Malete (KWASU)',
+  'Ladoke Akintola University of Technology, Ogbomoso (LAUTECH)',
+  'Lagos State University, Ojo (LASU)',
+  'Nasarawa State University, Keffi (NSUK)',
+  'Niger Delta University, Wilberforce Island (NDU)',
+  'Olabisi Onabanjo University, Ago-Iwoye (OOU)',
+  'Ondo State University of Science and Technology, Okitipupa (OSUSTECH)',
+  'Osun State University, Osogbo (UNIOSUN)',
+  'Plateau State University, Bokkos (PLASU)',
+  'Rivers State University (RSU)',
+  'Tai Solarin University of Education, Ijagun (TASUED)',
+  'Taraba State University, Jalingo (TASU)',
+  'Technical University, Ibadan',
+  'Sokoto State University (SSU)',
+  
+  // Private Universities
+  'Covenant University',
+  'Landmark University',
+  'Babcock University',
+  'Afe Babalola University, Ado-Ekiti (ABUAD)',
+  'American University of Nigeria, Yola (AUN)',
+  'Benson Idahosa University, Benin City (BIU)',
+  'Bowen University, Iwo',
+  'Caleb University, Lagos',
+  'Caritas University, Enugu',
+  'Crawford University, Igbesa',
+  'Crescent University, Abeokuta',
+  'Elizade University, Ilara-Mokin',
+  'Evangel University, Akaeze',
+  'Fountain University, Osogbo',
+  'Gregory University, Uturu',
+  'Hallmark University, Ijebu-Itele',
+  'Igbinedion University, Okada',
+  'Joseph Ayo Babalola University, Ikeji-Arakeji (JABU)',
+  'Kings University, Ode Omu',
+  'Lead City University, Ibadan',
+  'Madonna University, Okija',
+  'McPherson University, Seriki Sotayo',
+  'Mountain Top University',
+  'Novena University, Ogume',
+  'Obong University, Obong Ntak',
+  'Oduduwa University, Ipetumodu',
+  'Pan-Atlantic University, Lagos',
+  'Paul University, Awka',
+  'Redeemer\'s University, Ede',
+  'Renaissance University, Enugu',
+  'Rhema University, Obeama-Asa',
+  'Salem University, Lokoja',
+  'Samuel Adegboyega University, Ogwa',
+  'Southwestern University, Okun Owa',
+  'Summit University, Offa',
+  'Tansian University, Umunya',
+  'University of Mkar, Mkar',
+  'Veritas University, Abuja',
+  'Wellspring University, Benin City',
+  'Wesley University, Ondo',
+  'Western Delta University, Oghara',
+  'Christopher University, Mowe',
+  'Anchor University, Lagos',
+  'Augustine University, Ilara',
+  'Chrisland University, Abeokuta',
+  'Edwin Clark University, Kiagbodo',
+  'Hezekiah University, Umudi',
+  'Admiralty University of Nigeria, Ibusa',
+  'Skyline University, Kano',
+  'Dominion University, Ibadan',
+  'Precious Cornerstone University, Ibadan',
+  'PAMO University of Medical Sciences, Port Harcourt',
+  'Legacy University, Okija',
+  'Atiba University, Oyo',
+  'Nile University of Nigeria, Abuja',
+  'Trinity University, Oyo'
+])
 
 // State
 const phoneNumber = ref("");
@@ -783,8 +920,9 @@ try {
   }
 
   // Show success message with animation
-  orderSuccess.value = true;
-  showOrderSuccessModal.value = true;
+  chatWithVendor()
+  // orderSuccess.value = true;
+  // showOrderSuccessModal.value = true;
 
   // Clear cart
   // cart.clearCart();
@@ -852,6 +990,8 @@ const chatWithVendor = () => {
   
   // Add order details with emojis and formatting
   message += `📋 *ORDER DETAILS* (${cart.totalItems.value} items) 📋\n\n`;
+
+  message += `📌 Order ID: ₦${orderResponse?.value?.orderId}\n`;
   
   // Add items from each pack with friendly formatting
   let packCounter = 0;

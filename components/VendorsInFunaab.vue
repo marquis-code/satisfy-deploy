@@ -1,12 +1,13 @@
 <template>
   <section class="my-10">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-xl font-semibold">All Vendors</h2>
-      <a href="#" class="text-red-700 hover:text-red-800 flex items-center transition-colors duration-300">
+      <h2 class="text-xl font-semibold">Most Recent Vendors</h2>
+      <NuxtLink to="/vendors" class="text-red-700 hover:text-red-800 flex items-center transition-colors duration-300">
         View all
         <ChevronRight size="20" />
-      </a>
+      </NuxtLink>
     </div>
+    <!-- {{recentVendors}} -->
     
     <div class="relative mb-6">
       <input 
@@ -142,7 +143,7 @@
     <!-- All Vendors Grid -->
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div 
-        v-for="vendor in vendors" 
+        v-for="vendor in recentVendors" 
         :key="vendor._id"
         @click="handleSelectedVendor(vendor)"
         class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
@@ -208,6 +209,16 @@ interface Vendor {
 }
 
 
+const recentVendors = computed(() => {
+  if (Array.isArray(vendors?.value) && vendors?.value.length > 0) {
+    return vendors?.value
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort by latest first
+      .slice(0, 6); // Get the first 6 elements
+  }
+  return []; // Return an empty array if no vendors
+});
+
+
 const { vendors, loading: isLoading } = useFetchVendors();
 
 const searchQuery = ref('');
@@ -265,12 +276,12 @@ const filteredVendors = computed(() => {
   
   const query = searchQuery.value.toLowerCase();
   
-  return vendors.value.filter((vendor: Vendor) => 
+  return vendors?.value?.slice(0, 3).filter((vendor: Vendor) => 
     vendor.restaurantName.toLowerCase().includes(query) ||
     vendor.category.toLowerCase().includes(query) ||
     vendor.locationName.toLowerCase().includes(query) ||
     vendor.address.toLowerCase().includes(query)
-  );
+  )
 });
 
 const suggestedVendors = computed(() => {

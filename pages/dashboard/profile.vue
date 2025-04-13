@@ -137,6 +137,14 @@
                 {{ imageFileName || 'No file chosen' }}
               </div>
             </div>
+
+            <div v-if="uploading" class="py-8 flex flex-col items-center">
+            <svg class="animate-spin h-12 w-12 text-orange-500 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-gray-600">Uploading image...</p>
+          </div>
             
             <!-- Image preview with animation -->
             <div v-if="editForm.imageUrl" class="mt-3 animate-fade-in">
@@ -317,6 +325,8 @@ import {
   CheckCircle, Edit2, MapPin, Phone, Copy, Tag, Clock, User, 
   ImageIcon, Briefcase, FileText, Mail, X, Save 
 } from 'lucide-vue-next'
+import { useUploadFile } from '@/composables/core/useUpload'
+const {  uploadFile, loading: uploading } = useUploadFile()
 
 // Get user data from composable
 const { user } = useUser()
@@ -429,7 +439,7 @@ const saveChanges = async () => {
       description: editForm.description,
       tags: editForm.tags,
       openingHours: editForm.openingHours,
-      imageUrl: editForm.imageUrl
+      displayImage: editForm.imageUrl
     }
     
     // Call update profile composable
@@ -450,20 +460,39 @@ const saveChanges = async () => {
   }
 }
 
-const handleImageUpload = (event: Event) => {
+const handleImageUpload = async (event: Event) => {
   const input = event.target as HTMLInputElement
   if (input.files && input.files.length > 0) {
     const file = input.files[0]
     imageFileName.value = file.name
+
+    try {
+    // Call the uploadFile method from your composable
+    const fileUrl = await uploadFile(file);
     
-    // Create a URL for the image preview
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        editForm.imageUrl = e.target.result as string
-      }
-    }
-    reader.readAsDataURL(file)
+    // Set the returned URL to the form data
+    editForm.image = fileUrl;
+    editForm.imageUrl = fileUrl;
+    
+    // Show success toast
+    // showToast('Image uploaded successfully', 'success');
+  } catch (error) {
+    // Handle upload error
+    // showToast(`Failed to upload image: ${error}`, 'error');
+    console.error('Upload error:', error);
+  } finally {
+    // Reset uploading state
+    uploading.value = false;
+  }
+    
+    // // Create a URL for the image preview
+    // const reader = new FileReader()
+    // reader.onload = (e) => {
+    //   if (e.target?.result) {
+    //     editForm.imageUrl = e.target.result as string
+    //   }
+    // }
+    // reader.readAsDataURL(file)
     
     // Here you would typically upload the image to your server/storage
     // and get back a URL to store in the profile
