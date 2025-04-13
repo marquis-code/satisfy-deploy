@@ -214,7 +214,7 @@
         <!-- Order Summary Section -->
         <div class="w-full lg:w-1/3">
           <div
-            class="bg-white rounded-xl shadow-md p-6 sticky top-4 border border-gray-100"
+            class="bg-white rounded-xl shadow-md p-3 sticky top-4 border border-gray-100"
           >
             <div class="flex justify-between items-center mb-6">
               <h2 class="text-base font-bold text-gray-800 flex items-center">
@@ -222,7 +222,7 @@
                 Your Orders
                 <span
                   v-if="cart.totalItems.value > 0"
-                  class="ml-2 px-2 py-0.5 bg-orange-100 text-orange-800 text-xs font-medium rounded-full animate-pulse"
+                  class="ml-2 px-2 py-0.5 bg-orange-100 text-orange-800 text-xs font-bold rounded-full animate-pulse"
                 >
                   {{ cart.totalItems.value }}
                 </span>
@@ -304,14 +304,15 @@
                     :key="`${pack.id}-${itemIndex}`"
                     class="flex justify-between items-center bg-gray-50 p-2 rounded-xl hover:bg-gray-100 transition-all duration-300"
                   >
+                  <!-- {{item}} -->
                     <div class="flex items-center rounded-lg">
                       <div
-                        class="w-8 h-8 rounded-lg overflow-hidden bg-gray-200"
+                        class="w-8 h-8 rounded-xl overflow-hidden bg-gray-200"
                       >
                         <img
-                          src="@/assets/img/meal2.jpg"
+                          :src="item.image"
                           :alt="item.name"
-                          class="w-full h-full object-cover"
+                          class="w-full rounded-xl h-full object-cover"
                         />
                         <!-- <img 
                             :src="getMealImage(item.mealId)" 
@@ -437,11 +438,11 @@
               <ShoppingBagIcon class="h-5 w-5 mr-2 text-green-500" />
               Add to Pack
             </h2>
-
+<!-- {{selectedMeal}} -->
             <div class="flex items-center mb-6 bg-gray-50 p-3 rounded-xl">
               <div class="w-20 h-20 rounded-xl overflow-hidden">
                 <img
-                  src="@/assets/img/meal.jpg"
+                  :src="selectedMeal.image"
                   :alt="selectedMeal?.name"
                   class="w-full h-full object-cover"
                 />
@@ -784,6 +785,7 @@ const { showToast } = useCustomToast();
 interface Meal {
   _id: string;
   name: string;
+  image: string;
   price: number;
   categoryId: string;
   isEnabled: boolean;
@@ -940,6 +942,7 @@ const addToPack = () => {
 
   const packIndex = selectedPackIndex.value;
   const meal = selectedMeal.value;
+  console.log(meal, 'added meal')
 
   const success = cart.addItemToPack(
     packIndex,
@@ -947,19 +950,20 @@ const addToPack = () => {
       mealId: meal._id,
       name: meal.name,
       price: meal.price,
-      image: getMealImage(meal._id),
+      // image: getMealImage(meal._id),
+      image: meal.image,
     },
     quantity.value
   );
 
   if (success) {
     // toast.success(`Added ${quantity.value} ${meal.name} to Pack ${packIndex + 1}`)
-    showToast({
-      title: "Success",
-      message: `Added ${quantity.value} ${meal.name} to Pack ${packIndex + 1}`,
-      toastType: "success",
-      duration: 3000,
-    });
+    // showToast({
+    //   title: "Success",
+    //   message: `Added ${quantity.value} ${meal.name} to Pack ${packIndex + 1}`,
+    //   toastType: "success",
+    //   duration: 3000,
+    // });
     showAddToPackModal.value = false; // Fix: Close the modal after adding to pack
     selectedMeal.value = null;
   } else {
