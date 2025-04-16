@@ -184,6 +184,65 @@
         </div>
       </div>
     </div>
+
+    <CoreModal :isOpen="isCloseModalOpen" @close="isCloseModalOpen = false">
+    <div class="p-6 rounded-xl w-5/12 relative" @click.stop>
+      <div
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+      >
+        <div
+          class="bg-white rounded-xl p-6 shadow-lg w-full space-y-4 max-w-md relative text-center"
+        >
+          <div class="flex justify-center items-center mb-4">
+            <div class="">
+              <svg
+                width="65"
+                height="64"
+                viewBox="0 0 65 64"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="0.923828"
+                  width="63.1513"
+                  height="64"
+                  rx="31.5756"
+                  fill="#0F973D"
+                />
+                <path
+                  d="M44.1631 32.3596C44.1631 25.7418 38.7982 20.377 32.1804 20.377C25.5626 20.377 20.1978 25.7418 20.1978 32.3596C20.1978 38.9774 25.5626 44.3423 32.1804 44.3423C38.7982 44.3423 44.1631 38.9774 44.1631 32.3596Z"
+                  stroke="white"
+                  stroke-width="1.7974"
+                />
+                <path
+                  d="M27.584 32.9633L30.5297 35.9839L37.0103 28.7344"
+                  stroke="white"
+                  stroke-width="1.7974"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <!-- <h2 class="text-xl font-medium mb-2 text-[#1D2739]">Shop Closed</h2> -->
+          <p class="text-xl font-semibold text-[#667185] mb-4">
+  Restaurant Closed
+</p>
+<p class="text-[#667185] mb-6 leading-snug">
+  Sorry, this restaurant is currently closed. Please check back later for availability.
+</p>
+<div class="pt-6">
+  <button
+    @click="isCloseModalOpen = false"
+    class="bg-[#292929] text-[#EAEAEA] w-full py-3.5 rounded-xl"
+  >
+    Close
+  </button>
+</div>
+        </div>
+      </div>
+    </div>
+  </CoreModal>
   </section>
 </template>
 
@@ -192,6 +251,7 @@ import { ref, computed, reactive } from 'vue';
 import { ChevronRight, Search, Heart, CheckCircle, Star, Pizza, Coffee } from 'lucide-vue-next';
 import { useFetchVendors } from '@/composables/modules/vendor/useFetchVendors'
 const router = useRouter()
+const isCloseModalOpen = ref(false)
 
 // Define the vendor interface based on the backend structure
 interface Vendor {
@@ -292,8 +352,12 @@ const suggestedVendors = computed(() => {
 });
 
 const handleSelectedVendor = (vendor: any) => {
-  localStorage.setItem('selected-vendor', JSON.stringify(vendor))
-  router.push(`/vendors/${vendor._id}`)
+  if(!vendor.isStoreOpen){
+    isCloseModalOpen.value = true
+  } else {
+    localStorage.setItem('selected-vendor', JSON.stringify(vendor))
+    router.push(`/vendors/${vendor._id}`)
+  }
 }
 </script>
 

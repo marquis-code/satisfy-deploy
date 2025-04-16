@@ -10,9 +10,6 @@
           alt="Nigerian Food"
           class="w-full h-screen object-cover opacity-60 mix-blend-multiply"
         />
-        <!-- <div
-          class="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"
-        ></div> -->
       </div>
 
       <!-- Restaurant Logo -->
@@ -106,27 +103,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="relative mx-4 -mt-10 md:-mt-16 bg-gradient-to-r from-orange-100 to-yellow-50 rounded-xl shadow-xl p-6 z-10 animate-fade-in-up border border-orange-200">
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
-            <div>
-              <h1 class="text-2xl md:text-3xl font-bold text-gray-800">{{vendor?.restaurantName ?? 'Nil'}}</h1>
-              <div class="flex items-center mt-1">
-                <p class="text-gray-600">{{vendor?.locationName ?? 'Nil'}}</p>
-                <div class="flex ml-2">
-                  <StarIcon v-for="i in 5" :key="i" class="h-4 w-4 text-yellow-500" />
-                </div>
-              </div>
-            </div>
-            <button 
-              class="mt-4 md:mt-0 px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center"
-              @click="showReviewModal = true"
-            >
-              <StarIcon class="h-4 w-4 mr-1" />
-              Leave A Review
-            </button>
-          </div>
-          <p class="mt-4 text-gray-700 italic">Am proud of you, Dr Ben. - {{vendor?.phoneNumber ?? 'Nil'}}</p>
-        </div> -->
     </div>
 
     <div class="container mx-auto px-4 py-8 md:py-12">
@@ -179,10 +155,8 @@
               :class="{ 'animate-fade-in': true }"
               :style="{ animationDelay: `${index * 0.05}s` }"
             >
-            <!-- {{meal}} -->
               <div class="flex h-full">
                 <div class="w-1/3 overflow-hidden">
-                  <!-- <img :src="getMealImage(meal._id)" :alt="meal.name" class="w-full h-full object-cover" /> -->
                   <img
                     :src="meal.image"
                     :alt="meal.name"
@@ -198,13 +172,35 @@
                       ₦{{ formatPrice(meal.price) }}
                     </p>
                   </div>
-                  <button
-                    @click="openAddToPackModal(meal)"
-                    class="self-end mt-2 px-3 py-1.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl flex items-center shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105"
-                  >
-                    <PlusIcon class="h-4 w-4 mr-1" />
-                    Add to Pack
-                  </button>
+                  
+                  <!-- Quantity Controls -->
+                  <div class="self-end mt-2 flex items-center">
+                    <template v-if="getMealQuantityInFirstPack(meal._id) > 0">
+                      <button
+                        @click="decrementMealInFirstPack(meal)"
+                        class="w-8 h-8 bg-gray-200 hover:bg-gray-300 rounded-l-md flex items-center justify-center transition-colors"
+                      >
+                        <MinusIcon class="h-4 w-4" />
+                      </button>
+                      <span class="w-8 text-center text-sm bg-gray-100 py-1.5">
+                        {{ getMealQuantityInFirstPack(meal._id) }}
+                      </span>
+                      <button
+                        @click="incrementMealInFirstPack(meal)"
+                        class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-r-md flex items-center justify-center transition-colors"
+                      >
+                        <PlusIcon class="h-4 w-4" />
+                      </button>
+                    </template>
+                    <button
+                      v-else
+                      @click="addMealToFirstPack(meal)"
+                      class="px-3 py-1.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl flex items-center shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105"
+                    >
+                      <PlusIcon class="h-4 w-4 mr-1" />
+                      Add to Pack
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -304,7 +300,6 @@
                     :key="`${pack.id}-${itemIndex}`"
                     class="flex justify-between items-center bg-gray-50 p-2 rounded-xl hover:bg-gray-100 transition-all duration-300"
                   >
-                  <!-- {{item}} -->
                     <div class="flex items-center rounded-lg">
                       <div
                         class="w-8 h-8 rounded-xl overflow-hidden bg-gray-200"
@@ -314,11 +309,6 @@
                           :alt="item.name"
                           class="w-full rounded-xl h-full object-cover"
                         />
-                        <!-- <img 
-                            :src="getMealImage(item.mealId)" 
-                            :alt="item.name" 
-                            class="w-full h-full object-cover" 
-                          /> -->
                       </div>
                       <div class="ml-2">
                         <p class="text-sm font-medium text-gray-800">
@@ -421,114 +411,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Add to Pack Modal -->
-    <Teleport to="body">
-      <div
-        v-if="showAddToPackModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
-        @click="closeAddToPackModal"
-      >
-        <div
-          class="bg-white rounded-xl shadow-xl w-full max-w-md animate-fade-in-up"
-          @click.stop
-        >
-          <div class="p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-              <ShoppingBagIcon class="h-5 w-5 mr-2 text-green-500" />
-              Add to Pack
-            </h2>
-<!-- {{selectedMeal}} -->
-            <div class="flex items-center mb-6 bg-gray-50 p-3 rounded-xl">
-              <div class="w-20 h-20 rounded-xl overflow-hidden">
-                <img
-                  :src="selectedMeal.image"
-                  :alt="selectedMeal?.name"
-                  class="w-full h-full object-cover"
-                />
-                <!-- <img 
-                    :src="getMealImage(selectedMeal?._id || '')" 
-                    :alt="selectedMeal?.name" 
-                    class="w-full h-full object-cover" 
-                  /> -->
-              </div>
-              <div class="ml-4">
-                <h3 class="font-medium text-gray-800 text-lg">
-                  {{ selectedMeal?.name }}
-                </h3>
-                <p class="text-sm font-semibold text-green-600">
-                  ₦{{ formatPrice(selectedMeal?.price || 0) }}
-                </p>
-              </div>
-            </div>
-
-            <div class="mb-6">
-              <label class="block text-gray-700 mb-2 font-medium"
-                >Select Pack:</label
-              >
-              <div class="relative">
-                <select
-                  v-model="selectedPackIndex"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none"
-                >
-                  <option
-                    v-for="(pack, index) in cart.packs.value"
-                    :key="pack.id"
-                    :value="index"
-                  >
-                    Pack {{ index + 1 }} ({{ pack.items.length }} items)
-                  </option>
-                </select>
-                <ChevronDownIcon
-                  class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none"
-                />
-              </div>
-            </div>
-
-            <div class="mb-6">
-              <label class="block text-gray-700 mb-2 font-medium"
-                >Quantity:</label
-              >
-              <div class="flex items-center">
-                <button
-                  @click="decrementQuantity"
-                  class="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-l-lg flex items-center justify-center transition-colors"
-                >
-                  <MinusIcon class="h-5 w-5" />
-                </button>
-                <input
-                  type="number"
-                  v-model="quantity"
-                  min="1"
-                  class="w-16 h-10 border-t border-b border-gray-300 text-center focus:outline-none"
-                />
-                <button
-                  @click="incrementQuantity"
-                  class="w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-r-lg flex items-center justify-center transition-colors"
-                >
-                  <PlusIcon class="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-
-            <div class="flex justify-end gap-3">
-              <button
-                @click="closeAddToPackModal"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300"
-              >
-                Cancel
-              </button>
-              <button
-                @click="addToPack"
-                class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
-              >
-                Add to Pack
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Teleport>
 
     <!-- Duplicate Pack Modal -->
     <Teleport to="body">
@@ -752,7 +634,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useCart } from "~/composables/useCart";
 import { useToast } from "~/composables/useToast";
 import { useFetchVendorById } from "@/composables/modules/vendor/useFetchVendorById";
@@ -775,11 +657,9 @@ import {
   MessageCircleIcon,
   AlertCircleIcon,
 } from "lucide-vue-next";
-// import ToastContainer from '~/components/ToastContainer.vue'
 import { useCustomToast } from "@/composables/core/useCustomToast";
-const { vendor, loading, error } = useFetchVendorById();
-const { showToast } = useCustomToast();
-  const route = useRoute()
+
+const route = useRoute();
 
 // Types
 interface Meal {
@@ -801,8 +681,9 @@ const router = useRouter();
 
 // Composables
 const cart = useCart();
-// const toast = useToast()
 const { menus, loading: fetchingMenu } = useFetchVendorMenu();
+const { showToast } = useCustomToast();
+const { vendor, loading, error } = useFetchVendorById(route.params.id as string);
 
 // State
 const searchQuery = ref("");
@@ -822,7 +703,6 @@ const filteredMeals = computed(() => {
 });
 
 // Modal states
-const showAddToPackModal = ref(false);
 const showDuplicatePackModal = ref(false);
 const showPackNoteModal = ref(false);
 const showReviewModal = ref(false);
@@ -856,34 +736,90 @@ const getMealImage = (mealId: string): string => {
   return mealImages[mealId] || "/images/placeholder.jpg";
 };
 
-const openAddToPackModal = (meal: Meal) => {
-  selectedMeal.value = meal;
-  selectedPackIndex.value = cart.packs.value.length - 1; // Select the last pack by default
-  quantity.value = 1;
-  showAddToPackModal.value = true;
+// New methods for handling meal quantities directly in the menu
+const getMealQuantityInFirstPack = (mealId: string): number => {
+  // Ensure there's at least one pack
+  if (cart.packs.value.length === 0) {
+    return 0;
+  }
+  
+  // Find the meal in the first pack
+  const firstPack = cart.packs.value[0];
+  const mealItem = firstPack.items.find(item => item.mealId === mealId);
+  
+  return mealItem ? mealItem.quantity : 0;
 };
 
-const closeAddToPackModal = () => {
-  showAddToPackModal.value = false;
-  selectedMeal.value = null;
+const addMealToFirstPack = (meal: Meal): void => {
+  // Ensure there's at least one pack
+  if (cart.packs.value.length === 0) {
+    cart.addNewPack();
+  }
+  
+  // Add to the first pack (index 0)
+  const success = cart.addItemToPack(
+    0,
+    {
+      mealId: meal._id,
+      name: meal.name,
+      price: meal.price,
+      image: meal.image,
+    },
+    1 // Default quantity is 1
+  );
+
+  if (success) {
+    showToast({
+      title: "Success",
+      message: `Added ${meal.name} to Pack 1`,
+      toastType: "success",
+      duration: 3000,
+    });
+  } else {
+    showToast({
+      title: "Error",
+      message: "Failed to add item to pack",
+      toastType: "error",
+      duration: 3000,
+    });
+  }
 };
 
-// const openDuplicatePackModal = () => {
-//   if (cart.packs.value.length === 1) {
-//     // If there's only one pack, duplicate it directly
-//     duplicatePack(0)
-//     return
-//   }
+const incrementMealInFirstPack = (meal: Meal): void => {
+  // Find the meal in the first pack
+  if (cart.packs.value.length === 0) {
+    addMealToFirstPack(meal);
+    return;
+  }
+  
+  const firstPack = cart.packs.value[0];
+  const itemIndex = firstPack.items.findIndex(item => item.mealId === meal._id);
+  
+  if (itemIndex !== -1) {
+    cart.incrementItemQuantity(0, itemIndex);
+  } else {
+    addMealToFirstPack(meal);
+  }
+};
 
-//   packToDuplicateIndex.value = cart.packs.value.length - 1 // Default to last pack
-//   showDuplicatePackModal.value = true
-// }
+const decrementMealInFirstPack = (meal: Meal): void => {
+  // Find the meal in the first pack
+  if (cart.packs.value.length === 0) {
+    return;
+  }
+  
+  const firstPack = cart.packs.value[0];
+  const itemIndex = firstPack.items.findIndex(item => item.mealId === meal._id);
+  
+  if (itemIndex !== -1) {
+    cart.decrementItemQuantity(0, itemIndex);
+  }
+};
 
 const openDuplicatePackModal = () => {
   if (cart.packs.value.length === 1) {
     // If there's only one pack, duplicate it directly
     duplicatePack(0);
-    // toast.success('Pack duplicated successfully')
     showToast({
       title: "Success",
       message: "Pack duplicated successfully",
@@ -906,87 +842,15 @@ const duplicateSelectedPack = () => {
   closeDuplicatePackModal();
 };
 
-const incrementQuantity = () => {
-  quantity.value++;
-};
-
-const decrementQuantity = () => {
-  if (quantity.value > 1) {
-    quantity.value--;
-  }
-};
-
-// const addToPack = () => {
-//   if (!selectedMeal.value) return
-
-//   const packIndex = selectedPackIndex.value
-//   const meal = selectedMeal.value
-
-//   const success = cart.addItemToPack(packIndex, {
-//     mealId: meal._id,
-//     name: meal.name,
-//     price: meal.price,
-//     image: getMealImage(meal._id)
-//   }, quantity.value)
-
-//   if (success) {
-//     toast.success(`Added ${quantity.value} ${meal.name} to Pack ${packIndex + 1}`)
-//     closeAddToPackModal()
-//   } else {
-//     toast.error('Failed to add item to pack')
-//   }
-// }
-
-const addToPack = () => {
-  if (!selectedMeal.value) return;
-
-  const packIndex = selectedPackIndex.value;
-  const meal = selectedMeal.value;
-  console.log(meal, 'added meal')
-
-  const success = cart.addItemToPack(
-    packIndex,
-    {
-      mealId: meal._id,
-      name: meal.name,
-      price: meal.price,
-      // image: getMealImage(meal._id),
-      image: meal.image,
-    },
-    quantity.value
-  );
-
-  if (success) {
-    // toast.success(`Added ${quantity.value} ${meal.name} to Pack ${packIndex + 1}`)
-    // showToast({
-    //   title: "Success",
-    //   message: `Added ${quantity.value} ${meal.name} to Pack ${packIndex + 1}`,
-    //   toastType: "success",
-    //   duration: 3000,
-    // });
-    showAddToPackModal.value = false; // Fix: Close the modal after adding to pack
-    selectedMeal.value = null;
-  } else {
-    // toast.error('Failed to add item to pack')
-    showToast({
-      title: "Error",
-      message: "Failed to add item to pack",
-      toastType: "error",
-      duration: 3000,
-    });
-  }
-};
-
 const addNewPack = () => {
   const success = cart.addNewPack();
   if (success) {
-    // toast.success('New pack added')
-    showToast({
-      title: "Success",
-      message: "New pack added",
-      toastType: "success",
-      duration: 3000,
-    });
+    // showToast({
+    //   title: "Success",
+    //   message: "New pack added",
+    //   toastType: "success",
+    //   duration: 3000,
+    // });
   }
 };
 
@@ -994,13 +858,12 @@ const duplicatePack = (index: number) => {
   if (cart.packs.value.length > 0) {
     const success = cart.duplicatePack(index);
     if (success) {
-      showToast({
-        title: "Success",
-        message: `Pack ${index + 1} duplicated successfully`,
-        toastType: "success",
-        duration: 3000,
-      });
-      // toast.success(`Pack ${index + 1} duplicated successfully`)
+      // showToast({
+      //   title: "Success",
+      //   message: `Pack ${index + 1} duplicated successfully`,
+      //   toastType: "success",
+      //   duration: 3000,
+      // });
     }
   }
 };
@@ -1008,14 +871,12 @@ const duplicatePack = (index: number) => {
 const removePack = (index: number) => {
   const success = cart.removePack(index);
   if (success) {
-    // toast.info('Pack removed')
-    // `Pack ${index + 1} duplicated successfully`
-    showToast({
-      title: "Success",
-      message: `Pack ${index + 1} duplicated successfully`,
-      toastType: "success",
-      duration: 3000,
-    });
+    // showToast({
+    //   title: "Success",
+    //   message: `Pack ${index + 1} removed`,
+    //   toastType: "success",
+    //   duration: 3000,
+    // });
   }
 };
 
@@ -1046,13 +907,12 @@ const closePackNoteModal = () => {
 const savePackNote = () => {
   const success = cart.updatePackNote(packNoteIndex.value, packNote.value);
   if (success) {
-    // toast.success('Note saved successfully')
-    showToast({
-      title: "Success",
-      message: "Note saved successfully",
-      toastType: "success",
-      duration: 3000,
-    });
+    // showToast({
+    //   title: "Success",
+    //   message: "Note saved successfully",
+    //   toastType: "success",
+    //   duration: 3000,
+    // });
     closePackNoteModal();
   }
 };
@@ -1066,7 +926,6 @@ const confirmEmptyCart = () => {
 const emptyCart = () => {
   const success = cart.clearCart();
   if (success) {
-    // toast.info('Cart emptied successfully')
     showToast({
       title: "Success",
       message: "Cart emptied successfully",
@@ -1088,7 +947,6 @@ const proceedToCheckout = () => {
       toastType: "warning",
       duration: 3000,
     });
-    // toast.warning('Your cart is empty')
   }
 };
 
@@ -1105,11 +963,10 @@ const submitReview = () => {
     text: reviewText.value,
   });
 
-  // toast.success('Thank you for your review!')
   showToast({
-    title: "Warning",
+    title: "Success",
     message: "Thank you for your review!",
-    toastType: "warning",
+    toastType: "success",
     duration: 3000,
   });
   closeReviewModal();
@@ -1131,6 +988,19 @@ onMounted(() => {
   // Initialize cart from localStorage
   cart.initCart();
 });
+
+watch(
+  () => route.params.id,
+  (newVendorId) => {
+    if (newVendorId) {
+      vendor.value = null;
+      loading.value = true;
+      error.value = null;
+      useFetchVendorById(newVendorId as string);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>
@@ -1301,173 +1171,6 @@ onMounted(() => {
   50% {
     opacity: 0.8;
     transform: scale(1.05);
-  }
-}
-
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(156, 163, 175, 0.5);
-  border-radius: 20px;
-}
-
-.transform.hover\:scale-98:hover {
-  transform: scale(0.98);
-}
-
-.card-container {
-  perspective: 1000px;
-}
-
-.restaurant-card {
-  transform-style: preserve-3d;
-  animation: card-entrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  box-shadow: 0 10px 30px -5px rgba(243, 156, 18, 0.2);
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.restaurant-card:hover {
-  box-shadow: 0 15px 35px -5px rgba(243, 156, 18, 0.3);
-  transform: translateY(-5px);
-}
-
-.restaurant-name {
-  animation: slide-in 0.6s ease forwards;
-  animation-delay: 0.2s;
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.location {
-  animation: slide-in 0.6s ease forwards;
-  animation-delay: 0.3s;
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.stars-container {
-  animation: slide-in 0.6s ease forwards;
-  animation-delay: 0.4s;
-  opacity: 0;
-}
-
-.star-wrapper {
-  display: inline-block;
-  transform-origin: center;
-}
-
-.star-wrapper:hover .star-icon {
-  transform: scale(1.3);
-  color: #f59e0b;
-}
-
-.star-icon {
-  transition: all 0.2s ease;
-}
-
-.review-button {
-  position: relative;
-  overflow: hidden;
-  animation: slide-in 0.6s ease forwards;
-  animation-delay: 0.5s;
-  opacity: 0;
-}
-
-.review-button::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: rgba(255, 255, 255, 0.2);
-  transform: rotate(45deg);
-  opacity: 0;
-  transition: all 0.6s ease;
-}
-
-.review-button:hover::after {
-  opacity: 1;
-  transform: rotate(45deg) translate(50%, 50%);
-}
-
-.category-badge {
-  animation: slide-in 0.6s ease forwards;
-  animation-delay: 0.6s;
-  opacity: 0;
-}
-
-.quote-text {
-  animation: slide-in 0.6s ease forwards;
-  animation-delay: 0.7s;
-  opacity: 0;
-  position: relative;
-}
-
-.footer {
-  animation: slide-in 0.6s ease forwards;
-  animation-delay: 0.8s;
-  opacity: 0;
-}
-
-@keyframes card-entrance {
-  0% {
-    opacity: 0;
-    transform: translateY(20px) rotateX(5deg);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) rotateX(0);
-  }
-}
-
-@keyframes slide-in {
-  0% {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes spin-slow {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spin-slow 3s linear infinite;
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 0.1;
-  }
-  50% {
-    opacity: 0.3;
   }
 }
 
