@@ -20,5 +20,9 @@ export const vendor_api = {
   $_fetch_vendor_by_id: (id: string) => {
     let url = `/vendor/${id}`;
     return GATEWAY_ENDPOINT.get(url);
+  },
+  $_fetch_vendor_by_name: (slug: string) => {
+    let url = `/vendor/name/${slug}`;
+    return GATEWAY_ENDPOINT.get(url);
   }
 };

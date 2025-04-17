@@ -2,7 +2,7 @@
     <div class="min-h-screen">
       <div class="container mx-auto">
         <!-- Working Hours Section -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 mb-8 transform transition-all duration-500 hover:shadow-2xl">
+        <div class="bg-white dark:bg-gray-800 rounded-md shadow-xl p-8 mb-8 transform transition-all duration-500 hover:shadow-2xl">
           <h2 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center mb-8">
             <span class="relative">
               Vendor Availability
@@ -113,7 +113,7 @@
         </div>
   
         <!-- Availability Summary Card -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8 transition-all duration-300 hover:shadow-xl">
+        <div class="bg-white dark:bg-gray-800 rounded-md shadow-lg p-6 mb-8 transition-all duration-300 hover:shadow-xl">
           <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Availability Summary</h3>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -179,7 +179,7 @@
           @click.self="showDiscardConfirmation = false"
         >
           <div 
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6 transform transition-all duration-300"
+            class="bg-white dark:bg-gray-800 rounded-md shadow-2xl w-full max-w-md p-6 transform transition-all duration-300"
             :class="{ 'scale-100 opacity-100': showDiscardConfirmation, 'scale-95 opacity-0': !showDiscardConfirmation }"
           >
             <div class="text-center">
@@ -216,7 +216,7 @@
           @click.self="showToggleDayConfirmation = false"
         >
           <div 
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6 transform transition-all duration-300"
+            class="bg-white dark:bg-gray-800 rounded-md shadow-2xl w-full max-w-md p-6 transform transition-all duration-300"
             :class="{ 'scale-100 opacity-100': showToggleDayConfirmation, 'scale-95 opacity-0': !showToggleDayConfirmation }"
           >
             <div class="text-center">
@@ -272,7 +272,7 @@
           @click.self="showUpdateConfirmation = false"
         >
           <div 
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6 transform transition-all duration-300"
+            class="bg-white dark:bg-gray-800 rounded-md shadow-2xl w-full max-w-md p-6 transform transition-all duration-300"
             :class="{ 'scale-100 opacity-100': showUpdateConfirmation, 'scale-95 opacity-0': !showUpdateConfirmation }"
           >
             <div class="text-center">

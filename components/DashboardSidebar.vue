@@ -235,7 +235,7 @@
         
         <!-- Modal Content -->
         <div 
-          class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-11/12 max-w-md relative overflow-hidden modal-content"
+          class="bg-white dark:bg-gray-800 rounded-md shadow-2xl w-11/12 max-w-md relative overflow-hidden modal-content"
           @click.stop
         >
           <!-- Top Decorative Wave -->
@@ -414,9 +414,9 @@ const navItems = reactive<NavItem[]>([
     path: "/dashboard/delivery",
     key: "delivery",
     children: [
-      { label: "Active Deliveries", path: "/dashboard/delivery/active" },
-      { label: "Delivery History", path: "/dashboard/delivery/history" },
-      { label: "Delivery Settings", path: "/dashboard/delivery/settings" }
+      // { label: "Active Deliveries", path: "/dashboard/delivery/active" },
+      { label: "Delivery Locations", path: "/dashboard/delivery/location" },
+      { label: "Delivery Tracking", path: "/dashboard/delivery/" }
     ]
   }
 ]);

@@ -5,7 +5,7 @@
       @click="close"
     >
       <div 
-        class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 animate-scaleIn"
+        class="bg-white rounded-md shadow-xl w-full max-w-md p-6 animate-scaleIn"
         @click.stop
       >
         <div class="flex justify-between items-center mb-4">
@@ -19,8 +19,8 @@
         </div>
         
         <div class="mb-6">
-          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl mb-4">
-            <div class="w-16 h-16 rounded-xl overflow-hidden">
+          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-md mb-4">
+            <div class="w-16 h-16 rounded-md overflow-hidden">
               <img 
                 :src="vendor.image || '/placeholder.svg?height=64&width=64'" 
                 :alt="vendor.name" 
@@ -39,7 +39,7 @@
               type="text" 
               :value="shareUrl" 
               readonly
-              class="w-full pl-4 pr-20 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-50"
+              class="w-full pl-4 pr-20 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-50"
             />
             <button 
               @click="copyToClipboard"
@@ -53,7 +53,7 @@
         <div class="grid grid-cols-4 gap-4">
           <button 
             @click="shareViaWhatsApp"
-            class="flex flex-col items-center justify-center p-3 rounded-xl hover:bg-green-50 transition-colors duration-200"
+            class="flex flex-col items-center justify-center p-3 rounded-md hover:bg-green-50 transition-colors duration-200"
           >
             <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#25D366">
@@ -65,7 +65,7 @@
           
           <button 
             @click="shareViaTwitter"
-            class="flex flex-col items-center justify-center p-3 rounded-xl hover:bg-blue-50 transition-colors duration-200"
+            class="flex flex-col items-center justify-center p-3 rounded-md hover:bg-blue-50 transition-colors duration-200"
           >
             <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#1DA1F2">
@@ -77,7 +77,7 @@
           
           <button 
             @click="shareViaFacebook"
-            class="flex flex-col items-center justify-center p-3 rounded-xl hover:bg-blue-50 transition-colors duration-200"
+            class="flex flex-col items-center justify-center p-3 rounded-md hover:bg-blue-50 transition-colors duration-200"
           >
             <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#1877F2">
@@ -89,7 +89,7 @@
           
           <button 
             @click="shareViaEmail"
-            class="flex flex-col items-center justify-center p-3 rounded-xl hover:bg-gray-50 transition-colors duration-200"
+            class="flex flex-col items-center justify-center p-3 rounded-md hover:bg-gray-50 transition-colors duration-200"
           >
             <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-2">
               <Mail size="24" class="text-gray-700" />

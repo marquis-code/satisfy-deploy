@@ -13,7 +13,7 @@
         </div>
       </div>
 
-    <div v-else class="overflow-hidden rounded-xl">
+    <div v-else class="overflow-hidden rounded-md">
       <div
         class="flex transition-transform duration-500 ease-in-out"
         :style="{ transform: `translateX(-${currentSlide * 100}%)` }"
@@ -37,7 +37,7 @@
                 <img 
                   :src="vendor.displayImage || defaultImage" 
                   :alt="vendor.restaurantName" 
-                  class="w-auto h-[180px] md:h-[220px] object-cover rounded-xl shadow-lg transform transition-transform duration-500 hover:scale-105"
+                  class="w-auto h-[180px] md:h-[220px] object-cover rounded-md shadow-lg transform transition-transform duration-500 hover:scale-105"
                 />
               </div>
             </div>

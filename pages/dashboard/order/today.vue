@@ -17,7 +17,7 @@
     <!-- {{orders}} -->
 
     <!-- Filters card -->
-    <div class="bg-white rounded-xl shadow-md p-6 mb-8 transition-all duration-300 hover:shadow-lg">
+    <div class="bg-white rounded-md shadow-md p-6 mb-8 transition-all duration-300 hover:shadow-lg">
       <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
         <FilterIcon class="h-5 w-5 text-emerald-600" />
         <span>Filters & Controls</span>
@@ -126,7 +126,7 @@
     </div>
     
     <!-- Orders table -->
-    <div v-else class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg mb-6">
+    <div v-else class="bg-white rounded-md shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg mb-6">
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
@@ -231,7 +231,7 @@
     </div>
     
     <!-- Pagination -->
-    <div class="bg-white rounded-xl shadow-md p-4 flex flex-col md:flex-row justify-between items-center gap-4 transition-all duration-300 hover:shadow-lg">
+    <div class="bg-white rounded-md shadow-md p-4 flex flex-col md:flex-row justify-between items-center gap-4 transition-all duration-300 hover:shadow-lg">
       <div class="text-sm text-gray-600">
         Showing {{ paginationInfo.from }} to {{ paginationInfo.to }} of {{ totalOrders }} entries
       </div>
@@ -284,7 +284,7 @@
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="showStatusModal = false"></div>
             
             <!-- Modal panel -->
-            <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
+            <div class="inline-block align-bottom bg-white rounded-md text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
               <div class="bg-white px-6 pt-5 pb-6">
                 <div class="flex items-start justify-between mb-5">
                   <div>

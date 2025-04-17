@@ -90,7 +90,7 @@
       </div>
       
       <!-- Orders table -->
-      <div class="overflow-x-auto bg-white rounded-xl shadow">
+      <div class="overflow-x-auto bg-white rounded-md shadow">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
@@ -196,7 +196,7 @@
       <!-- Status Update Modal -->
       <Teleport to="body">
         <div v-if="showStatusModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md transform transition-all duration-300 ease-in-out" 
+          <div class="bg-white rounded-md shadow-lg p-6 w-full max-w-md transform transition-all duration-300 ease-in-out" 
                :class="{ 'scale-100 opacity-100': showStatusModal, 'scale-95 opacity-0': !showStatusModal }">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-medium text-gray-900">Update Order Status</h3>

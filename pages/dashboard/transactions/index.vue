@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-screen ">
       <!-- Header with animated gradient -->
-      <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 p-6 mb-8 shadow-lg">
+      <div class="relative overflow-hidden rounded-md bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 p-6 mb-8 shadow-lg">
         <div class="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
         <div class="relative z-10">
           <h1 class="text-3xl font-bold text-white mb-2 tracking-tight">
@@ -16,7 +16,7 @@
       
       <!-- Wallet Card with 3D hover effect -->
       <div 
-        class="bg-white rounded-xl shadow-lg p-6 mb-8 transform transition-all duration-300 hover:shadow-xl relative overflow-hidden group"
+        class="bg-white rounded-md shadow-lg p-6 mb-8 transform transition-all duration-300 hover:shadow-xl relative overflow-hidden group"
         :class="{'animate-pulse': isWithdrawing}"
       >
         <div class="absolute inset-0 bg-gradient-to-r from-orange-100/40 to-pink-100/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -57,7 +57,7 @@
       </div>
       
       <!-- Transactions Panel -->
-      <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+      <div class="bg-white rounded-md shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
         <!-- Controls Bar -->
         <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-6 border-b border-gray-200">
           <div class="flex flex-col md:flex-row justify-between gap-4">
@@ -270,7 +270,7 @@
               leave-from-class="transform scale-100 opacity-100 translate-y-0"
               leave-to-class="transform scale-95 opacity-0 translate-y-8"
             >
-              <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div class="inline-block align-bottom bg-white rounded-md text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <div class="bg-gradient-to-r from-orange-500 to-pink-500 px-6 py-4 flex items-center">
                   <div class="bg-white/20 p-2 rounded-lg mr-3">
                     <CreditCard class="h-6 w-6 text-white" />

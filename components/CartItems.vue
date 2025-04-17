@@ -5,7 +5,7 @@
           <img 
             :src="item.image || '/placeholder.svg?height=60&width=60'" 
             :alt="item.name" 
-            class="w-16 h-16 object-cover rounded-xl"
+            class="w-16 h-16 object-cover rounded-md"
           />
           <div class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
             {{ item.quantity }}

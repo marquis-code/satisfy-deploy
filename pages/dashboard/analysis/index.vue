@@ -14,7 +14,7 @@
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div 
-          class="relative overflow-hidden bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 group"
+          class="relative overflow-hidden bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-100 dark:border-gray-700 group"
           v-motion
           :initial="{ opacity: 0, y: 50 }"
           :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 100 } }"
@@ -45,7 +45,7 @@
         </div>
   
         <div 
-          class="relative overflow-hidden bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 group"
+          class="relative overflow-hidden bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-100 dark:border-gray-700 group"
           v-motion
           :initial="{ opacity: 0, y: 50 }"
           :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 200 } }"
@@ -76,7 +76,7 @@
         </div>
   
         <div 
-          class="relative overflow-hidden bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 group"
+          class="relative overflow-hidden bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-100 dark:border-gray-700 group"
           v-motion
           :initial="{ opacity: 0, y: 50 }"
           :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 300 } }"
@@ -114,7 +114,7 @@
         </div>
   
         <div 
-          class="relative overflow-hidden bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 group"
+          class="relative overflow-hidden bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-100 dark:border-gray-700 group"
           v-motion
           :initial="{ opacity: 0, y: 50 }"
           :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 400 } }"
@@ -149,7 +149,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- Monthly Analysis Chart -->
         <div 
-          class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
+          class="bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
           v-motion
           :initial="{ opacity: 0, x: -50 }"
           :enter="{ opacity: 1, x: 0, transition: { duration: 500, delay: 500 } }"
@@ -169,7 +169,7 @@
                 </button>
               </div>
             </div>
-            <div class="bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 rounded-xl p-4 overflow-hidden">
+            <div class="bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 rounded-md p-4 overflow-hidden">
               <canvas ref="monthlyChart" height="300"></canvas>
             </div>
           </div>
@@ -177,7 +177,7 @@
   
         <!-- Location Analysis Chart -->
         <div 
-          class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
+          class="bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
           v-motion
           :initial="{ opacity: 0, x: 50 }"
           :enter="{ opacity: 1, x: 0, transition: { duration: 500, delay: 600 } }"
@@ -197,7 +197,7 @@
                 </button>
               </div>
             </div>
-            <div class="bg-gradient-to-br from-teal-50/50 to-emerald-50/50 dark:from-teal-900/10 dark:to-emerald-900/10 rounded-xl p-4 overflow-hidden">
+            <div class="bg-gradient-to-br from-teal-50/50 to-emerald-50/50 dark:from-teal-900/10 dark:to-emerald-900/10 rounded-md p-4 overflow-hidden">
               <canvas ref="locationChart" height="300"></canvas>
             </div>
           </div>
@@ -205,7 +205,7 @@
   
         <!-- Product Category Chart -->
         <div 
-          class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
+          class="bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
           v-motion
           :initial="{ opacity: 0, y: 50 }"
           :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 700 } }"
@@ -225,7 +225,7 @@
                 </button>
               </div>
             </div>
-            <div class="bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-900/10 dark:to-orange-900/10 rounded-xl p-4 overflow-hidden">
+            <div class="bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-900/10 dark:to-orange-900/10 rounded-md p-4 overflow-hidden">
               <canvas ref="categoryChart" height="300"></canvas>
             </div>
           </div>
@@ -233,7 +233,7 @@
   
         <!-- Revenue Trend Chart -->
         <div 
-          class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
+          class="bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
           v-motion
           :initial="{ opacity: 0, y: 50 }"
           :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 800 } }"
@@ -253,7 +253,7 @@
                 </button>
               </div>
             </div>
-            <div class="bg-gradient-to-br from-rose-50/50 to-pink-50/50 dark:from-rose-900/10 dark:to-pink-900/10 rounded-xl p-4 overflow-hidden">
+            <div class="bg-gradient-to-br from-rose-50/50 to-pink-50/50 dark:from-rose-900/10 dark:to-pink-900/10 rounded-md p-4 overflow-hidden">
               <canvas ref="revenueChart" height="300"></canvas>
             </div>
           </div>
@@ -262,7 +262,7 @@
   
       <!-- Sales Table -->
       <div 
-        class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
+        class="bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
         v-motion
         :initial="{ opacity: 0, y: 50 }"
         :enter="{ opacity: 1, y: 0, transition: { duration: 500, delay: 900 } }"
@@ -315,7 +315,7 @@
             </div>
           </div>
   
-          <div class="overflow-x-auto rounded-xl border border-gray-100 dark:border-gray-700">
+          <div class="overflow-x-auto rounded-md border border-gray-100 dark:border-gray-700">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead class="bg-gray-50 dark:bg-gray-900/50">
                 <tr>
@@ -444,7 +444,7 @@
             @click="showEditModal = false"
           >
             <div 
-              class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 border border-gray-100 dark:border-gray-700"
+              class="bg-white dark:bg-gray-800 rounded-md shadow-xl max-w-md w-full p-6 border border-gray-100 dark:border-gray-700"
               @click.stop
             >
               <div class="flex justify-between items-center mb-4">
@@ -532,7 +532,7 @@
             @click="showExportConfirmation = false"
           >
             <div 
-              class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 border border-gray-100 dark:border-gray-700"
+              class="bg-white dark:bg-gray-800 rounded-md shadow-xl max-w-md w-full p-6 border border-gray-100 dark:border-gray-700"
               @click.stop
             >
               <div class="flex justify-between items-center mb-4">

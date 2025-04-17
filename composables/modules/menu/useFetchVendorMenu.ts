@@ -7,10 +7,10 @@ export const useFetchVendorMenu = () => {
   const menus = ref(null)
   const route = useRoute()
 
-  const fetchVendorMenu = async () => {
+  const fetchVendorMenu = async (id: string |  any) => {
     loading.value = true
     error.value = null
-     const id = route.params.id as string
+    //  const id = route.params.id as string
     try {
       const res = (await menu_api.$_fetch_vendor_menu(id)) as any
       if (res.type !== "ERROR") {
@@ -26,9 +26,9 @@ export const useFetchVendorMenu = () => {
     }
   }
 
-  onMounted(() => {
-    fetchVendorMenu()
-  })
+  // onMounted(() => {
+  //   fetchVendorMenu()
+  // })
 
   return { fetchVendorMenu, menus, loading, error }
 }

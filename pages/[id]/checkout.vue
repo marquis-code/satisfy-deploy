@@ -5,7 +5,7 @@
       <div class="flex items-center mb-6">
         <button
           @click="goBack"
-          class="px-3 py-2 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-xl transition-all duration-300 mr-3 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center"
+          class="px-3 py-3 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-md transition-all duration-300 mr-3 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center"
         >
           <ArrowLeftIcon class="h-4 w-4 mr-1" />
           Back
@@ -16,7 +16,7 @@
       <div class="flex flex-col md:flex-row gap-6">
         <!-- Order Details Section -->
         <div class="w-full md:w-2/3">
-          <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+          <div class="bg-white rounded-md shadow-md p-6 border border-gray-100">
             <div class="flex items-center justify-between mb-6">
               <h2 class="text-xl font-bold text-gray-800 flex items-center">
                 <ShoppingBagIcon class="h-5 w-5 mr-2 text-orange-500" />
@@ -49,7 +49,7 @@
               <p class="text-gray-500 mb-4">Your cart is empty</p>
               <button
                 @click="goBack"
-                class="px-4 py-2 bg-orange-400 hover:bg-orange-500 text-white rounded-xl transition-colors transform hover:scale-105"
+                class="px-4 py-3 bg-orange-400 hover:bg-orange-500 text-white rounded-md transition-colors transform hover:scale-105"
               >
                 Go back to menu
               </button>
@@ -62,7 +62,7 @@
               <div
                 v-for="(pack, packIndex) in cart.packs.value"
                 :key="pack.id"
-                class="border border-gray-100 rounded-xl p-4 hover:border-orange-200 transition-colors"
+                class="border border-gray-100 rounded-md p-4 hover:border-orange-200 transition-colors"
                 :class="{ 'animate-fade-in': true }"
                 :style="{ animationDelay: `${packIndex * 0.1}s` }"
               >
@@ -86,14 +86,14 @@
                 <div
                   v-for="(item, itemIndex) in pack.items"
                   :key="item.id"
-                  class="flex items-center justify-between mb-4 hover:bg-gray-50 p-2 rounded-xl transition-colors animate-slide-in"
+                  class="flex items-center justify-between mb-4 hover:bg-gray-50 p-2 rounded-md transition-colors animate-slide-in"
                   :style="{
                     animationDelay: `${packIndex * 0.1 + itemIndex * 0.05}s`,
                   }"
                 >
                   <div class="flex items-center">
                     <div
-                      class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100"
+                      class="w-16 h-16 rounded-md overflow-hidden bg-gray-100"
                     >
                       <!-- <img :src="getMealImage(item.mealId)" :alt="item.name" class="w-full h-full object-cover" /> -->
                       <img
@@ -112,7 +112,7 @@
 
                   <div class="flex items-center">
                     <div
-                      class="flex items-center bg-gray-100 rounded-xl overflow-hidden"
+                      class="flex items-center bg-gray-100 rounded-md overflow-hidden"
                     >
                       <button
                         @click="decrementItemQuantity(packIndex, itemIndex)"
@@ -141,7 +141,7 @@
 
                 <div
                   v-if="pack.note"
-                  class="mt-2 text-sm italic text-gray-600 bg-gray-50 p-3 rounded-xl"
+                  class="mt-2 text-sm italic text-gray-600 bg-gray-50 p-3 rounded-md"
                 >
                   <span class="font-medium">Note:</span> {{ pack.note }}
                 </div>
@@ -159,7 +159,7 @@
 
           <!-- Order Summary for Mobile -->
           <div
-            class="md:hidden mt-6 bg-white rounded-xl shadow-md p-6 border border-gray-100"
+            class="md:hidden mt-6 bg-white rounded-md shadow-md p-6 border border-gray-100"
           >
             <h3 class="font-semibold text-gray-800 mb-3">Order Summary</h3>
 
@@ -195,10 +195,10 @@
         <!-- Delivery Details Section -->
         <div class="w-full md:w-1/3">
           <div
-            class="bg-white rounded-xl shadow-md p-6 sticky top-4 border border-gray-100"
+            class="bg-white rounded-md shadow-md p-6 sticky top-4 border border-gray-100"
           >
             <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-              <TruckIcon class="h-5 w-5 mr-2 text-orange-500" />
+              <TruckIcon class="h-5 text-sm w-5 mr-2 text-orange-500" />
               Delivery Details
             </h2>
 
@@ -210,7 +210,7 @@
                 <input
                   v-model="customerName"
                   type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                  class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                   placeholder="Name"
                 />
                 <p
@@ -228,7 +228,7 @@
                 <input
                   v-model="phoneNumber"
                   type="tel"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                  class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                   placeholder="Phone Number"
                 />
                 <p
@@ -243,13 +243,14 @@
                 <label class="block text-gray-600 mb-1 text-sm font-medium"
                   >Location <span class="text-red-500">*</span></label
                 >
+                <!-- {{vendorDeliveryLocations}} -->
                 <div class="relative">
                   <select
                     v-model="location"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent appearance-none"
+                    class="w-full px-3 py-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent appearance-none"
                   >
                   <option disabled value="">Select Location</option>
-                    <option v-for="item in schools" :key="item" :value="item" >{{item}}</option>
+                    <option v-for="item in vendorDeliveryLocations" :key="item" :value="item" >{{item.name}}</option>
                   </select>
                   <ChevronDownIcon
                     class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none"
@@ -270,7 +271,7 @@
                 <div class="grid grid-cols-2 gap-3 mt-2">
                   <div
                     @click="deliveryMethod = 'pickup'"
-                    class="border rounded-xl p-3 cursor-pointer transition-all duration-300 flex flex-col items-center"
+                    class="border rounded-md p-3 cursor-pointer transition-all duration-300 flex flex-col items-center"
                     :class="
                       deliveryMethod === 'pickup'
                         ? 'border-orange-400 bg-orange-50'
@@ -299,7 +300,7 @@
 
                   <div
                     @click="deliveryMethod = 'delivery'"
-                    class="border rounded-xl p-3 cursor-pointer transition-all duration-300 flex flex-col items-center"
+                    class="border rounded-md p-3 cursor-pointer transition-all duration-300 flex flex-col items-center"
                     :class="
                       deliveryMethod === 'delivery'
                         ? 'border-orange-400 bg-orange-50'
@@ -335,7 +336,7 @@
                 <textarea
                   v-model="deliveryAddress"
                   rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                  class="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                   placeholder="A proper description of your address"
                 ></textarea>
                 <p
@@ -352,8 +353,8 @@
                 >
                 <textarea
                   v-model="additionalNotes"
-                  rows="2"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                  rows=""
+                  class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                   placeholder="Any additional instructions..."
                 ></textarea>
               </div>
@@ -410,14 +411,14 @@
               <div class="flex gap-3">
                 <button
                   @click="cancelOrder"
-                  class="flex-1 px-4 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-all duration-300 flex items-center justify-center transform hover:scale-98"
+                  class="flex-1 px-4 py-3 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-all duration-300 flex items-center justify-center transform hover:scale-98"
                 >
                   <XCircleIcon class="h-5 w-5 mr-1" />
                   Cancel Order
                 </button>
                 <button
                   @click="submitOrder"
-                  class="flex-1 px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center"
+                  class="flex-1 px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center"
                   :disabled="!isFormValid || orderLoading"
                   :class="{
                     'opacity-50 cursor-not-allowed':
@@ -439,7 +440,7 @@
 
               <div
                 v-if="error"
-                class="mt-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm"
+                class="mt-4 p-3 bg-red-50 text-red-600 rounded-md text-sm"
               >
                 <AlertTriangleIcon class="h-4 w-4 inline-block mr-1" />
                 {{ error }}
@@ -458,7 +459,7 @@
         @click="closePackNoteModal"
       >
         <div
-          class="bg-white rounded-xl shadow-xl w-full max-w-md animate-fade-in-up"
+          class="bg-white rounded-md shadow-xl w-full max-w-md animate-fade-in-up"
           @click.stop
         >
           <div class="p-6">
@@ -475,20 +476,20 @@
                 v-model="packNote"
                 rows="3"
                 placeholder="E.g., Make it spicy, serve hot, etc."
-                class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               ></textarea>
             </div>
 
             <div class="flex justify-end gap-3">
               <button
                 @click="closePackNoteModal"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300"
+                class="px-4 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-300"
               >
                 Cancel
               </button>
               <button
                 @click="savePackNote"
-                class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+                class="px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 Save Note
               </button>
@@ -505,7 +506,7 @@
         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
       >
         <div
-          class="bg-white rounded-xl shadow-xl w-full max-w-md animate-fade-in-up"
+          class="bg-white rounded-md shadow-xl w-full max-w-md animate-fade-in-up"
           @click.stop
         >
           <div class="p-6 text-center">
@@ -525,7 +526,7 @@
       <div class="flex flex-col gap-3">
         <button
           @click="chatWithVendor"
-          class="px-6 py-3 bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center"
+          class="px-6 py-3 bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
@@ -534,7 +535,7 @@
         </button>
         <button
           @click="goToHome"
-          class="px-6 py-3 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+          class="px-6 py-3 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
         >
           Back to Menu
         </button>
@@ -554,6 +555,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useCart } from "~/composables/useCart";
 import { useToast } from "~/composables/useToast";
+import { useVendorDeliveryLocations } from "@/composables/modules/delivery/useVendorDeliveryLocations";
 import { useCreateOrder } from "@/composables/modules/order/useCreateOrder";
 import {
   ArrowLeftIcon,
@@ -571,14 +573,17 @@ import {
 } from "lucide-vue-next";
 import ToastContainer from "~/components/ToastContainer.vue";
 import { useCustomToast } from "@/composables/core/useCustomToast";
+import { useFetchVendorById } from "@/composables/modules/vendor/useFetchVendorById";
 
 // Composables
 const { showToast } = useCustomToast();
 const router = useRouter();
+const route = useRoute();
 const cart = useCart();
 const toast = useToast();
 const { createOrder, loading: orderLoading, error, orderResponse } = useCreateOrder();
-const route = useRoute()
+const { vendor } = useFetchVendorById(route.params.id as string);
+const { fetchVendorDeliveryLocations, loading: fetchingDeliveryLocations, vendorDeliveryLocations } = useVendorDeliveryLocations()
 
 const schools = ref( [
   // Federal Universities
@@ -1069,6 +1074,16 @@ const chatWithVendor = () => {
 
   cart.clearCart();
 };
+
+watch(
+  () => vendor.value,
+  async () => {
+    console.log('prop value changed', vendor.value)
+    await fetchVendorDeliveryLocations(vendor.value._id);
+  }
+)
+
+
 </script>
 
 

@@ -5,7 +5,7 @@
           v-model="searchQuery" 
           type="text" 
           placeholder="Search food or vendor" 
-          class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+          class="w-full pl-10 pr-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
           @input="handleSearch"
         />
         <Search 
@@ -49,7 +49,7 @@
               v-for="vendor in filteredVendors" 
               :key="vendor._id"
               @click="router.push(`/vendors/${vendor._id}`)"
-              class="bg-white cursor-pointer border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+              class="bg-white cursor-pointer border border-gray-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
             >
               <div class="relative cursor-pointer">
                 <img :src="vendor.displayImage" :alt="vendor.restaurantName" class="w-full h-48 cursor-pointer object-cover" />
@@ -80,7 +80,7 @@
                 
                 <div class="mt-4 flex justify-between items-center">
                   <a href="#" class="text-sm text-red-700 hover:text-red-800 font-medium">View Menu</a>
-                  <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl text-sm transition-colors duration-300">
+                  <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm transition-colors duration-300">
                     Order Now
                   </button>
                 </div>
@@ -105,7 +105,7 @@
                   v-for="vendor in suggestedVendors" 
                   :key="vendor._id" 
                    @click="router.push(`/vendors/${vendor._id}`)"
-                  class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+                  class="bg-white border border-gray-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
                 >
                   <div class="relative">
                     <img :src="vendor?.displayImage" :alt="vendor.restaurantName" class="w-full h-32 object-cover" />
@@ -137,7 +137,7 @@
           v-for="vendor in recentVendors" 
           :key="vendor._id"
           @click="handleSelectedVendor(vendor)"
-          class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+          class="bg-white border border-gray-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
         >
           <div class="relative">
             <img :src="vendor?.displayImage" :alt="vendor.restaurantName" class="w-full h-48 object-cover" />
@@ -168,7 +168,7 @@
             
             <!-- <div class="mt-4 flex justify-between items-center">
               <a href="#" class="text-sm text-red-700 hover:text-red-800 font-medium">View Menu</a>
-              <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl text-sm transition-colors duration-300">
+              <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm transition-colors duration-300">
                 Order Now
               </button>
             </div> -->

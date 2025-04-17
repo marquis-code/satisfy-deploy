@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white rounded-xl shadow-md p-5 animate-slideUp">
+    <div class="bg-white rounded-md shadow-md p-5 animate-slideUp">
       <h3 class="text-lg font-bold mb-4">Order Summary</h3>
       
       <div class="space-y-3 mb-4">
@@ -28,7 +28,7 @@
       
       <button 
         @click="$emit('checkout')"
-        class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors duration-300 flex items-center justify-center space-x-2"
+        class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors duration-300 flex items-center justify-center space-x-2"
         :disabled="loading"
       >
         <span v-if="!loading">Proceed to Checkout</span>

@@ -42,7 +42,7 @@ export function useRestaurantUrl(baseUrl?: string) {
       return `${siteUrl.value}`
     }
     
-    return `${siteUrl.value}/vendors/${vendor._id}`
+    return `${siteUrl.value}/${vendor.slug}`
   }
   
   /**

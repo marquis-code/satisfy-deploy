@@ -1,7 +1,7 @@
 <template>
   <div class="p-3 lg:p-6 bg-gradient-to-br from-orange-50 to-white min-h-screen">
     <!-- Header with animated gradient -->
-    <div class="relative overflow-hidden bg-white rounded-xl shadow-lg p-6 mb-8 border border-orange-100">
+    <div class="relative overflow-hidden bg-white rounded-md shadow-lg p-6 mb-8 border border-orange-100">
       <div class="absolute -top-24 -right-24 w-48 h-48 bg-orange-100 rounded-full opacity-70 blur-xl"></div>
       <div class="absolute -bottom-16 -left-16 w-32 h-32 bg-orange-200 rounded-full opacity-50 blur-xl"></div>
       
@@ -15,7 +15,7 @@
         </div>
         <button
           @click="openCreateModal"
-          class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center group"
+          class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-5 py-2.5 rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center group"
           :disabled="creating"
         >
           <span v-if="creating" class="mr-2">
@@ -34,7 +34,7 @@
 
     <!-- Filters and Search with animated appearance -->
     <div 
-      class="bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-100"
+      class="bg-white rounded-md shadow-md p-6 mb-8 border border-gray-100"
       v-motion
       :initial="{ opacity: 0, y: 20 }"
       :enter="{ opacity: 1, y: 0, transition: { delay: 200 } }"
@@ -45,7 +45,7 @@
           <select
             v-model="perPage"
             @change="changePage(1)"
-            class="border border-gray-200 rounded-xl px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+            class="border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
           >
             <option :value="10">10</option>
             <option :value="25">25</option>
@@ -61,7 +61,7 @@
           <input
             v-model="searchQuery"
             type="text"
-            class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+            class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
             placeholder="Search meals by name, category or price..."
             @input="changePage(1)"
           />
@@ -100,7 +100,7 @@
         <div
           v-for="meal in paginatedMeals"
           :key="meal.id"
-          class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+          class="bg-white rounded-md shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
           v-motion
           :initial="{ opacity: 0, y: 20 }"
           :enter="{ opacity: 1, y: 0, transition: { delay: 100 } }"
@@ -145,7 +145,7 @@
             <div class="flex justify-between items-center">
               <button
                 @click.stop="openEditModal(meal)"
-                class="px-3 py-1.5 bg-orange-100 text-orange-600 rounded-xl hover:bg-orange-200 transition-colors duration-200 flex items-center"
+                class="px-3 py-1.5 bg-orange-100 text-orange-600 rounded-md hover:bg-orange-200 transition-colors duration-200 flex items-center"
                 :disabled="editing"
               >
                 <div v-if="editing && selectedMeal?.id === meal.id" class="w-4 h-4 mr-1">
@@ -159,7 +159,7 @@
               </button>
               <button
                 @click.stop="openDeleteModal(meal)"
-                class="px-3 py-1.5 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-colors duration-200 flex items-center"
+                class="px-3 py-1.5 bg-red-100 text-red-600 rounded-md hover:bg-red-200 transition-colors duration-200 flex items-center"
                 :disabled="deleting"
               >
                 <div v-if="deleting && selectedMeal?.id === meal.id" class="w-4 h-4 mr-1">
@@ -179,7 +179,7 @@
       <!-- Empty State -->
       <div 
         v-if="paginatedMeals?.length === 0" 
-        class="col-span-full flex flex-col items-center justify-center py-12 bg-white rounded-xl border border-dashed border-gray-200"
+        class="col-span-full flex flex-col items-center justify-center py-12 bg-white rounded-md border border-dashed border-gray-200"
       >
         <SearchX class="w-16 h-16 text-gray-300 mb-4" />
         <h3 class="text-lg font-medium text-gray-700">No meals found</h3>
@@ -190,7 +190,7 @@
     <!-- Table View -->
     <div 
       v-else-if="viewMode === 'table' && !loading"
-      class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 mb-8"
+      class="bg-white rounded-md shadow-md overflow-hidden border border-gray-100 mb-8"
       v-motion
       :initial="{ opacity: 0, scale: 0.95 }"
       :enter="{ opacity: 1, scale: 1, transition: { delay: 300 } }"
@@ -223,7 +223,7 @@
               class="hover:bg-orange-50 transition-colors duration-150"
             >
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="w-16 h-16 rounded-xl overflow-hidden">
+                <div class="w-16 h-16 rounded-md overflow-hidden">
                   <img
                     :src="meal.image || defaultMeal"
                     :alt="meal.name"
@@ -275,7 +275,7 @@
                 <div class="flex justify-end space-x-2">
                   <button
                     @click="openEditModal(meal)"
-                    class="p-1.5 rounded-xl bg-orange-100 text-orange-600 hover:bg-orange-200 transition-colors duration-200"
+                    class="p-1.5 rounded-md bg-orange-100 text-orange-600 hover:bg-orange-200 transition-colors duration-200"
                     :disabled="editing"
                   >
                     <div v-if="editing && selectedMeal?.id === meal.id" class="w-4 h-4">
@@ -288,7 +288,7 @@
                   </button>
                   <button
                     @click="openDeleteModal(meal)"
-                    class="p-1.5 rounded-xl bg-red-100 text-red-600 hover:bg-red-200 transition-colors duration-200"
+                    class="p-1.5 rounded-md bg-red-100 text-red-600 hover:bg-red-200 transition-colors duration-200"
                     :disabled="deleting"
                   >
                     <div v-if="deleting && selectedMeal?.id === meal.id" class="w-4 h-4">
@@ -314,19 +314,19 @@
     </div>
 
     <!-- View Toggle and Pagination -->
-    <div v-if="!loading" class="bg-white rounded-xl shadow-md p-4 mb-8 border border-gray-100">
+    <div v-if="!loading" class="bg-white rounded-md shadow-md p-4 mb-8 border border-gray-100">
       <div class="flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="flex items-center space-x-2">
           <button
             @click="viewMode = 'grid'"
-            class="p-2 rounded-xl transition-all duration-200"
+            class="p-2 rounded-md transition-all duration-200"
             :class="viewMode === 'grid' ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
           >
             <Grid class="w-5 h-5" />
           </button>
           <button
             @click="viewMode = 'table'"
-            class="p-2 rounded-xl transition-all duration-200"
+            class="p-2 rounded-md transition-all duration-200"
             :class="viewMode === 'table' ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
           >
             <List class="w-5 h-5" />
@@ -341,7 +341,7 @@
           <button
             @click="changePage(currentPage - 1)"
             :disabled="currentPage === 1"
-            class="px-3 py-1.5 rounded-xl border transition-all duration-200 flex items-center"
+            class="px-3 py-1.5 rounded-md border transition-all duration-200 flex items-center"
             :class="
               currentPage === 1
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
@@ -355,7 +355,7 @@
             v-for="page in displayedPages"
             :key="page"
             @click="typeof page === 'number' ? changePage(page) : null"
-            class="px-3 py-1.5 rounded-xl border transition-all duration-200"
+            class="px-3 py-1.5 rounded-md border transition-all duration-200"
             :class="[
               typeof page !== 'number' ? 'bg-white text-gray-400' : 
               currentPage === page
@@ -368,7 +368,7 @@
           <button
             @click="changePage(currentPage + 1)"
             :disabled="currentPage === totalPages"
-            class="px-3 py-1.5 rounded-xl border transition-all duration-200 flex items-center"
+            class="px-3 py-1.5 rounded-md border transition-all duration-200 flex items-center"
             :class="
               currentPage === totalPages
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
@@ -429,7 +429,7 @@
                   <input
                     v-model="formData.name"
                     type="text"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
                     placeholder="e.g fried rice, full chicken, chocolate cake"
                     required
                   />
@@ -444,7 +444,7 @@
                     <input
                       v-model="formattedPrice"
                       type="text"
-                      class="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                      class="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
                       placeholder="Input Food Price"
                       required
                       @input="handlePriceInput"
@@ -457,7 +457,7 @@
                   <div class="relative">
                     <select
                       v-model="formData.category"
-                      class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 appearance-none"
+                      class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 appearance-none"
                       required
                     >
                       <option value="" disabled>Select Category</option>
@@ -471,7 +471,7 @@
 
                 <!-- <div>
                   <label class="block text-gray-700 font-medium mb-2">Image</label>
-                  <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-orange-500 transition-colors duration-200">
+                  <div class="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:border-orange-500 transition-colors duration-200">
                     <div v-if="formData.image" class="mb-4">
                       <img
                         :src="formData.image"
@@ -493,7 +493,7 @@
                     <button
                       type="button"
                       @click="$refs.fileInput.click()"
-                      class="mt-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors duration-200"
+                      class="mt-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors duration-200"
                     >
                       {{ formData.image ? 'Change Image' : 'Choose File' }}
                     </button>
@@ -502,7 +502,7 @@
 
                 <div>
         <label class="block text-gray-700 font-medium mb-2">Image</label>
-        <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-orange-500 transition-colors duration-200">
+        <div class="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:border-orange-500 transition-colors duration-200">
           <div v-if="formData.image" class="mb-4">
             <img
               :src="formData.image"
@@ -531,7 +531,7 @@
           <button
             type="button"
             @click="$refs.fileInput.click()"
-            class="mt-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors duration-200"
+            class="mt-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors duration-200"
             :disabled="isUploading"
           >
             {{ formData.image ? 'Change Image' : 'Choose File' }}
@@ -543,13 +543,13 @@
                   <button
                     type="button"
                     @click="closeModal"
-                    class="px-6 py-2.5 w-full bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
+                    class="px-6 py-2.5 w-full bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
                   >
                     Discard
                   </button>
                   <button
                     type="submit"
-                    class="px-6 py-2.5 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
+                    class="px-6 py-2.5 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-md hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
                     :disabled="creating || editing"
                   >
                     <span v-if="creating || editing" class="mr-2">
@@ -606,13 +606,13 @@
             <div class="flex justify-center space-x-4">
               <button
                 @click="closeDeleteModal"
-                class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
+                class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
               >
                 Cancel
               </button>
               <button
                 @click="deleteMeal"
-                class="px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
+                class="px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-md hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
                 :disabled="deleting"
               >
                 <span v-if="deleting" class="mr-2">
@@ -674,13 +674,13 @@
             <div class="flex justify-center space-x-4">
               <button
                 @click="closeToggleModal"
-                class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
+                class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
               >
                 Cancel
               </button>
               <button
                 @click="confirmToggleVisibility"
-                class="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
+                class="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-md hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
                 :disabled="enabling || disabling"
               >
                 <span v-if="enabling || disabling" class="mr-2">
@@ -708,7 +708,7 @@
     >
       <div
         v-if="toast.show"
-        class="fixed bottom-4 right-4 z-50 px-6 py-3 rounded-xl shadow-lg flex items-center space-x-2 backdrop-blur-sm"
+        class="fixed bottom-4 right-4 z-50 px-6 py-3 rounded-md shadow-lg flex items-center space-x-2 backdrop-blur-sm"
         :class="{
           'bg-green-500/90 text-white': toast.type === 'success',
           'bg-red-500/90 text-white': toast.type === 'error',

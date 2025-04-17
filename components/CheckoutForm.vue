@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white rounded-xl shadow-md p-5 animate-fadeIn">
+    <div class="bg-white rounded-md shadow-md p-5 animate-fadeIn">
       <h3 class="text-lg font-bold mb-4">Delivery Information</h3>
       
       <form @submit.prevent="submitForm" class="space-y-4">
@@ -12,7 +12,7 @@
               id="phoneNumber"
               type="tel"
               placeholder="+234 800 000 0000"
-              class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              class="w-full pl-10 pr-4 py-2.5 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               required
             />
           </div>
@@ -24,7 +24,7 @@
             <button
               type="button"
               @click="formData.deliveryType = 'delivery'"
-              class="flex items-center justify-center p-3 rounded-xl border transition-all duration-200"
+              class="flex items-center justify-center p-3 rounded-md border transition-all duration-200"
               :class="formData.deliveryType === 'delivery' ? 'border-red-500 bg-red-50 text-red-600' : 'border-gray-300 hover:border-gray-400'"
             >
               <Truck class="mr-2" size="18" />
@@ -34,7 +34,7 @@
             <button
               type="button"
               @click="formData.deliveryType = 'pickup'"
-              class="flex items-center justify-center p-3 rounded-xl border transition-all duration-200"
+              class="flex items-center justify-center p-3 rounded-md border transition-all duration-200"
               :class="formData.deliveryType === 'pickup' ? 'border-red-500 bg-red-50 text-red-600' : 'border-gray-300 hover:border-gray-400'"
             >
               <ShoppingBag class="mr-2" size="18" />
@@ -53,7 +53,7 @@
                 id="location"
                 type="text"
                 placeholder="e.g. FUNAAB Campus"
-                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                class="w-full pl-10 pr-4 py-2.5 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 required
               />
             </div>
@@ -67,7 +67,7 @@
                 v-model="formData.address"
                 id="address"
                 placeholder="e.g. Hostel name, room number, landmark"
-                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent min-h-[80px]"
+                class="w-full pl-10 pr-4 py-2.5 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent min-h-[80px]"
                 required
               ></textarea>
             </div>
@@ -82,14 +82,14 @@
               v-model="formData.notes"
               id="notes"
               placeholder="Any special instructions for your order?"
-              class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent min-h-[80px]"
+              class="w-full pl-10 pr-4 py-2.5 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent min-h-[80px]"
             ></textarea>
           </div>
         </div>
         
         <button
           type="submit"
-          class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors duration-300 flex items-center justify-center space-x-2"
+          class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors duration-300 flex items-center justify-center space-x-2"
           :disabled="loading"
         >
           <span v-if="!loading">Place Order</span>

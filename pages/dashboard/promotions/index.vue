@@ -129,7 +129,7 @@
             <div class="px-8 pb-8 pt-4 relative z-10">
               <button 
                 @click="openModal(plan.id)" 
-                class="w-full py-4 rounded-xl font-medium transition-all duration-500 relative overflow-hidden shadow-md"
+                class="w-full py-4 rounded-md font-medium transition-all duration-500 relative overflow-hidden shadow-md"
                 :class="isSubscribed(plan.id) ? 
                   'bg-white text-[#F47B4D] border-2 border-[#F47B4D]' : 
                   'bg-[#F47B4D] text-white hover:bg-[#E06A3C]'"
@@ -182,7 +182,7 @@
                   Are you sure you want to {{ isSubscribed(selectedPlan) ? 'manage' : 'subscribe to' }} the {{ selectedPlan ? getPlanName(selectedPlan) : '' }} plan?
                 </p>
                 
-                <div class="bg-gray-50 p-6 rounded-xl mb-8 border border-gray-100">
+                <div class="bg-gray-50 p-6 rounded-md mb-8 border border-gray-100">
                   <div class="flex justify-between mb-4">
                     <span class="text-gray-600">Plan:</span>
                     <span class="font-medium">{{ selectedPlan ? getPlanName(selectedPlan) : '' }}</span>
@@ -198,13 +198,13 @@
                 <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
                   <button 
                     @click="closeModal" 
-                    class="py-3 border-2 border-gray-300 text-gray-700 rounded-xl transition-all duration-300 hover:bg-gray-50 sm:flex-1 font-medium"
+                    class="py-3 border-2 border-gray-300 text-gray-700 rounded-md transition-all duration-300 hover:bg-gray-50 sm:flex-1 font-medium"
                   >
                     Cancel
                   </button>
                   <button 
                     @click="confirmSubscription" 
-                    class="py-3 bg-[#F47B4D] text-white rounded-xl transition-all duration-300 hover:bg-[#E06A3C] sm:flex-1 flex justify-center items-center font-medium relative overflow-hidden"
+                    class="py-3 bg-[#F47B4D] text-white rounded-md transition-all duration-300 hover:bg-[#E06A3C] sm:flex-1 flex justify-center items-center font-medium relative overflow-hidden"
                   >
                     <div class="relative z-10 flex items-center">
                       <Loader2 v-if="isLoading" class="animate-spin mr-2" size="18" />
@@ -260,7 +260,7 @@
                 
                 <button 
                   @click="showPromoInfo = false" 
-                  class="w-full py-3 bg-[#F47B4D] text-white rounded-xl transition-all duration-300 hover:bg-[#E06A3C] font-medium"
+                  class="w-full py-3 bg-[#F47B4D] text-white rounded-md transition-all duration-300 hover:bg-[#E06A3C] font-medium"
                 >
                   Got it
                 </button>
@@ -274,7 +274,7 @@
       <Transition name="toast-fancy">
         <div 
           v-if="showToast" 
-          class="fixed bottom-6 right-6 bg-white text-gray-800 px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 z-50 toast-card"
+          class="fixed bottom-6 right-6 bg-white text-gray-800 px-6 py-4 rounded-md shadow-2xl flex items-center space-x-3 z-50 toast-card"
         >
           <div class="bg-green-100 p-2 rounded-full">
             <CheckCircle size="20" class="text-green-600" />

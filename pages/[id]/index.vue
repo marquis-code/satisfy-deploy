@@ -24,7 +24,7 @@
       <!-- Restaurant Info Card -->
       <div class="card-container">
         <div
-          class="relative mx-4 -mt-10 md:-mt-16 bg-gradient-to-r from-orange-100 to-yellow-50 rounded-xl shadow-xl p-6 z-10 border border-orange-200 restaurant-card"
+          class="relative mx-4 -mt-10 md:-mt-16 bg-gradient-to-r from-orange-100 to-yellow-50 rounded-md shadow-xl p-6 z-10 border border-orange-200 restaurant-card"
         >
           <!-- Decorative elements -->
           <div
@@ -56,7 +56,7 @@
             </div>
 
             <button
-              class="mt-4 md:mt-0 px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 hover:scale-105 flex items-center review-button"
+              class="mt-4 md:mt-0 px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-md transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 hover:scale-105 flex items-center review-button"
               @click="showReviewModal = true"
             >
               <StarIcon class="h-4 w-4 mr-1 animate-spin-slow" />
@@ -135,13 +135,13 @@
 
           <div
             v-else-if="filteredMeals.length === 0"
-            class="bg-white rounded-xl shadow-md p-8 text-center"
+            class="bg-white rounded-md shadow-md p-8 text-center"
           >
             <SearchXIcon class="h-12 w-12 mx-auto text-gray-400 mb-4" />
             <p class="text-gray-600">No meals found matching your search.</p>
             <button
               @click="searchQuery = ''"
-              class="mt-4 px-4 py-2 bg-orange-400 text-white rounded-xl hover:bg-orange-500 transition-colors"
+              class="mt-4 px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500 transition-colors"
             >
               Clear Search
             </button>
@@ -151,7 +151,7 @@
             <div
               v-for="(meal, index) in filteredMeals"
               :key="meal._id"
-              class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
+              class="bg-white rounded-md shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
               :class="{ 'animate-fade-in': true }"
               :style="{ animationDelay: `${index * 0.05}s` }"
             >
@@ -195,7 +195,7 @@
                     <button
                       v-else
                       @click="addMealToFirstPack(meal)"
-                      class="px-3 py-1.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl flex items-center shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105"
+                      class="px-3 py-1.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-md flex items-center shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105"
                     >
                       <PlusIcon class="h-4 w-4 mr-1" />
                       Add to Pack
@@ -210,7 +210,7 @@
         <!-- Order Summary Section -->
         <div class="w-full lg:w-1/3">
           <div
-            class="bg-white rounded-xl shadow-md p-3 sticky top-4 border border-gray-100"
+            class="bg-white rounded-md shadow-md p-3 sticky top-4 border border-gray-100"
           >
             <div class="flex justify-between items-center mb-6">
               <h2 class="text-base font-bold text-gray-800 flex items-center">
@@ -226,13 +226,13 @@
               <div class="flex space-x-2">
                 <button
                   @click="addNewPack"
-                  class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm flex items-center transition-all duration-300 transform hover:scale-105"
+                  class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-sm flex items-center transition-all duration-300 transform hover:scale-105"
                 >
                   <PlusIcon class="h-4 w-4 mr-1" /> Add Pack
                 </button>
                 <button
                   @click="openDuplicatePackModal"
-                  class="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-xl text-sm flex items-center transition-all duration-300 transform hover:scale-105"
+                  class="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-md text-sm flex items-center transition-all duration-300 transform hover:scale-105"
                 >
                   <CopyIcon class="h-4 w-4 mr-1" /> Duplicate
                 </button>
@@ -268,7 +268,7 @@
               <div
                 v-for="(pack, index) in cart.packs.value"
                 :key="pack.id"
-                class="border border-gray-100 rounded-xl p-3 hover:border-orange-200 transition-colors animate-fade-in"
+                class="border border-gray-100 rounded-md p-3 hover:border-orange-200 transition-colors animate-fade-in"
               >
                 <div class="flex justify-between items-center">
                   <div class="flex items-center">
@@ -288,7 +288,7 @@
                   <button
                     v-if="cart.packs.value.length > 1"
                     @click="removePack(index)"
-                    class="text-xs px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition-colors transform hover:scale-105"
+                    class="text-xs px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-md transition-colors transform hover:scale-105"
                   >
                     <TrashIcon class="h-3 w-3 inline-block" /> Remove
                   </button>
@@ -298,16 +298,16 @@
                   <div
                     v-for="(item, itemIndex) in pack.items"
                     :key="`${pack.id}-${itemIndex}`"
-                    class="flex justify-between items-center bg-gray-50 p-2 rounded-xl hover:bg-gray-100 transition-all duration-300"
+                    class="flex justify-between items-center bg-gray-50 p-2 rounded-md hover:bg-gray-100 transition-all duration-300"
                   >
                     <div class="flex items-center rounded-lg">
                       <div
-                        class="w-8 h-8 rounded-xl overflow-hidden bg-gray-200"
+                        class="w-8 h-8 rounded-md overflow-hidden bg-gray-200"
                       >
                         <img
                           :src="item.image"
                           :alt="item.name"
-                          class="w-full rounded-xl h-full object-cover"
+                          class="w-full rounded-md h-full object-cover"
                         />
                       </div>
                       <div class="ml-2">
@@ -340,7 +340,7 @@
 
                   <div
                     v-if="pack.note"
-                    class="text-xs italic text-gray-500 bg-gray-50 p-2 rounded-xl"
+                    class="text-xs italic text-gray-500 bg-gray-50 p-2 rounded-md"
                   >
                     <span class="font-medium">Note:</span> {{ pack.note }}
                   </div>
@@ -354,7 +354,7 @@
                   </button>
                 </div>
 
-                <div v-else class="mt-3 text-center py-3 bg-gray-50 rounded-xl">
+                <div v-else class="mt-3 text-center py-3 bg-gray-50 rounded-md">
                   <p class="text-sm text-gray-400">This pack is empty</p>
                 </div>
               </div>
@@ -381,7 +381,7 @@
               <div class="flex gap-3">
                 <button
                   @click="confirmEmptyCart"
-                  class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all duration-300 flex items-center justify-center transform hover:scale-98"
+                  class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-all duration-300 flex items-center justify-center transform hover:scale-98"
                   :disabled="cart.totalItems.value === 0"
                   :class="{
                     'opacity-50 cursor-not-allowed':
@@ -400,7 +400,7 @@
                     'hover:bg-orange-600 hover:shadow-lg transform hover:-translate-y-0.5':
                       cart.totalItems.value > 0,
                   }"
-                  class="flex-1 px-4 py-3 bg-gradient-to-r from-orange-400 to-orange-500 text-white rounded-xl shadow-md transition-all duration-300 flex items-center justify-center"
+                  class="flex-1 px-4 py-3 bg-gradient-to-r from-orange-400 to-orange-500 text-white rounded-md shadow-md transition-all duration-300 flex items-center justify-center"
                 >
                   <ShoppingCartIcon class="h-4 w-4 mr-2" />
                   Checkout
@@ -420,7 +420,7 @@
         @click="closeDuplicatePackModal"
       >
         <div
-          class="bg-white rounded-xl shadow-xl w-full max-w-md animate-fade-in-up"
+          class="bg-white rounded-md shadow-xl w-full max-w-md animate-fade-in-up"
           @click.stop
         >
           <div class="p-6">
@@ -436,7 +436,7 @@
               <div class="relative">
                 <select
                   v-model="packToDuplicateIndex"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent appearance-none"
                 >
                   <option
                     v-for="(pack, index) in cart.packs.value"
@@ -455,13 +455,13 @@
             <div class="flex justify-end gap-3">
               <button
                 @click="closeDuplicatePackModal"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300"
+                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-300"
               >
                 Cancel
               </button>
               <button
                 @click="duplicateSelectedPack"
-                class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+                class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 Duplicate Pack
               </button>
@@ -479,7 +479,7 @@
         @click="closePackNoteModal"
       >
         <div
-          class="bg-white rounded-xl shadow-xl w-full max-w-md animate-fade-in-up"
+          class="bg-white rounded-md shadow-xl w-full max-w-md animate-fade-in-up"
           @click.stop
         >
           <div class="p-6">
@@ -496,20 +496,20 @@
                 v-model="packNote"
                 rows="3"
                 placeholder="E.g., Make it spicy, serve hot, etc."
-                class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               ></textarea>
             </div>
 
             <div class="flex justify-end gap-3">
               <button
                 @click="closePackNoteModal"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300"
+                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-300"
               >
                 Cancel
               </button>
               <button
                 @click="savePackNote"
-                class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+                class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 Save Note
               </button>
@@ -527,7 +527,7 @@
         @click="closeReviewModal"
       >
         <div
-          class="bg-white rounded-xl shadow-xl w-full max-w-md animate-fade-in-up"
+          class="bg-white rounded-md shadow-xl w-full max-w-md animate-fade-in-up"
           @click.stop
         >
           <div class="p-6">
@@ -565,20 +565,20 @@
                 v-model="reviewText"
                 rows="4"
                 placeholder="Share your experience..."
-                class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
               ></textarea>
             </div>
 
             <div class="flex justify-end gap-3">
               <button
                 @click="closeReviewModal"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300"
+                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-300"
               >
                 Cancel
               </button>
               <button
                 @click="submitReview"
-                class="px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+                class="px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 Submit Review
               </button>
@@ -596,7 +596,7 @@
         @click="showConfirmEmptyCartModal = false"
       >
         <div
-          class="bg-white rounded-xl shadow-xl w-full max-w-md animate-fade-in-up"
+          class="bg-white rounded-md shadow-xl w-full max-w-md animate-fade-in-up"
           @click.stop
         >
           <div class="p-6">
@@ -611,13 +611,13 @@
             <div class="flex justify-end gap-3">
               <button
                 @click="showConfirmEmptyCartModal = false"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-300"
+                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-300"
               >
                 Cancel
               </button>
               <button
                 @click="emptyCart"
-                class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-300"
+                class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all duration-300"
               >
                 Empty Cart
               </button>
@@ -681,7 +681,7 @@ const router = useRouter();
 
 // Composables
 const cart = useCart();
-const { menus, loading: fetchingMenu } = useFetchVendorMenu();
+const { menus, loading: fetchingMenu, fetchVendorMenu } = useFetchVendorMenu();
 const { showToast } = useCustomToast();
 const { vendor, loading, error } = useFetchVendorById(route.params.id as string);
 
@@ -701,6 +701,7 @@ const filteredMeals = computed(() => {
       meal.name.toLowerCase().includes(query)
   );
 });
+
 
 // Modal states
 const showDuplicatePackModal = ref(false);
@@ -722,6 +723,7 @@ const reviewText = ref("");
 const formatPrice = (price: number): string => {
   return price.toLocaleString();
 };
+
 
 const getMealImage = (mealId: string): string => {
   // In a real app, you would get this from your API or have image URLs in your meal data
@@ -939,7 +941,7 @@ const emptyCart = () => {
 const proceedToCheckout = () => {
   if (cart.totalItems.value > 0) {
     // Navigate to checkout page
-    router.push(`/vendors/${route.params.id}/checkout`);
+    router.push(`/${route.params.id}/checkout`);
   } else {
     showToast({
       title: "Warning",
@@ -1001,6 +1003,17 @@ watch(
   },
   { immediate: true }
 );
+
+
+watch(
+  () => vendor.value,
+  async () => {
+    console.log('prop value changed', vendor.value)
+    await fetchVendorMenu(vendor.value._id);
+  }
+)
+
+
 </script>
 
 <style scoped>

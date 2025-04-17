@@ -381,7 +381,7 @@ const editForm = reactive<ProfileData>({
 
 // Computed URL based on restaurant name
 const restaurantUrl = computed(() => {
-  return getRestaurantUrl(user.value?.restaurantName || 'restaurant')
+  return getRestaurantUrl(user.value?.slug || 'restaurant')
 })
 
 // Parse tags from comma-separated input

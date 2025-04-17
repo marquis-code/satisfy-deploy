@@ -22,7 +22,7 @@
         <div 
           v-for="(stat, index) in stats" 
           :key="index"
-          class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group animate-fade-in"
+          class="bg-white rounded-md shadow-sm p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group animate-fade-in"
           :style="{ animationDelay: `${index * 100}ms` }"
         >
           <div class="flex items-center justify-between">
@@ -38,7 +38,7 @@
       </div>
 
       <!-- Main Content with Tabs -->
-      <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden animate-fade-in animation-delay-300">
+      <div class="bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden animate-fade-in animation-delay-300">
         <!-- Tab Navigation -->
         <div class="flex border-b border-gray-200">
           <button 
@@ -105,7 +105,7 @@
                 </div>
               </div>
 
-              <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+              <div class="bg-white rounded-md border border-gray-200 overflow-hidden shadow-sm">
                 <div class="overflow-x-auto">
                   <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
@@ -221,7 +221,7 @@
                 </span>
               </h2>
 
-              <div class="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-200">
+              <div class="bg-gray-50 rounded-md p-4 mb-6 border border-gray-200">
                 <div class="flex flex-col md:flex-row gap-4 items-end">
                   <div class="flex flex-col flex-1">
                     <label class="text-sm font-medium text-gray-700 mb-1">From:</label>
@@ -274,7 +274,7 @@
                 </div>
               </div>
 
-              <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+              <div class="bg-white rounded-md border border-gray-200 overflow-hidden shadow-sm">
                 <div class="overflow-x-auto">
                   <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
@@ -407,7 +407,7 @@
               </div>
             </div>
 
-            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+            <div class="bg-white rounded-md border border-gray-200 overflow-hidden shadow-sm">
               <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                   <thead class="bg-gray-50">
@@ -538,7 +538,7 @@
                 <div 
                   v-for="meal in paginatedMeals" 
                   :key="meal.id"
-                  class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group"
+                  class="bg-white rounded-md overflow-hidden shadow-sm border border-gray-200 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group"
                 >
                   <div class="h-40 bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center p-4">
                     <UtensilsIcon class="h-16 w-16 text-primary-300" />
@@ -600,7 +600,7 @@
               @click="closeOrderModal"
             ></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="inline-block align-bottom bg-white rounded-md text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <div class="bg-gradient-to-r from-primary-600 to-primary-700 px-4 py-3 sm:px-6">
                 <h3 class="text-lg leading-6 font-medium text-white" id="modal-title">
                   {{ isEditing ? 'Edit Order' : 'Create New Order' }}
@@ -686,7 +686,7 @@
               @click="closeMealModal"
             ></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="inline-block align-bottom bg-white rounded-md text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <div class="bg-gradient-to-r from-primary-600 to-primary-700 px-4 py-3 sm:px-6">
                 <h3 class="text-lg leading-6 font-medium text-white" id="modal-title">
                   {{ isEditingMeal ? 'Edit Meal' : 'Create New Meal' }}
@@ -794,7 +794,7 @@
               @click="closeViewModal"
             ></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="inline-block align-bottom bg-white rounded-md text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <div class="bg-gradient-to-r from-primary-600 to-primary-700 px-4 py-3 sm:px-6">
                 <h3 class="text-lg leading-6 font-medium text-white" id="modal-title">
                   {{ viewingMeal ? 'Meal Details' : 'Order Details' }}
@@ -901,7 +901,7 @@
               @click="closeConfirmModal"
             ></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="inline-block align-bottom bg-white rounded-md text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div class="sm:flex sm:items-start">
                   <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">

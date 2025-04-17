@@ -1,6 +1,6 @@
 <template>
     <div v-if="isOpen" @click="closeModal"  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div @click.stop class="p-4 rounded-xl max-w-full sm:max-w-[90%] md:max-w-[50%] lg:max-w-[30%] w-full h-[60%] overflow-y-scroll custom-scrollbar">
+        <div @click.stop class="p-4 rounded-md max-w-full sm:max-w-[90%] md:max-w-[50%] lg:max-w-[30%] w-full h-[60%] overflow-y-scroll custom-scrollbar">
             <!-- Modal Header -->
             <slot name="header"></slot>
 

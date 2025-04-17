@@ -16,7 +16,7 @@
         <div class="relative z-10">
           <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center">
-              <div class="bg-gradient-to-br from-orange-400 to-orange-600 p-3 rounded-xl shadow-lg mr-4 transform transition-transform hover:scale-105">
+              <div class="bg-gradient-to-br from-orange-400 to-orange-600 p-3 rounded-md shadow-lg mr-4 transform transition-transform hover:scale-105">
                 <UtensilsCrossedIcon class="w-6 h-6 text-white" />
               </div>
               <h1 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
@@ -25,7 +25,7 @@
             </div>
             <button 
               @click="openCreateModal" 
-              class="group bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center"
+              class="group bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-5 py-2.5 rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center"
               :disabled="creating"
             >
               <span v-if="creating" class="mr-2">
@@ -38,7 +38,7 @@
                 <PlusIcon class="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-90" />
               </span>
               <span>Add Category</span>
-              <span class="absolute inset-0 rounded-xl overflow-hidden">
+              <span class="absolute inset-0 rounded-md overflow-hidden">
                 <span class="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
               </span>
             </button>
@@ -64,7 +64,7 @@
         :class="{ 'scale-100 opacity-100': contentLoaded, 'scale-95 opacity-0': !contentLoaded }"
       >
         <div class="flex flex-col md:flex-row justify-between mb-6 gap-4">
-          <div class="flex items-center bg-gray-50 rounded-xl p-2 shadow-sm">
+          <div class="flex items-center bg-gray-50 rounded-md p-2 shadow-sm">
             <label class="text-gray-600 mr-2">Show</label>
             <select 
               v-model="perPage" 
@@ -85,7 +85,7 @@
             <input 
               v-model="searchQuery" 
               type="text" 
-              class="pl-10 pr-4 py-2 w-full md:w-64 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
+              class="pl-10 pr-4 py-2 w-full md:w-64 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
               placeholder="Search categories..."
             />
             <Transition name="fade">
@@ -101,7 +101,7 @@
         </div>
 
         <!-- Table with hover animations -->
-        <div class="overflow-hidden rounded-xl border border-gray-100 shadow-sm">
+        <div class="overflow-hidden rounded-md border border-gray-100 shadow-sm">
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
@@ -269,7 +269,7 @@
                 <input 
                   v-model="categoryForm.name" 
                   type="text" 
-                  class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
                   placeholder="E.g Drinks, Swallow, Cakes"
                   ref="categoryInput"
                   @focus="handleInputFocus"
@@ -285,7 +285,7 @@
             <div class="flex justify-end space-x-3">
               <button 
                 @click="closeModalWithAnimation" 
-                class="group relative px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors duration-200 overflow-hidden"
+                class="group relative px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors duration-200 overflow-hidden"
                 :disabled="creating || editing"
               >
                 <span class="relative z-10 font-medium">Discard</span>
@@ -293,7 +293,7 @@
               </button>
               <button 
                 @click="saveCategory" 
-                class="group relative px-6 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden flex items-center justify-center"
+                class="group relative px-6 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden flex items-center justify-center"
                 :disabled="creating || editing"
               >
                 <span v-if="creating || editing" class="mr-2">
@@ -338,7 +338,7 @@
               <div class="flex justify-center space-x-3">
                 <button 
                   @click="closeDeleteModalWithAnimation" 
-                  class="group relative px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors duration-200 overflow-hidden"
+                  class="group relative px-6 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors duration-200 overflow-hidden"
                   :disabled="deleting"
                 >
                   <span class="relative z-10 font-medium">Cancel</span>
@@ -346,7 +346,7 @@
                 </button>
                 <button 
                   @click="deleteCategory" 
-                  class="group relative px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden flex items-center justify-center"
+                  class="group relative px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden flex items-center justify-center"
                   :disabled="deleting"
                 >
                   <span v-if="deleting" class="mr-2">
@@ -369,7 +369,7 @@
     <Transition name="toast">
       <div 
         v-if="toast.show" 
-        class="fixed bottom-4 right-4 z-50 max-w-md bg-white rounded-xl shadow-lg border-l-4 p-4 transform transition-all duration-500"
+        class="fixed bottom-4 right-4 z-50 max-w-md bg-white rounded-md shadow-lg border-l-4 p-4 transform transition-all duration-500"
         :class="{
           'border-green-500': toast.type === 'success',
           'border-red-500': toast.type === 'error',

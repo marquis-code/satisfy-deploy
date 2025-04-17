@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto">
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-6 print:shadow-none transform transition-all duration-300 hover:shadow-xl">
+    <div class="bg-white rounded-md shadow-lg p-6 mb-6 print:shadow-none transform transition-all duration-300 hover:shadow-xl">
       <!-- Header with back button and print button -->
       <div class="flex justify-between items-center mb-6 print:hidden">
         <button 
@@ -13,7 +13,7 @@
         
         <button 
           @click="printOrder" 
-          class="flex items-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl transition-all duration-200 shadow hover:shadow-md transform hover:-translate-y-0.5"
+          class="flex items-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-all duration-200 shadow hover:shadow-md transform hover:-translate-y-0.5"
         >
           <PrinterIcon class="h-5 w-5 mr-2" />
           Print Order
@@ -45,7 +45,7 @@
             <UserIcon class="h-5 w-5 mr-2 text-orange-500" />
             Customer Information
           </h2>
-          <div class="bg-gray-50 p-5 rounded-xl border border-gray-100 shadow-sm">
+          <div class="bg-gray-50 p-5 rounded-md border border-gray-100 shadow-sm">
             <p class="text-gray-700 mb-2 flex items-center">
               <span class="font-medium w-24">Name:</span> 
               <span class="text-gray-900">{{ order?.customerName }}</span>
@@ -70,7 +70,7 @@
             <ShoppingBagIcon class="h-5 w-5 mr-2 text-orange-500" />
             Order Information
           </h2>
-          <div class="bg-gray-50 p-5 rounded-xl border border-gray-100 shadow-sm">
+          <div class="bg-gray-50 p-5 rounded-md border border-gray-100 shadow-sm">
             <p class="text-gray-700 mb-2 flex items-center">
               <span class="font-medium w-24">Date:</span> 
               <span class="text-gray-900">{{ formatDate(order?.createdAt || '') }}</span>
@@ -106,7 +106,7 @@
           <ClipboardIcon class="h-5 w-5 mr-2 text-orange-500" />
           Additional Notes
         </h2>
-        <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100 shadow-sm">
+        <div class="bg-yellow-50 p-4 rounded-md border border-yellow-100 shadow-sm">
           <p class="text-gray-700 italic">{{ order.notes }}</p>
         </div>
       </div>
@@ -122,7 +122,7 @@
           <div 
             v-for="(pack, packIndex) in order?.packs" 
             :key="pack._id"
-            class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden transform transition-all duration-300 hover:shadow-md animate-fade-in"
+            class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden transform transition-all duration-300 hover:shadow-md animate-fade-in"
             :style="{ animationDelay: `${packIndex * 150}ms` }"
           >
             <div class="bg-orange-50 px-4 py-3 border-b border-orange-100 flex justify-between items-center">
@@ -195,7 +195,7 @@
       <!-- Order summary with improved styling -->
       <div class="flex justify-end animate-fade-in-up">
         <div class="w-full md:w-1/3">
-          <div class="bg-orange-50 p-5 rounded-xl border border-orange-100 shadow-sm">
+          <div class="bg-orange-50 p-5 rounded-md border border-orange-100 shadow-sm">
             <div class="flex justify-between py-2">
               <span class="text-gray-600">Subtotal:</span>
               <span class="text-gray-800 font-medium">₦{{ formatPrice(calculateSubtotal()) }}</span>
@@ -215,7 +215,7 @@
     
     <!-- Status update section with improved toggle -->
      <!-- {{order.status}} -->
-    <div v-if="order?.status === 'rejected'" class="bg-white rounded-xl shadow-lg p-6 print:hidden transform transition-all duration-300 hover:shadow-xl animate-fade-in-up" style="animation-delay: 300ms">
+    <div v-if="order?.status === 'rejected'" class="bg-white rounded-md shadow-lg p-6 print:hidden transform transition-all duration-300 hover:shadow-xl animate-fade-in-up" style="animation-delay: 300ms">
       <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
         <CheckCircleIcon class="h-5 w-5 mr-2 text-orange-500" />
         Update Order Status
@@ -250,7 +250,7 @@
       <div class="flex justify-center">
         <button 
           @click="handleUpdateOrderStatus" 
-          class="px-6 py-3 bg-orange-500 border border-transparent rounded-xl text-base font-medium text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all duration-200 shadow hover:shadow-lg transform hover:-translate-y-0.5"
+          class="px-6 py-3 bg-orange-500 border border-transparent rounded-md text-base font-medium text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all duration-200 shadow hover:shadow-lg transform hover:-translate-y-0.5"
           :disabled="updating"
         >
           <template v-if="updating">

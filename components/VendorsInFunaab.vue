@@ -8,13 +8,14 @@
       </NuxtLink>
     </div>
     <!-- {{recentVendors}} -->
+     <!-- {{filteredVendors}} -->
     
     <div class="relative mb-6">
       <input 
         v-model="searchQuery" 
         type="text" 
         placeholder="Search food or vendor" 
-        class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+        class="w-full pl-10 pr-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
         @input="handleSearch"
       />
       <Search 
@@ -57,8 +58,8 @@
           <div 
             v-for="vendor in filteredVendors" 
             :key="vendor._id"
-            @click="router.push(`/vendors/${vendor._id}`)"
-            class="bg-white cursor-pointer border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+            @click="handleSelectedVendor(vendor)"
+            class="bg-white cursor-pointer border border-gray-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
           >
             <div class="relative cursor-pointer">
               <img :src="vendor.displayImage" :alt="vendor.restaurantName" class="w-full h-48 cursor-pointer object-cover" />
@@ -89,7 +90,7 @@
               
               <div class="mt-4 flex justify-between items-center">
                 <a href="#" class="text-sm text-red-700 hover:text-red-800 font-medium">View Menu</a>
-                <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl text-sm transition-colors duration-300">
+                <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm transition-colors duration-300">
                   Order Now
                 </button>
               </div>
@@ -114,7 +115,7 @@
                 v-for="vendor in suggestedVendors" 
                 :key="vendor._id" 
                  @click="router.push(`/vendors/${vendor._id}`)"
-                class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+                class="bg-white border border-gray-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
               >
                 <div class="relative">
                   <img :src="vendor?.displayImage" :alt="vendor.restaurantName" class="w-full h-32 object-cover" />
@@ -146,7 +147,7 @@
         v-for="vendor in recentVendors" 
         :key="vendor._id"
         @click="handleSelectedVendor(vendor)"
-        class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+        class="bg-white border border-gray-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
       >
         <div class="relative">
           <img :src="vendor?.displayImage" :alt="vendor.restaurantName" class="w-full h-48 object-cover" />
@@ -177,7 +178,7 @@
           
           <!-- <div class="mt-4 flex justify-between items-center">
             <a href="#" class="text-sm text-red-700 hover:text-red-800 font-medium">View Menu</a>
-            <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl text-sm transition-colors duration-300">
+            <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm transition-colors duration-300">
               Order Now
             </button>
           </div> -->
@@ -186,12 +187,12 @@
     </div>
 
     <CoreModal :isOpen="isCloseModalOpen" @close="isCloseModalOpen = false">
-    <div class="p-6 rounded-xl w-5/12 relative" @click.stop>
+    <div class="p-6 rounded-md w-5/12 relative" @click.stop>
       <div
         class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
       >
         <div
-          class="bg-white rounded-xl p-6 shadow-lg w-full space-y-4 max-w-md relative text-center"
+          class="bg-white rounded-md p-6 shadow-lg w-full space-y-4 max-w-md relative text-center"
         >
           <div class="flex justify-center items-center mb-4">
             <div class="">
@@ -234,7 +235,7 @@
 <div class="pt-6">
   <button
     @click="isCloseModalOpen = false"
-    class="bg-[#292929] text-[#EAEAEA] w-full py-3.5 rounded-xl"
+    class="bg-[#292929] text-[#EAEAEA] w-full py-3.5 rounded-md"
   >
     Close
   </button>
@@ -248,10 +249,12 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue';
+import { useFormattedString } from '@/composables/core/useFormatVendorName'
 import { ChevronRight, Search, Heart, CheckCircle, Star, Pizza, Coffee } from 'lucide-vue-next';
 import { useFetchVendors } from '@/composables/modules/vendor/useFetchVendors'
 const router = useRouter()
 const isCloseModalOpen = ref(false)
+const { formatString } = useFormattedString()
 
 // Define the vendor interface based on the backend structure
 interface Vendor {
@@ -356,8 +359,13 @@ const handleSelectedVendor = (vendor: any) => {
     isCloseModalOpen.value = true
   } else {
     localStorage.setItem('selected-vendor', JSON.stringify(vendor))
-    router.push(`/vendors/${vendor._id}`)
+    const formatted = formatString(vendor.restaurantName)
+    router.push(`/${formatted}`)
   }
 }
+
+// const handleSelectedVendor = (vendor) => {
+//   router.push(`/vendors/${vendor._id}`)
+// }
 </script>
 
