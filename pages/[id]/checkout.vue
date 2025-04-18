@@ -202,83 +202,12 @@
             </h2>
 
             <div class="space-y-4">
-              <div>
-                <label class="block text-gray-600 mb-1 text-sm font-medium"
-                  >Customer Name <span class="text-red-500">*</span></label
-                >
-                <input
-                  v-model="customerName"
-                  type="text"
-                  class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
-                  placeholder="Name"
-                />
-                <p
-                  v-if="validationErrors.customerName"
-                  class="mt-1 text-xs text-red-500"
-                >
-                  {{ validationErrors.customerName}}
-                </p>
-              </div>
-
-              <div>
-                <label class="block text-gray-600 mb-1 text-sm font-medium"
-                  >Phone Number <span class="text-red-500">*</span></label
-                >
-                <input
-                  v-model="phoneNumber"
-                  type="tel"
-                  class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
-                  placeholder="Phone Number"
-                />
-                <p
-                  v-if="validationErrors.phoneNumber"
-                  class="mt-1 text-xs text-red-500"
-                >
-                  {{ validationErrors.phoneNumber }}
-                </p>
-              </div>
-
               <!-- Delivery Method Selection -->
               <div class="mb-2">
                 <label class="block text-gray-600 mb-2 text-sm font-medium"
                   >Delivery Method <span class="text-red-500">*</span></label
                 >
                 <div class="grid grid-cols-2 gap-3">
-                  <div
-                    @click="setDeliveryMethod('pickup')"
-                    class="border rounded-md p-3 cursor-pointer transition-all duration-300 flex flex-col items-center transform hover:scale-105"
-                    :class="[
-                      deliveryMethod === 'pickup' 
-                        ? 'border-green-400 bg-green-50 shadow-md' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    ]"
-                  >
-                    <div class="relative">
-                      <ShoppingBagIcon
-                        class="h-6 w-6 mb-1 transition-colors duration-300"
-                        :class="
-                          deliveryMethod === 'pickup'
-                            ? 'text-green-500'
-                            : 'text-gray-400'
-                        "
-                      />
-                      <div 
-                        v-if="deliveryMethod === 'pickup'"
-                        class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-ping-slow"
-                      ></div>
-                    </div>
-                    <span
-                      class="text-sm font-medium transition-colors duration-300"
-                      :class="
-                        deliveryMethod === 'pickup'
-                          ? 'text-green-800'
-                          : 'text-gray-600'
-                      "
-                      >Pickup</span
-                    >
-                    <span class="text-xs text-green-600 mt-1 font-medium">Free</span>
-                  </div>
-
                   <div
                     @click="setDeliveryMethod('delivery')"
                     class="border rounded-md p-3 cursor-pointer transition-all duration-300 flex flex-col items-center transform hover:scale-105"
@@ -320,6 +249,42 @@
                       </template>
                     </span>
                   </div>
+                  
+                  <div
+                    @click="setDeliveryMethod('pickup')"
+                    class="border rounded-md p-3 cursor-pointer transition-all duration-300 flex flex-col items-center transform hover:scale-105"
+                    :class="[
+                      deliveryMethod === 'pickup' 
+                        ? 'border-green-400 bg-green-50 shadow-md' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    ]"
+                  >
+                    <div class="relative">
+                      <ShoppingBagIcon
+                        class="h-6 w-6 mb-1 transition-colors duration-300"
+                        :class="
+                          deliveryMethod === 'pickup'
+                            ? 'text-green-500'
+                            : 'text-gray-400'
+                        "
+                      />
+                      <div 
+                        v-if="deliveryMethod === 'pickup'"
+                        class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-ping-slow"
+                      ></div>
+                    </div>
+                    <span
+                      class="text-sm font-medium transition-colors duration-300"
+                      :class="
+                        deliveryMethod === 'pickup'
+                          ? 'text-green-800'
+                          : 'text-gray-600'
+                      "
+                      >Pickup</span
+                    >
+                    <span class="text-xs text-green-600 mt-1 font-medium">Free</span>
+                  </div>
+
                 </div>
               </div>
 
@@ -380,6 +345,42 @@
                   class="mt-1 text-xs text-red-500 animate-shake"
                 >
                   {{ validationErrors.deliveryAddress }}
+                </p>
+              </div>
+
+              <div>
+                <label class="block text-gray-600 mb-1 text-sm font-medium"
+                  >Customer Name <span class="text-red-500">*</span></label
+                >
+                <input
+                  v-model="customerName"
+                  type="text"
+                  class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                  placeholder="Name"
+                />
+                <p
+                  v-if="validationErrors.customerName"
+                  class="mt-1 text-xs text-red-500"
+                >
+                  {{ validationErrors.customerName}}
+                </p>
+              </div>
+
+              <div>
+                <label class="block text-gray-600 mb-1 text-sm font-medium"
+                  >Phone Number <span class="text-red-500">*</span></label
+                >
+                <input
+                  v-model="phoneNumber"
+                  type="tel"
+                  class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                  placeholder="Phone Number"
+                />
+                <p
+                  v-if="validationErrors.phoneNumber"
+                  class="mt-1 text-xs text-red-500"
+                >
+                  {{ validationErrors.phoneNumber }}
                 </p>
               </div>
 
@@ -627,7 +628,7 @@ const { fetchVendorDeliveryLocations, loading: fetchingDeliveryLocations, vendor
 const phoneNumber = ref("");
 const customerName = ref("");
 const deliveryAddress = ref("");
-const deliveryMethod = ref("pickup"); // Default to pickup
+const deliveryMethod = ref("delivery"); // Default to delivery
 const additionalNotes = ref("");
 const saveOrder = ref(false);
 const showPackNoteModal = ref(false);
