@@ -85,7 +85,7 @@
 
                 <div
                   v-for="(item, itemIndex) in pack.items"
-                  :key="item.id"
+                  :key="`${pack.id}-${itemIndex}`"
                   class="flex items-center justify-between mb-4 hover:bg-gray-50 p-2 rounded-md transition-colors animate-slide-in"
                   :style="{
                     animationDelay: `${packIndex * 0.1 + itemIndex * 0.05}s`,
@@ -95,7 +95,6 @@
                     <div
                       class="w-16 h-16 rounded-md overflow-hidden bg-gray-100"
                     >
-                      <!-- <img :src="getMealImage(item.mealId)" :alt="item.name" class="w-full h-full object-cover" /> -->
                       <img
                         src="@/assets/img/meal1.jpg"
                         :alt="item.name"
@@ -170,7 +169,7 @@
                   >₦{{ formatPrice(cart.subtotal.value) }}</span
                 >
               </div>
-              <div class="flex justify-between text-sm">
+              <div class="flex justify-between text-sm" v-if="deliveryMethod === 'delivery'">
                 <span class="text-gray-600">Delivery</span>
                 <span class="font-medium">₦{{ formatPrice(deliveryFee) }}</span>
               </div>
@@ -239,84 +238,72 @@
                 </p>
               </div>
 
-              <div>
-                <label class="block text-gray-600 mb-1 text-sm font-medium"
-                  >Location <span class="text-red-500">*</span></label
-                >
-                <!-- {{vendorDeliveryLocations}} -->
-                <div class="relative">
-                  <select
-                    v-model="location"
-                    class="w-full px-3 py-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent appearance-none"
-                  >
-                  <option disabled value="">Select Location</option>
-                    <option v-for="item in vendorDeliveryLocations" :key="item" :value="item" >{{item.name}}</option>
-                  </select>
-                  <ChevronDownIcon
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none"
-                  />
-                </div>
-                <p
-                  v-if="validationErrors.location"
-                  class="mt-1 text-xs text-red-500"
-                >
-                  {{ validationErrors.location }}
-                </p>
-              </div>
-
-              <div>
-                <label class="block text-gray-600 mb-1 text-sm font-medium"
+              <!-- Delivery Method Selection -->
+              <div class="mb-2">
+                <label class="block text-gray-600 mb-2 text-sm font-medium"
                   >Delivery Method <span class="text-red-500">*</span></label
                 >
-                <div class="grid grid-cols-2 gap-3 mt-2">
+                <div class="grid grid-cols-2 gap-3">
                   <div
-                    @click="deliveryMethod = 'pickup'"
-                    class="border rounded-md p-3 cursor-pointer transition-all duration-300 flex flex-col items-center"
-                    :class="
-                      deliveryMethod === 'pickup'
-                        ? 'border-orange-400 bg-orange-50'
+                    @click="setDeliveryMethod('pickup')"
+                    class="border rounded-md p-3 cursor-pointer transition-all duration-300 flex flex-col items-center transform hover:scale-105"
+                    :class="[
+                      deliveryMethod === 'pickup' 
+                        ? 'border-green-400 bg-green-50 shadow-md' 
                         : 'border-gray-200 hover:border-gray-300'
-                    "
+                    ]"
                   >
-                    <ShoppingBagIcon
-                      class="h-6 w-6 mb-1"
-                      :class="
-                        deliveryMethod === 'pickup'
-                          ? 'text-orange-500'
-                          : 'text-gray-400'
-                      "
-                    />
+                    <div class="relative">
+                      <ShoppingBagIcon
+                        class="h-6 w-6 mb-1 transition-colors duration-300"
+                        :class="
+                          deliveryMethod === 'pickup'
+                            ? 'text-green-500'
+                            : 'text-gray-400'
+                        "
+                      />
+                      <div 
+                        v-if="deliveryMethod === 'pickup'"
+                        class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-ping-slow"
+                      ></div>
+                    </div>
                     <span
-                      class="text-sm font-medium"
+                      class="text-sm font-medium transition-colors duration-300"
                       :class="
                         deliveryMethod === 'pickup'
-                          ? 'text-orange-800'
+                          ? 'text-green-800'
                           : 'text-gray-600'
                       "
                       >Pickup</span
                     >
-                    <span class="text-xs text-green-600 mt-1">Free</span>
+                    <span class="text-xs text-green-600 mt-1 font-medium">Free</span>
                   </div>
 
                   <div
-                    @click="deliveryMethod = 'delivery'"
-                    class="border rounded-md p-3 cursor-pointer transition-all duration-300 flex flex-col items-center"
-                    :class="
-                      deliveryMethod === 'delivery'
-                        ? 'border-orange-400 bg-orange-50'
+                    @click="setDeliveryMethod('delivery')"
+                    class="border rounded-md p-3 cursor-pointer transition-all duration-300 flex flex-col items-center transform hover:scale-105"
+                    :class="[
+                      deliveryMethod === 'delivery' 
+                        ? 'border-orange-400 bg-orange-50 shadow-md' 
                         : 'border-gray-200 hover:border-gray-300'
-                    "
+                    ]"
                   >
-                    <TruckIcon
-                      class="h-6 w-6 mb-1"
-                      :class="
-                        deliveryMethod === 'delivery'
-                          ? 'text-orange-500'
-                          : 'text-gray-400'
-                      "
-                    />
+                    <div class="relative">
+                      <TruckIcon
+                        class="h-6 w-6 mb-1 transition-colors duration-300"
+                        :class="
+                          deliveryMethod === 'delivery'
+                            ? 'text-orange-500'
+                            : 'text-gray-400'
+                        "
+                      />
+                      <div 
+                        v-if="deliveryMethod === 'delivery'"
+                        class="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full animate-ping-slow"
+                      ></div>
+                    </div>
                     <span
-                      class="text-sm font-medium"
+                      class="text-sm font-medium transition-colors duration-300"
                       :class="
                         deliveryMethod === 'delivery'
                           ? 'text-orange-800'
@@ -324,12 +311,61 @@
                       "
                       >Delivery</span
                     >
-                    <span class="text-xs text-gray-500 mt-1">₦700</span>
+                    <span class="text-xs text-orange-600 mt-1 font-medium">
+                      <template v-if="selectedLocation">
+                        ₦{{ formatPrice(selectedLocation.deliveryFee) }}
+                      </template>
+                      <template v-else>
+                        Select location
+                      </template>
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <div v-if="deliveryMethod === 'delivery'">
+              <!-- Location Dropdown - Only shown for delivery -->
+              <div v-if="deliveryMethod === 'delivery'" class="mt-4 animate-fade-in">
+                <label class="block text-gray-600 mb-1 text-sm font-medium"
+                  >Location <span class="text-red-500">*</span></label
+                >
+                
+                <div class="relative location-dropdown">
+                  <select 
+                    v-if="vendorDeliveryLocations.length"  
+                    class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent appearance-none"
+                    v-model="selectedLocationId"
+                    @change="handleLocationChange"
+                  >
+                    <option value="" disabled selected>Select a location</option>
+                    <option 
+                      v-for="item in vendorDeliveryLocations" 
+                      :key="item._id" 
+                      :value="item._id"
+                    >
+                      {{item.name}} - ₦{{ formatPrice(item.deliveryFee) }}
+                    </option>
+                  </select>
+                  <ChevronDownIcon
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none"
+                  />
+                </div>
+
+                <div v-if="vendorDeliveryLocations.length === 0" class="p-4 text-center text-gray-500 border border-gray-200 rounded-md mt-2">
+                  <MapPinOffIcon class="h-6 w-6 mx-auto mb-2 text-gray-400" />
+                  <p>This vendor hasn't set up delivery locations yet.</p>
+                  <p class="text-xs mt-1">Please choose pickup or contact the vendor.</p>
+                </div>
+                
+                <p
+                  v-if="validationErrors.location"
+                  class="mt-1 text-xs text-red-500 animate-shake"
+                >
+                  {{ validationErrors.location }}
+                </p>
+              </div>        
+
+              <!-- Delivery Address - Only shown for delivery -->
+              <div v-if="deliveryMethod === 'delivery'" class="animate-fade-in">
                 <label class="block text-gray-600 mb-1 text-sm font-medium"
                   >Delivery Address <span class="text-red-500">*</span></label
                 >
@@ -341,7 +377,7 @@
                 ></textarea>
                 <p
                   v-if="validationErrors.deliveryAddress"
-                  class="mt-1 text-xs text-red-500"
+                  class="mt-1 text-xs text-red-500 animate-shake"
                 >
                   {{ validationErrors.deliveryAddress }}
                 </p>
@@ -353,7 +389,7 @@
                 >
                 <textarea
                   v-model="additionalNotes"
-                  rows=""
+                  rows="2"
                   class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                   placeholder="Any additional instructions..."
                 ></textarea>
@@ -371,11 +407,11 @@
                     >₦{{ formatPrice(cart.subtotal.value) }}</span
                   >
                 </div>
-                <div class="flex justify-between text-sm">
+                <div class="flex justify-between text-sm" v-if="deliveryMethod === 'delivery'">
                   <span class="text-gray-600">Delivery</span>
-                  <span class="font-medium"
-                    >₦{{ formatPrice(deliveryFee) }}</span
-                  >
+                  <span class="font-medium animate-highlight" key="delivery-fee">
+                    ₦{{ formatPrice(deliveryFee) }}
+                  </span>
                 </div>
                 <div class="flex justify-between text-sm">
                   <span class="text-gray-600">Service Charge</span>
@@ -440,7 +476,7 @@
 
               <div
                 v-if="error"
-                class="mt-4 p-3 bg-red-50 text-red-600 rounded-md text-sm"
+                class="mt-4 p-3 bg-red-50 text-red-600 rounded-md text-sm animate-shake"
               >
                 <AlertTriangleIcon class="h-4 w-4 inline-block mr-1" />
                 {{ error }}
@@ -523,27 +559,27 @@
               confirmation shortly.
             </p>
 
-      <div class="flex flex-col gap-3">
-        <button
-          @click="chatWithVendor"
-          class="px-6 py-3 bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-          </svg>
-          Chat with Vendor
-        </button>
-        <button
-          @click="goToHome"
-          class="px-6 py-3 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
-        >
-          Back to Menu
-        </button>
+            <div class="flex flex-col gap-3">
+              <button
+                @click="chatWithVendor"
+                class="px-6 py-3 bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                Chat with Vendor
+              </button>
+              <button
+                @click="goToHome"
+                class="px-6 py-3 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+              >
+                Back to Menu
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
-</Teleport>
+    </Teleport>
 
     <!-- Toast Container -->
     <ToastContainer />
@@ -570,6 +606,8 @@ import {
   PencilIcon,
   ClipboardEditIcon,
   AlertTriangleIcon,
+  MapPinIcon,
+  MapPinOffIcon,
 } from "lucide-vue-next";
 import ToastContainer from "~/components/ToastContainer.vue";
 import { useCustomToast } from "@/composables/core/useCustomToast";
@@ -583,160 +621,22 @@ const cart = useCart();
 const toast = useToast();
 const { createOrder, loading: orderLoading, error, orderResponse } = useCreateOrder();
 const { vendor } = useFetchVendorById(route.params.id as string);
-const { fetchVendorDeliveryLocations, loading: fetchingDeliveryLocations, vendorDeliveryLocations } = useVendorDeliveryLocations()
-
-const schools = ref( [
-  // Federal Universities
-  'Federal University of Technology, Akure (FUTA)',
-  'Obafemi Awolowo University (OAU)',
-  'University of Ibadan (UI)',
-  'University of Lagos (UNILAG)',
-  'University of Benin (UNIBEN)',
-  'Ahmadu Bello University (ABU)',
-  'Bayero University Kano (BUK)',
-  'Federal University of Agriculture, Abeokuta (FUNAAB)',
-  'Federal University Oye-Ekiti (FUOYE)',
-  'Federal University of Technology, Minna (FUTMINNA)',
-  'Federal University of Technology, Owerri (FUTO)',
-  'Federal University, Dutse (FUD)',
-  'Federal University, Lafia (FULAFIA)',
-  'Federal University, Lokoja (FULOKOJA)',
-  'Federal University, Otuoke (FUO)',
-  'Federal University, Wukari (FUWUKARI)',
-  'Michael Okpara University of Agriculture, Umudike (MOUAU)',
-  'Modibbo Adama University of Technology, Yola (MAUTECH)',
-  'National Open University of Nigeria (NOUN)',
-  'Nigeria Police Academy, Wudil',
-  'Nigerian Defence Academy (NDA)',
-  'Nnamdi Azikiwe University, Awka (UNIZIK)',
-  'University of Abuja (UNIABUJA)',
-  'University of Agriculture, Makurdi (UAM)',
-  'University of Calabar (UNICAL)',
-  'University of Ilorin (UNILORIN)',
-  'University of Jos (UNIJOS)',
-  'University of Maiduguri (UNIMAID)',
-  'University of Nigeria, Nsukka (UNN)',
-  'University of Port Harcourt (UNIPORT)',
-  'University of Uyo (UNIUYO)',
-  'Abubakar Tafawa Balewa University (ATBU)',
-  'Federal University Gashua (FUGASHUA)',
-  'Federal University Gusau (FUGUS)',
-  'Federal University Kashere (FUK)',
-  'Federal University Birnin Kebbi (FUBK)',
-  'Federal University Dustin-Ma (FUDMA)',
-  'Alex Ekwueme Federal University, Ndufu-Alike (AE-FUNAI)',
-  'Federal University of Petroleum Resources, Effurun (FUPRE)',
-  'Federal University of Health Sciences, Otukpo (FUHSO)',
-  
-  // State Universities
-  'Abia State University, Uturu (ABSU)',
-  'Adamawa State University, Mubi (ADSU)',
-  'Adekunle Ajasin University, Akungba (AAUA)',
-  'Akwa Ibom State University (AKSU)',
-  'Ambrose Alli University, Ekpoma (AAU)',
-  'Chukwuemeka Odumegwu Ojukwu University, Uli (COOU)',
-  'Bauchi State University, Gadau (BASUG)',
-  'Benue State University, Makurdi (BSU)',
-  'Yobe State University, Damaturu (YSU)',
-  'Cross River State University of Technology, Calabar (CRUTECH)',
-  'Delta State University, Abraka (DELSU)',
-  'Ebonyi State University, Abakaliki (EBSU)',
-  'Ekiti State University, Ado Ekiti (EKSU)',
-  'Enugu State University of Science and Technology (ESUT)',
-  'Gombe State University (GSU)',
-  'Ibrahim Badamasi Babangida University, Lapai (IBBUL)',
-  'Ignatius Ajuru University of Education, Port Harcourt (IAUE)',
-  'Imo State University, Owerri (IMSU)',
-  'Kaduna State University (KASU)',
-  'Kano University of Science and Technology, Wudil (KUST)',
-  'Kebbi State University of Science and Technology, Aliero (KSUSTA)',
-  'Kogi State University, Anyigba (KSU)',
-  'Kwara State University, Malete (KWASU)',
-  'Ladoke Akintola University of Technology, Ogbomoso (LAUTECH)',
-  'Lagos State University, Ojo (LASU)',
-  'Nasarawa State University, Keffi (NSUK)',
-  'Niger Delta University, Wilberforce Island (NDU)',
-  'Olabisi Onabanjo University, Ago-Iwoye (OOU)',
-  'Ondo State University of Science and Technology, Okitipupa (OSUSTECH)',
-  'Osun State University, Osogbo (UNIOSUN)',
-  'Plateau State University, Bokkos (PLASU)',
-  'Rivers State University (RSU)',
-  'Tai Solarin University of Education, Ijagun (TASUED)',
-  'Taraba State University, Jalingo (TASU)',
-  'Technical University, Ibadan',
-  'Sokoto State University (SSU)',
-  
-  // Private Universities
-  'Covenant University',
-  'Landmark University',
-  'Babcock University',
-  'Afe Babalola University, Ado-Ekiti (ABUAD)',
-  'American University of Nigeria, Yola (AUN)',
-  'Benson Idahosa University, Benin City (BIU)',
-  'Bowen University, Iwo',
-  'Caleb University, Lagos',
-  'Caritas University, Enugu',
-  'Crawford University, Igbesa',
-  'Crescent University, Abeokuta',
-  'Elizade University, Ilara-Mokin',
-  'Evangel University, Akaeze',
-  'Fountain University, Osogbo',
-  'Gregory University, Uturu',
-  'Hallmark University, Ijebu-Itele',
-  'Igbinedion University, Okada',
-  'Joseph Ayo Babalola University, Ikeji-Arakeji (JABU)',
-  'Kings University, Ode Omu',
-  'Lead City University, Ibadan',
-  'Madonna University, Okija',
-  'McPherson University, Seriki Sotayo',
-  'Mountain Top University',
-  'Novena University, Ogume',
-  'Obong University, Obong Ntak',
-  'Oduduwa University, Ipetumodu',
-  'Pan-Atlantic University, Lagos',
-  'Paul University, Awka',
-  'Redeemer\'s University, Ede',
-  'Renaissance University, Enugu',
-  'Rhema University, Obeama-Asa',
-  'Salem University, Lokoja',
-  'Samuel Adegboyega University, Ogwa',
-  'Southwestern University, Okun Owa',
-  'Summit University, Offa',
-  'Tansian University, Umunya',
-  'University of Mkar, Mkar',
-  'Veritas University, Abuja',
-  'Wellspring University, Benin City',
-  'Wesley University, Ondo',
-  'Western Delta University, Oghara',
-  'Christopher University, Mowe',
-  'Anchor University, Lagos',
-  'Augustine University, Ilara',
-  'Chrisland University, Abeokuta',
-  'Edwin Clark University, Kiagbodo',
-  'Hezekiah University, Umudi',
-  'Admiralty University of Nigeria, Ibusa',
-  'Skyline University, Kano',
-  'Dominion University, Ibadan',
-  'Precious Cornerstone University, Ibadan',
-  'PAMO University of Medical Sciences, Port Harcourt',
-  'Legacy University, Okija',
-  'Atiba University, Oyo',
-  'Nile University of Nigeria, Abuja',
-  'Trinity University, Oyo'
-])
+const { fetchVendorDeliveryLocations, loading: fetchingDeliveryLocations, vendorDeliveryLocations } = useVendorDeliveryLocations();
 
 // State
 const phoneNumber = ref("");
 const customerName = ref("");
-const location = ref("");
 const deliveryAddress = ref("");
-const deliveryMethod = ref("pickup");
+const deliveryMethod = ref("pickup"); // Default to pickup
 const additionalNotes = ref("");
 const saveOrder = ref(false);
 const showPackNoteModal = ref(false);
 const showOrderSuccessModal = ref(false);
 const packNoteIndex = ref(0);
 const packNote = ref("");
+const isLocationDropdownOpen = ref(false);
+const selectedLocationId = ref("");
+const selectedLocation = ref(null);
 const validationErrors = ref({
   phoneNumber: "",
   customerName: "",
@@ -748,19 +648,28 @@ const orderIds = ref<string[]>([]);
 
 // Constants
 const serviceCharge = 50;
-const deliveryFee = computed(() =>
-  deliveryMethod.value === "delivery" ? 700 : 0
-);
+const deliveryFee = computed(() => {
+  if (deliveryMethod.value !== "delivery") return 0;
+  return selectedLocation.value ? selectedLocation.value.deliveryFee : 0;
+});
 
 // Computed
 const isFormValid = computed(() => {
-  return (
-    phoneNumber.value.trim() !== "" && customerName.value.trim() !== "" &&
-    location.value !== "" &&
-    (deliveryMethod.value === "pickup" ||
-      deliveryAddress.value.trim() !== "") &&
-    cart.totalItems.value > 0
-  );
+  if (deliveryMethod.value === 'pickup') {
+    return (
+      phoneNumber.value.trim() !== "" && 
+      customerName.value.trim() !== "" && 
+      cart.totalItems.value > 0
+    );
+  } else {
+    return (
+      phoneNumber.value.trim() !== "" && 
+      customerName.value.trim() !== "" &&
+      selectedLocation.value !== null &&
+      deliveryAddress.value.trim() !== "" &&
+      cart.totalItems.value > 0
+    );
+  }
 });
 
 // Methods
@@ -803,24 +712,65 @@ const savePackNote = () => {
   }
 };
 
+const setDeliveryMethod = (method: 'pickup' | 'delivery') => {
+  deliveryMethod.value = method;
+  
+  // Reset validation errors when switching methods
+  if (method === 'pickup') {
+    validationErrors.value.location = "";
+    validationErrors.value.deliveryAddress = "";
+    selectedLocation.value = null;
+    selectedLocationId.value = "";
+  }
+  
+  // Show a toast notification
+  showToast({
+    title: method === 'pickup' ? "Pickup Selected" : "Delivery Selected",
+    message: method === 'pickup' 
+      ? "You'll pick up your order at the restaurant" 
+      : "Your order will be delivered to your location",
+    toastType: "info",
+    duration: 2000,
+  });
+};
+
+const handleLocationChange = () => {
+  // Find the full location object based on the selected ID
+  selectedLocation.value = vendorDeliveryLocations.value.find(
+    location => location._id === selectedLocationId.value
+  );
+  
+  if (selectedLocation.value) {
+    // Clear location validation error if a location is selected
+    validationErrors.value.location = "";
+    
+    // Show toast with the selected location and fee
+    showToast({
+      title: "Delivery Location Selected",
+      message: `Delivery to ${selectedLocation.value.name} costs ₦${formatPrice(selectedLocation.value.deliveryFee)}`,
+      toastType: "success",
+      duration: 3000,
+    });
+  }
+};
+
 const goBack = () => {
-  router.push("/");
-  cart.clearCart();
+  router.push(`/${route.params.id}`);
 };
 
 const goToHome = () => {
   showOrderSuccessModal.value = false;
-  router.push("/");
+  router.push(`/${route.params.id}`);
 };
 
 const cancelOrder = () => {
   if (confirm("Are you sure you want to cancel your order?")) {
     cart.clearCart();
-    router.push("/");
+    router.push(`/${route.params.id}`);
     showToast({
-      title: "Success",
-      message: "Order cancelled",
-      toastType: "success",
+      title: "Order Cancelled",
+      message: "Your order has been cancelled",
+      toastType: "info",
       duration: 3000,
     });
   }
@@ -843,133 +793,105 @@ const validateForm = () => {
     isValid = false;
   }
 
-  if (!location.value) {
-    validationErrors.value.location = "Please select a location";
+  if (!customerName.value.trim()) {
+    validationErrors.value.customerName = "Customer name is required";
     isValid = false;
   }
 
-  if (!customerName.value) {
-    validationErrors.value.customerName = "Please Customer Name is required";
-    isValid = false;
-  }
+  if (deliveryMethod.value === "delivery") {
+    if (!selectedLocation.value) {
+      validationErrors.value.location = "Please select a delivery location";
+      isValid = false;
+    }
 
-  if (deliveryMethod.value === "delivery" && !deliveryAddress.value.trim()) {
-    validationErrors.value.deliveryAddress = "Delivery address is required";
-    isValid = false;
+    if (!deliveryAddress.value.trim()) {
+      validationErrors.value.deliveryAddress = "Delivery address is required";
+      isValid = false;
+    }
   }
 
   return isValid;
 };
 
 const submitOrder = async () => {
-if (!validateForm()) {
-  showToast({
-    title: "Warning",
-    message: "Please fill in all required fields correctly",
-    toastType: "warning",
-    duration: 3000,
-  });
-  return;
-}
-
-if (cart.totalItems.value === 0) {
-  showToast({
-    title: "Warning",
-    message: "Your cart is empty",
-    toastType: "warning",
-    duration: 3000,
-  });
-  return;
-}
-
-try {
-  // Create a single order with all packs
-  const orderData = {
-    vendorId: route.params.id,
-    customerName: customerName.value,
-    phoneNumber: phoneNumber.value,
-    deliveryType: deliveryMethod.value as "delivery" | "pickup",
-    location: location.value,
-    address: deliveryMethod.value === "delivery" ? deliveryAddress.value : "",
-    // Transform cart packs to match the new structure
-    packs: cart.packs.value
-      .filter(pack => pack.items.length > 0)
-      .map(pack => ({
-        items: pack.items.map(item => ({
-          menuItemId: item.mealId,
-          quantity: item.quantity
-        })),
-        // Add pack quantity if it exists, otherwise it defaults to 1
-        ...(pack.quantity && pack.quantity > 1 ? { quantity: pack.quantity } : {})
-      })),
-    // Add general notes if provided
-    notes: additionalNotes.value.trim()
-  };
-
-  // Add pack-specific notes if needed (you might need to adjust this based on your requirements)
-  // This is just one approach - you might need to handle pack notes differently
-  const packsWithNotes = cart.packs.value.filter(pack => pack.items.length > 0 && pack.note);
-  if (packsWithNotes.length > 0) {
-    const packNotes = packsWithNotes.map(pack => pack.note).join('. ');
-    orderData.notes = orderData.notes
-      ? `${orderData.notes}. ${packNotes}`
-      : packNotes;
+  if (!validateForm()) {
+    showToast({
+      title: "Warning",
+      message: "Please fill in all required fields correctly",
+      toastType: "warning",
+      duration: 3000,
+    });
+    return;
   }
 
-  console.log(orderData, 'Order payload');
-  
-  // Submit the single order with all packs
-  const response = await createOrder(orderData);
-  if (response && response._id) {
-    orderIds.value = [response._id];
-  }
-
-  // Show success message with animation
-  chatWithVendor()
-  // orderSuccess.value = true;
-  // showOrderSuccessModal.value = true;
-
-  // Clear cart
-  // cart.clearCart();
-
-  // If save order is checked, we would save it to the user's profile
-  if (saveOrder.value) {
-    console.log("Saving order for future use");
-  }
-} catch (err) {
-  console.error("Error submitting order:", err);
-  showToast({
-    title: "Error",
-    message: "Failed to submit order. Please try again.",
-    toastType: "error",
-    duration: 3000,
-  });
-}
-};
-
-// Watch for delivery method changes to reset validation errors
-watch(deliveryMethod, () => {
-  if (deliveryMethod.value === "pickup") {
-    validationErrors.value.deliveryAddress = "";
-  }
-});
-
-// Lifecycle
-onMounted(() => {
-  // Initialize cart from localStorage
-  cart.initCart();
-
-  // Redirect to home if no order exists
   if (cart.totalItems.value === 0) {
-    router.push("/");
     showToast({
       title: "Warning",
       message: "Your cart is empty",
       toastType: "warning",
       duration: 3000,
     });
+    return;
   }
-});
+
+  try {
+    // Create a single order with all packs
+    const orderData = {
+      vendorId: vendor.value._id,
+      customerName: customerName.value,
+      phoneNumber: phoneNumber.value,
+      deliveryType: deliveryMethod.value as "delivery" | "pickup",
+      location: deliveryMethod.value === "delivery" && selectedLocation.value ? selectedLocation.value.name : "",
+      address: deliveryMethod.value === "delivery" ? deliveryAddress.value : "",
+      // Transform cart packs to match the new structure
+      packs: cart.packs.value
+        .filter(pack => pack.items.length > 0)
+        .map(pack => ({
+          items: pack.items.map(item => ({
+            menuItemId: item.mealId,
+            quantity: item.quantity
+          })),
+          // Add pack quantity if it exists, otherwise it defaults to 1
+          ...(pack.quantity && pack.quantity > 1 ? { quantity: pack.quantity } : {})
+        })),
+      // Add general notes if provided
+      notes: additionalNotes.value.trim()
+    };
+
+    // Add pack-specific notes if needed
+    const packsWithNotes = cart.packs.value.filter(pack => pack.items.length > 0 && pack.note);
+    if (packsWithNotes.length > 0) {
+      const packNotes = packsWithNotes.map(pack => pack.note).join('. ');
+      orderData.notes = orderData.notes
+        ? `${orderData.notes}. ${packNotes}`
+        : packNotes;
+    }
+
+    console.log(orderData, 'Order payload');
+    
+    // Submit the order
+    const response = await createOrder(orderData);
+    if (response && response._id) {
+      orderIds.value = [response._id];
+    }
+
+    // Show success message with animation
+    showOrderSuccessModal.value = true;
+
+    // If save order is checked, we would save it to the user's profile
+    if (saveOrder.value) {
+      console.log("Saving order for future use");
+    }
+  } catch (err) {
+    console.error("Error submitting order:", err);
+    showToast({
+      title: "Error",
+      message: "Failed to submit order. Please try again.",
+      toastType: "error",
+      duration: 3000,
+    });
+  }
+};
 
 const chatWithVendor = () => {
   // Get vendor details from local storage
@@ -996,7 +918,7 @@ const chatWithVendor = () => {
   // Add order details with emojis and formatting
   message += `📋 *ORDER DETAILS* (${cart.totalItems.value} items) 📋\n\n`;
 
-  message += `📌 Order ID: ₦${orderResponse?.value?.orderId}\n`;
+  message += `📌 Order ID: ${orderResponse?.value?.orderId || 'Pending'}\n`;
   
   // Add items from each pack with friendly formatting
   let packCounter = 0;
@@ -1022,16 +944,22 @@ const chatWithVendor = () => {
   message += `💰 *ORDER SUMMARY* 💰\n\n`;
   message += `📌 Subtotal: ₦${formatPrice(cart.subtotal.value)}\n`;
   message += `📌 Service Charge: ₦${formatPrice(serviceCharge)}\n`;
-  message += `📌 Delivery Fee: ₦${formatPrice(deliveryFee.value)}\n`;
+  
+  if (deliveryMethod.value === 'delivery' && selectedLocation.value) {
+    message += `📌 Delivery Fee (${selectedLocation.value.name}): ₦${formatPrice(selectedLocation.value.deliveryFee)}\n`;
+  } else {
+    message += `📌 Pickup: Free\n`;
+  }
+  
   message += `🔥 *GRAND TOTAL: ₦${formatPrice(calculateGrandTotal())}* 🔥\n\n`;
   
   // Add customer details section with friendly format
   message += `👤 *CUSTOMER DETAILS* 👤\n\n`;
   message += `🙋 Name: ${customerName.value}\n`;
   message += `📞 Phone: ${phoneNumber.value}\n`;
-  message += `📍 Location: ${location.value}\n`;
   
-  if (deliveryMethod.value === 'delivery' && deliveryAddress.value) {
+  if (deliveryMethod.value === 'delivery' && selectedLocation.value) {
+    message += `📍 Location: ${selectedLocation.value.name}\n`;
     message += `🏠 Delivery Address: ${deliveryAddress.value}\n`;
   }
   
@@ -1050,7 +978,6 @@ const chatWithVendor = () => {
   const encodedMessage = encodeURIComponent(message);
   
   // Format the phone number correctly for WhatsApp
-  // WhatsApp requires the phone number to be in international format without any special characters
   let formattedPhone = "";
   if (vendorPhone) {
     // Remove any non-digit characters
@@ -1064,28 +991,73 @@ const chatWithVendor = () => {
   }
   
   // Open WhatsApp with the message and vendor's phone number
-  // If no vendor phone number is available, it will open WhatsApp without a specific recipient
   const whatsappUrl = formattedPhone 
     ? `https://wa.me/${formattedPhone}?text=${encodedMessage}` 
     : `https://wa.me/?text=${encodedMessage}`;
   
-  console.log("Opening WhatsApp URL:", whatsappUrl);
   window.open(whatsappUrl, '_blank');
 
+  // Clear cart after successful order
   cart.clearCart();
+  
+  // Close the success modal
+  showOrderSuccessModal.value = false;
+  
+  // Navigate back to menu
+  router.push(`/${route.params.id}`);
 };
 
+// Watch for delivery method changes to reset validation errors
+watch(deliveryMethod, () => {
+  if (deliveryMethod.value === "pickup") {
+    validationErrors.value.location = "";
+    validationErrors.value.deliveryAddress = "";
+    selectedLocation.value = null;
+    selectedLocationId.value = "";
+  }
+});
+
+// Lifecycle hooks
+onMounted(() => {
+  document.addEventListener('click', (e) => {
+    if (isLocationDropdownOpen.value) {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.location-dropdown')) {
+        isLocationDropdownOpen.value = false;
+      }
+    }
+  });
+  
+  // Initialize cart from localStorage
+  cart.initCart();
+
+  // Redirect to home if no order exists
+  if (cart.totalItems.value === 0) {
+    router.push(`/${route.params.id}`);
+    showToast({
+      title: "Warning",
+      message: "Your cart is empty",
+      toastType: "warning",
+      duration: 3000,
+    });
+  }
+  
+  // Fetch vendor delivery locations
+  if (vendor.value && vendor.value._id) {
+    fetchVendorDeliveryLocations(vendor.value._id);
+  }
+});
+
+// Watch for vendor changes to fetch delivery locations
 watch(
   () => vendor.value,
-  async () => {
-    console.log('prop value changed', vendor.value)
-    await fetchVendorDeliveryLocations(vendor.value._id);
+  async (newVendor) => {
+    if (newVendor && newVendor._id) {
+      await fetchVendorDeliveryLocations(newVendor._id);
+    }
   }
-)
-
-
+);
 </script>
-
 
 <style scoped>
 .animate-fade-in-up {
@@ -1110,6 +1082,22 @@ watch(
 
 .animate-slide-in {
   animation: slideIn 0.4s ease-out;
+}
+
+.animate-dropdown {
+  animation: dropdown 0.3s ease-out;
+}
+
+.animate-ping-slow {
+  animation: pingSlow 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+.animate-highlight {
+  animation: highlight 1s ease-in-out;
 }
 
 @keyframes fadeInUp {
@@ -1175,6 +1163,40 @@ watch(
     transform: translateX(0);
     opacity: 1;
   }
+}
+
+@keyframes dropdown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pingSlow {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+@keyframes highlight {
+  0% { background-color: transparent; }
+  30% { background-color: rgba(249, 115, 22, 0.2); }
+  100% { background-color: transparent; }
 }
 
 .custom-scrollbar {

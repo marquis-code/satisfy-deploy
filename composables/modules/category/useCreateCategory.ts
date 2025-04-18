@@ -17,6 +17,7 @@ export const useCreateCategory = () => {
       const res = (await category_api.$_create_mcategory(payload)) as any
       if (res.type !== "ERROR") {
         category.value = res.data
+        window.location.reload()
         await fetchCategory()
         return res.data
       } else {

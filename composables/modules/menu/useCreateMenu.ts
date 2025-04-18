@@ -1,7 +1,8 @@
 import { ref } from "vue"
 import { menu_api } from "@/api_factory/modules/menu"
+import { useFetchMenu } from "@/composables/modules/menu/useFetchMenu"
 import type { MenuPayload } from "@/api_factory/modules/menu"
-
+const { fetchMenu } = useFetchMenu()
 export const useCreateMenu = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -15,6 +16,8 @@ export const useCreateMenu = () => {
       const res = (await menu_api.$_create_menue(payload)) as any
       if (res.type !== "ERROR") {
         menu.value = res.data
+        window.location.reload()
+        fetchMenu()
         return res
       } else {
         error.value = res.message || "Failed to create menu"

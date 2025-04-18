@@ -175,18 +175,18 @@
                   
                   <!-- Quantity Controls -->
                   <div class="self-end mt-2 flex items-center">
-                    <template v-if="getMealQuantityInFirstPack(meal._id) > 0">
+                    <template v-if="getMealQuantityInActivePack(meal._id) > 0">
                       <button
-                        @click="decrementMealInFirstPack(meal)"
+                        @click="decrementMealInActivePack(meal)"
                         class="w-8 h-8 bg-gray-200 hover:bg-gray-300 rounded-l-md flex items-center justify-center transition-colors"
                       >
                         <MinusIcon class="h-4 w-4" />
                       </button>
                       <span class="w-8 text-center text-sm bg-gray-100 py-1.5">
-                        {{ getMealQuantityInFirstPack(meal._id) }}
+                        {{ getMealQuantityInActivePack(meal._id) }}
                       </span>
                       <button
-                        @click="incrementMealInFirstPack(meal)"
+                        @click="incrementMealInActivePack(meal)"
                         class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-r-md flex items-center justify-center transition-colors"
                       >
                         <PlusIcon class="h-4 w-4" />
@@ -194,7 +194,7 @@
                     </template>
                     <button
                       v-else
-                      @click="addMealToFirstPack(meal)"
+                      @click="addMealToActivePack(meal)"
                       class="px-3 py-1.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-md flex items-center shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105"
                     >
                       <PlusIcon class="h-4 w-4 mr-1" />
@@ -227,14 +227,18 @@
                 <button
                   @click="addNewPack"
                   class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-sm flex items-center transition-all duration-300 transform hover:scale-105"
+                  :class="{ 'relative': true }"
                 >
                   <PlusIcon class="h-4 w-4 mr-1" /> Add Pack
+                  <span v-if="isNewPackActive" class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full"></span>
                 </button>
                 <button
                   @click="openDuplicatePackModal"
                   class="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-md text-sm flex items-center transition-all duration-300 transform hover:scale-105"
+                  :class="{ 'relative': true }"
                 >
                   <CopyIcon class="h-4 w-4 mr-1" /> Duplicate
+                  <span v-if="isDuplicatedPackActive" class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full"></span>
                 </button>
               </div>
             </div>
@@ -268,7 +272,11 @@
               <div
                 v-for="(pack, index) in cart.packs.value"
                 :key="pack.id"
-                class="border border-gray-100 rounded-md p-3 hover:border-orange-200 transition-colors animate-fade-in"
+                class="border rounded-md p-3 transition-colors animate-fade-in"
+                :class="[
+                  index === activePackIndex ? 'border-orange-300 bg-orange-50' : 'border-gray-100',
+                  { 'hover:border-orange-200': true }
+                ]"
               >
                 <div class="flex justify-between items-center">
                   <div class="flex items-center">
@@ -278,20 +286,35 @@
                       "
                       class="w-2 h-2 rounded-full mr-2"
                     ></div>
-                    <h3 class="font-medium text-gray-800">
+                    <h3 class="font-medium text-gray-800 flex items-center">
                       Pack {{ index + 1 }}
-                      <span class="text-gray-500 text-sm"
+                      <span class="text-gray-500 text-sm ml-1"
                         >( {{ pack.items.length }} items )</span
                       >
+                      <span 
+                        v-if="index === activePackIndex" 
+                        class="ml-2 text-xs px-1.5 py-0.5 bg-green-100 text-green-700 rounded-full"
+                      >
+                        Active
+                      </span>
                     </h3>
                   </div>
-                  <button
-                    v-if="cart.packs.value.length > 1"
-                    @click="removePack(index)"
-                    class="text-xs px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-md transition-colors transform hover:scale-105"
-                  >
-                    <TrashIcon class="h-3 w-3 inline-block" /> Remove
-                  </button>
+                  <div class="flex space-x-1">
+                    <button
+                      @click="setActivePackIndex(index)"
+                      class="text-xs px-2 py-1 bg-green-50 hover:bg-green-100 text-green-600 rounded-md transition-colors transform hover:scale-105"
+                      v-if="index !== activePackIndex"
+                    >
+                      <CheckIcon class="h-3 w-3 inline-block" /> Select
+                    </button>
+                    <button
+                      v-if="cart.packs.value.length > 1"
+                      @click="removePack(index)"
+                      class="text-xs px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-md transition-colors transform hover:scale-105"
+                    >
+                      <TrashIcon class="h-3 w-3 inline-block" /> Remove
+                    </button>
+                  </div>
                 </div>
 
                 <div v-if="pack.items.length > 0" class="mt-3 space-y-3">
@@ -369,12 +392,20 @@
                   >
                 </div>
                 <div class="flex justify-between text-sm text-gray-600 mb-1">
+                  <span>Pack Fee (₦{{ packFee }} × {{ cart.packs.value.length }}):</span>
+                  <span class="font-medium">₦{{ formatPrice(packFee * cart.packs.value.length) }}</span>
+                </div>
+                <div class="flex justify-between text-sm text-gray-600 mb-1">
                   <span>Service Charge:</span>
                   <span class="font-medium">₦50</span>
                 </div>
-                <div class="flex justify-between text-sm text-gray-600">
+                <!-- <div class="flex justify-between text-sm text-gray-600">
                   <span>Delivery Fee:</span>
                   <span class="font-medium">From ₦700</span>
+                </div> -->
+                <div class="flex justify-between text-sm font-bold text-gray-800 mt-2 pt-2 border-t border-dashed border-gray-200">
+                  <span>Total:</span>
+                  <span>₦{{ formatPrice(calculateTotal()) }}</span>
                 </div>
               </div>
 
@@ -484,12 +515,12 @@
         >
           <div class="p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-              <ClipboardEditIcon class="h-5 w-5 mr-2 text-blue-500" />
+              <ClipboardEditIcon class="h-5 text-sm w-5 mr-2 text-blue-500" />
               Add Note to Pack
             </h2>
 
             <div class="mb-6">
-              <label class="block text-gray-700 mb-2 font-medium"
+              <label class="block text-gray-700 text-sm mb-2 font-medium"
                 >Special Instructions:</label
               >
               <textarea
@@ -656,6 +687,7 @@ import {
   ClipboardEditIcon,
   MessageCircleIcon,
   AlertCircleIcon,
+  CheckIcon,
 } from "lucide-vue-next";
 import { useCustomToast } from "@/composables/core/useCustomToast";
 
@@ -687,6 +719,12 @@ const { vendor, loading, error } = useFetchVendorById(route.params.id as string)
 
 // State
 const searchQuery = ref("");
+const activePackIndex = ref(0);
+const isNewPackActive = ref(false);
+const isDuplicatedPackActive = ref(false);
+const packFee = ref(100); // Default pack fee, should be configured by vendor
+
+// Computed properties for filtered meals
 const filteredMeals = computed(() => {
   if (!menus.value || menus.value.length === 0) return [];
 
@@ -701,7 +739,6 @@ const filteredMeals = computed(() => {
       meal.name.toLowerCase().includes(query)
   );
 });
-
 
 // Modal states
 const showDuplicatePackModal = ref(false);
@@ -724,43 +761,55 @@ const formatPrice = (price: number): string => {
   return price.toLocaleString();
 };
 
-
-const getMealImage = (mealId: string): string => {
-  // In a real app, you would get this from your API or have image URLs in your meal data
-  // For now, we'll use a mapping or default images
-  const mealImages: Record<string, string> = {
-    "67e9c5d1e4ca7f8d6e4fdbf4": "/images/abacha.jpg",
-    "67e9c875738bd34efb8e3c3b": "/images/nkwobi.jpg",
-    "67e9d20e95896a435cac3b43": "/images/plantain-egg.jpg",
-    // Add more mappings as needed
-  };
-
-  return mealImages[mealId] || "/images/placeholder.jpg";
+// Calculate total including pack fees
+const calculateTotal = (): number => {
+  const subtotal = cart.subtotal.value;
+  const packFees = packFee.value * cart.packs.value.length;
+  const serviceCharge = 50;
+  // const deliveryFee = 700; // Minimum delivery fee
+  
+  return subtotal + packFees + serviceCharge 
+  // + deliveryFee;
 };
 
-// New methods for handling meal quantities directly in the menu
-const getMealQuantityInFirstPack = (mealId: string): number => {
+// Set active pack index
+const setActivePackIndex = (index: number): void => {
+  activePackIndex.value = index;
+  isNewPackActive.value = false;
+  isDuplicatedPackActive.value = false;
+  
+  showToast({
+    title: "Pack Selected",
+    message: `Pack ${index + 1} is now active`,
+    toastType: "success",
+    duration: 2000,
+  });
+};
+
+// New methods for handling meal quantities in the active pack
+const getMealQuantityInActivePack = (mealId: string): number => {
   // Ensure there's at least one pack
   if (cart.packs.value.length === 0) {
     return 0;
   }
   
-  // Find the meal in the first pack
-  const firstPack = cart.packs.value[0];
-  const mealItem = firstPack.items.find(item => item.mealId === mealId);
+  // Find the meal in the active pack
+  const activePack = cart.packs.value[activePackIndex.value];
+  const mealItem = activePack.items.find(item => item.mealId === mealId);
   
   return mealItem ? mealItem.quantity : 0;
 };
 
-const addMealToFirstPack = (meal: Meal): void => {
+const addMealToActivePack = (meal: Meal): void => {
   // Ensure there's at least one pack
   if (cart.packs.value.length === 0) {
     cart.addNewPack();
+    activePackIndex.value = 0;
   }
   
-  // Add to the first pack (index 0)
+  // Add to the active pack
   const success = cart.addItemToPack(
-    0,
+    activePackIndex.value,
     {
       mealId: meal._id,
       name: meal.name,
@@ -773,7 +822,7 @@ const addMealToFirstPack = (meal: Meal): void => {
   if (success) {
     showToast({
       title: "Success",
-      message: `Added ${meal.name} to Pack 1`,
+      message: `Added ${meal.name} to Pack ${activePackIndex.value + 1}`,
       toastType: "success",
       duration: 3000,
     });
@@ -787,51 +836,55 @@ const addMealToFirstPack = (meal: Meal): void => {
   }
 };
 
-const incrementMealInFirstPack = (meal: Meal): void => {
-  // Find the meal in the first pack
+const incrementMealInActivePack = (meal: Meal): void => {
+  // Find the meal in the active pack
   if (cart.packs.value.length === 0) {
-    addMealToFirstPack(meal);
+    addMealToActivePack(meal);
     return;
   }
   
-  const firstPack = cart.packs.value[0];
-  const itemIndex = firstPack.items.findIndex(item => item.mealId === meal._id);
+  const activePack = cart.packs.value[activePackIndex.value];
+  const itemIndex = activePack.items.findIndex(item => item.mealId === meal._id);
   
   if (itemIndex !== -1) {
-    cart.incrementItemQuantity(0, itemIndex);
+    cart.incrementItemQuantity(activePackIndex.value, itemIndex);
   } else {
-    addMealToFirstPack(meal);
+    addMealToActivePack(meal);
   }
 };
 
-const decrementMealInFirstPack = (meal: Meal): void => {
-  // Find the meal in the first pack
+const decrementMealInActivePack = (meal: Meal): void => {
+  // Find the meal in the active pack
   if (cart.packs.value.length === 0) {
     return;
   }
   
-  const firstPack = cart.packs.value[0];
-  const itemIndex = firstPack.items.findIndex(item => item.mealId === meal._id);
+  const activePack = cart.packs.value[activePackIndex.value];
+  const itemIndex = activePack.items.findIndex(item => item.mealId === meal._id);
   
   if (itemIndex !== -1) {
-    cart.decrementItemQuantity(0, itemIndex);
+    cart.decrementItemQuantity(activePackIndex.value, itemIndex);
   }
 };
 
 const openDuplicatePackModal = () => {
-  if (cart.packs.value.length === 1) {
-    // If there's only one pack, duplicate it directly
-    duplicatePack(0);
+  if (cart.packs.value.length === 0) {
     showToast({
-      title: "Success",
-      message: "Pack duplicated successfully",
-      toastType: "success",
+      title: "Warning",
+      message: "No packs to duplicate",
+      toastType: "warning",
       duration: 3000,
     });
     return;
   }
+  
+  if (cart.packs.value.length === 1) {
+    // If there's only one pack, duplicate it directly
+    duplicatePack(0);
+    return;
+  }
 
-  packToDuplicateIndex.value = 0; // Default to first pack
+  packToDuplicateIndex.value = activePackIndex.value; // Default to active pack
   showDuplicatePackModal.value = true;
 };
 
@@ -847,12 +900,17 @@ const duplicateSelectedPack = () => {
 const addNewPack = () => {
   const success = cart.addNewPack();
   if (success) {
-    // showToast({
-    //   title: "Success",
-    //   message: "New pack added",
-    //   toastType: "success",
-    //   duration: 3000,
-    // });
+    // Set the new pack as active
+    activePackIndex.value = cart.packs.value.length - 1;
+    isNewPackActive.value = true;
+    isDuplicatedPackActive.value = false;
+    
+    showToast({
+      title: "Success",
+      message: "New pack added and set as active",
+      toastType: "success",
+      duration: 3000,
+    });
   }
 };
 
@@ -860,25 +918,39 @@ const duplicatePack = (index: number) => {
   if (cart.packs.value.length > 0) {
     const success = cart.duplicatePack(index);
     if (success) {
-      // showToast({
-      //   title: "Success",
-      //   message: `Pack ${index + 1} duplicated successfully`,
-      //   toastType: "success",
-      //   duration: 3000,
-      // });
+      // Set the duplicated pack as active
+      activePackIndex.value = cart.packs.value.length - 1;
+      isDuplicatedPackActive.value = true;
+      isNewPackActive.value = false;
+      
+      showToast({
+        title: "Success",
+        message: `Pack ${index + 1} duplicated and set as active`,
+        toastType: "success",
+        duration: 3000,
+      });
     }
   }
 };
 
 const removePack = (index: number) => {
+  // If removing the active pack, set active to the first pack
+  if (index === activePackIndex.value) {
+    activePackIndex.value = 0;
+  } 
+  // If removing a pack before the active pack, adjust the active index
+  else if (index < activePackIndex.value) {
+    activePackIndex.value--;
+  }
+  
   const success = cart.removePack(index);
   if (success) {
-    // showToast({
-    //   title: "Success",
-    //   message: `Pack ${index + 1} removed`,
-    //   toastType: "success",
-    //   duration: 3000,
-    // });
+    showToast({
+      title: "Success",
+      message: `Pack removed`,
+      toastType: "success",
+      duration: 3000,
+    });
   }
 };
 
@@ -909,12 +981,12 @@ const closePackNoteModal = () => {
 const savePackNote = () => {
   const success = cart.updatePackNote(packNoteIndex.value, packNote.value);
   if (success) {
-    // showToast({
-    //   title: "Success",
-    //   message: "Note saved successfully",
-    //   toastType: "success",
-    //   duration: 3000,
-    // });
+    showToast({
+      title: "Success",
+      message: "Note saved successfully",
+      toastType: "success",
+      duration: 3000,
+    });
     closePackNoteModal();
   }
 };
@@ -935,6 +1007,9 @@ const emptyCart = () => {
       duration: 3000,
     });
     showConfirmEmptyCartModal.value = false;
+    activePackIndex.value = 0;
+    isNewPackActive.value = false;
+    isDuplicatedPackActive.value = false;
   }
 };
 
@@ -989,6 +1064,16 @@ const formatDate = (dateString?: string): string => {
 onMounted(() => {
   // Initialize cart from localStorage
   cart.initCart();
+  
+  // If cart is empty, create the first pack
+  if (cart.packs.value.length === 0) {
+    cart.addNewPack();
+  }
+  
+  // Set the pack fee from vendor configuration if available
+  if (vendor.value && vendor.value.packFee) {
+    packFee.value = vendor.value.packFee;
+  }
 });
 
 watch(
@@ -1004,16 +1089,29 @@ watch(
   { immediate: true }
 );
 
-
 watch(
   () => vendor.value,
-  async () => {
-    console.log('prop value changed', vendor.value)
-    await fetchVendorMenu(vendor.value._id);
+  async (newVendor) => {
+    if (newVendor) {
+      await fetchVendorMenu(newVendor._id);
+      
+      // Update pack fee from vendor configuration if available
+      if (newVendor.packFee) {
+        packFee.value = newVendor.packFee;
+      }
+    }
   }
-)
+);
 
-
+// Watch for changes in the active pack index
+watch(
+  () => activePackIndex.value,
+  () => {
+    // Reset the flags when active pack changes
+    isNewPackActive.value = false;
+    isDuplicatedPackActive.value = false;
+  }
+);
 </script>
 
 <style scoped>
@@ -1041,6 +1139,10 @@ watch(
   animation: bounceSlow 2s ease-in-out infinite;
 }
 
+.animate-spin-slow {
+  animation: spinSlow 3s linear infinite;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -1080,6 +1182,15 @@ watch(
   }
   50% {
     transform: translateY(-10px);
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -1103,91 +1214,5 @@ watch(
 
 .transform.hover\:scale-98:hover {
   transform: scale(0.98);
-}
-
-.logo-text {
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.font-cursive {
-  font-family: "Brush Script MT", cursive;
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.3s ease-out;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-bounce-slow {
-  animation: bounceSlow 2s ease-in-out infinite;
-}
-
-.animate-pulse {
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
-}
-
-@keyframes bounceSlow {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
-.delay-300 {
-  animation-delay: 300ms;
 }
 </style>
