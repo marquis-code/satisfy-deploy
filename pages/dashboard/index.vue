@@ -243,6 +243,7 @@ import { useUpdateProfile } from '@/composables/modules/customer/useUpdateProfil
 import { useRestaurantUrl } from '@/composables/useRestaurantUrl'
 import AnimatedCopyModal from '@/components/AnimatedCopyModal.vue'
 import { useUser } from '@/composables/auth/user'
+import { useFetchVendor } from "@/composables/modules/vendor/useFetchVendor"
 import { useFetchVendorById } from "@/composables/modules/vendor/useFetchVendorById";
 
 // Interface for profile data
@@ -264,6 +265,7 @@ const { closeStore, loading: closing } = useCloseStore()
 const { openStore, loading: opening } = useOpenStore()
 const { ordersList, loading: fetchingTodaysOrders } = useFetchVendorTodaysOrder()
 const { vendor } = useFetchVendorById(); // Added vendor composable
+const { vendor: vendorObj } = useFetchVendor()
 
 // Get user data from composable
 const { user } = useUser()

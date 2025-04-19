@@ -237,6 +237,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useUpdatePackPrice } from "~/composables/modules/vendor/useUpdatePackPrice"
 import { useCreateDeliveryLocation } from '@/composables/modules/delivery/useCreateDeliveryLocation'
 import { useUpdateDeliveryLocation } from '@/composables/modules/delivery/useUpdateDeliveryLocation'
 import { useDeleteDeliveryLocation } from '@/composables/modules/delivery/useDeleteDeliveryLocation'
@@ -258,6 +259,7 @@ const { createDeliveryLocation, loading: createLoading } = useCreateDeliveryLoca
 const { updateDeliveryLocation, loading: updateLoading } = useUpdateDeliveryLocation()
 const { deleteDeliveryLocation, loading: deleteLoading } = useDeleteDeliveryLocation()
 const { fetchLoggedInDeliveryLocations, loading: fetchLoading } = useFetchLoggedInDeliveryLocations()
+const { updatePackPrice, result, loading: updating } = useUpdatePackPrice()
 
 // Pack settings
 const packSettings = ref({
@@ -322,9 +324,9 @@ const updatePackSettings = async () => {
   
   isUpdatingSettings.value = true
   try {
-    await updateDeliveryLocation({
-      id: 'pack-settings', // Assuming an ID or endpoint for pack settings
-      deliveryFee: tempPackSettings.deliveryFee,
+    await updatePackPrice({
+      // id: 'pack-settings', // Assuming an ID or endpoint for pack settings
+      price: tempPackSettings.price,
       limit: tempPackSettings.limit
     })
     

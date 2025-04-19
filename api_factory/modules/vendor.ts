@@ -24,5 +24,13 @@ export const vendor_api = {
   $_fetch_vendor_by_name: (slug: string) => {
     let url = `/vendor/name/${slug}`;
     return GATEWAY_ENDPOINT.get(url);
+  },
+  $_update_pack_price: (payload: { limit: number, price: number}) => {
+    let url = `/vendor/update-pack-price`;
+    return GATEWAY_ENDPOINT.patch(url, payload);
+  },
+  $_update_working_hours: (payload: any) => {
+    let url = `/vendor/update-working-hours`;
+    return GATEWAY_ENDPOINT.patch(url, payload);
   }
 };
