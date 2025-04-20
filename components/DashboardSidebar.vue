@@ -51,19 +51,19 @@
             {{ !isCollapsed ? "GENERAL" : "GEN" }}
           </p>
           
-          <nav>
+          <nav class="space-y-2">
             <!-- Nav Items -->
             <div 
               v-for="item in navItems" 
               :key="item.label"
-              class="relative menu-container"
+              class="relative text-sm mx-2 menu-container"
             >
               <!-- Regular Nav Item -->
               <NuxtLink 
                 v-if="!item.children"
                 :to="item.path"
                 :class="[
-                  'flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 menu-item relative overflow-hidden',
+                  'flex items-center px-4 py-2.5 rounded-full text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 menu-item relative overflow-hidden',
                   isCollapsed && 'justify-center',
                   isActiveRoute(item.path) && 'bg-blue-600 text-white'
                 ]"
@@ -92,11 +92,11 @@
               </NuxtLink>
 
               <!-- Dropdown Nav Item -->
-              <div v-else>
+              <div class="" v-else>
                 <button 
                   @click="toggleMenu(item.key)"
                   :class="[
-                    'w-full flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors menu-item relative overflow-hidden',
+                    'flex items-center w-full px-4 py-2.5 rounded-full text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 menu-item relative overflow-hidden',
                     isCollapsed && 'justify-center',
                     isActiveParent(item.path) && 'bg-blue-600/50 text-white'
                   ]"
@@ -128,7 +128,7 @@
                 <div 
                   v-if="!isCollapsed" 
                   :class="[
-                    'pl-12 py-1 overflow-hidden transition-all duration-300 ease-in-out submenu',
+                    'pl-12 py-1 overflow-hidden text-sm transition-all duration-300 ease-in-out submenu',
                     expandedMenus[item.key] ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
                   ]"
                 >

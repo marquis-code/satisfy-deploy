@@ -1,231 +1,365 @@
-<!-- components/DeliveryLocations.vue -->
 <template>
   <div class="delivery-container">
-    <h1 class="text-xl font-semibold text-gray-800 mb-6">Delivery Locations</h1>
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-8 flex items-center">
+      <span class="relative group">
+        Delivery & Pack Settings
+        <span class="absolute bottom-0 left-0 w-full h-1 bg-orange-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+      </span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="ml-3 h-6 w-6 text-orange-500" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+      </svg>
+    </h1>
     
     <transition name="fade" mode="out-in">
       <!-- Loading state -->
-      <div v-if="loading" class="flex flex-col items-center justify-center py-12">
+      <div v-if="isLoading" class="flex flex-col items-center justify-center py-12">
         <div class="loader"></div>
-        <p class="text-gray-600 mt-4">Loading delivery information...</p>
+        <p class="text-gray-600 dark:text-gray-300 mt-4">Loading settings...</p>
       </div>
       
       <!-- Error state -->
-      <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6 animate-appear">
+      <div v-else-if="error" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-6 py-4 rounded-lg mb-6 animate-appear">
         <p class="flex items-center">
-          <span class="mr-2">⚠️</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
           <span>{{ error }}</span>
         </p>
         <button 
-          @click="fetchLocations"
-          class="mt-2 text-sm text-red-600 hover:text-red-800 underline transition-colors"
+          @click="fetchData"
+          class="mt-3 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 underline transition-colors"
         >
           Try Again
         </button>
       </div>
       
       <!-- Main content -->
-      <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Pack Fee and Limit Section -->
-        <div class="bg-white rounded-md shadow p-4 md:p-6 transform transition-all duration-300 hover:shadow-lg">
-          <h2 class="text-lg font-medium text-gray-700 mb-2">Pack Fee and Limit</h2>
-          <p class="text-gray-600 text-sm mb-6">
-            Set limits to the amount of pack that can be ordered at a time. Max(15)
-          </p>
-          
-          <div class="mb-4 group">
-            <label for="packPrice" class="block text-gray-600 mb-2 transition-all group-focus-within:text-orange-500">Pack Price</label>
-            <input 
-              id="packPrice"
-              v-model.number="tempPackSettings.price"
-              type="number"
-              class="w-full border border-gray-300 rounded-md p-2 focus:border-orange-500 focus:ring focus:ring-orange-200 focus:outline-none transition-all"
-              placeholder="0.00"
-              step="0.01"
-              min="0"
-            />
+      <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Pack Settings Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl border border-gray-100 dark:border-gray-700">
+          <div class="flex items-center mb-6">
+            <div class="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mr-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-gray-800 dark:text-white">Pack Settings</h2>
+              <p class="text-gray-500 dark:text-gray-400 text-sm">Configure your packaging options</p>
+            </div>
           </div>
           
-          <div class="mb-6 group">
-            <label for="packLimit" class="block text-gray-600 mb-2 transition-all group-focus-within:text-orange-500">Pack Limit</label>
-            <input 
-              id="packLimit"
-              v-model.number="tempPackSettings.limit"
-              type="number"
-              class="w-full border border-gray-300 rounded-md p-2 focus:border-orange-500 focus:ring focus:ring-orange-200 focus:outline-none transition-all"
-              placeholder="10"
-              min="1"
-              max="15"
-            />
+          <div class="space-y-6">
+            <div class="group">
+              <label for="packPrice" class="block text-gray-700 dark:text-gray-300 font-medium mb-2 transition-all group-focus-within:text-orange-500">
+                Pack Price (₦)
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span class="text-gray-500 dark:text-gray-400">₦</span>
+                </div>
+                <input 
+                  id="packPrice"
+                  v-model.number="tempPackSettings.price"
+                  type="number"
+                  class="w-full pl-8 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-3 focus:border-orange-500 focus:ring focus:ring-orange-200 dark:focus:ring-orange-800 focus:outline-none transition-all"
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0"
+                />
+                <div 
+                  v-if="tempPackSettings.price !== vendorPackSettings.price" 
+                  class="absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-500 animate-pulse"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14"></path>
+                    <path d="M19 12l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+              <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                Set the price for each packaging unit
+              </p>
+            </div>
+            
+            <div class="group">
+              <label for="packLimit" class="block text-gray-700 dark:text-gray-300 font-medium mb-2 transition-all group-focus-within:text-orange-500">
+                Pack Limit
+              </label>
+              <div class="relative">
+                <input 
+                  id="packLimit"
+                  v-model.number="tempPackSettings.limit"
+                  type="number"
+                  class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-3 focus:border-orange-500 focus:ring focus:ring-orange-200 dark:focus:ring-orange-800 focus:outline-none transition-all"
+                  placeholder="10"
+                  min="1"
+                  max="15"
+                />
+                <div 
+                  v-if="tempPackSettings.limit !== vendorPackSettings.limit" 
+                  class="absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-500 animate-pulse"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14"></path>
+                    <path d="M19 12l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+              <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                Maximum number of packs per order (1-15)
+              </p>
+            </div>
+            
+            <div class="pt-4">
+              <button 
+                @click="updatePackSettings"
+                class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                :disabled="isUpdatingSettings || !hasPackSettingsChanged"
+              >
+                <span v-if="isUpdatingSettings" class="inline-block mr-2">
+                  <div class="spinner-sm"></div>
+                </span>
+                <span v-else class="mr-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                  </svg>
+                </span>
+                <span>{{ isUpdatingSettings ? 'Updating...' : 'Save Pack Settings' }}</span>
+              </button>
+            </div>
+            
+            <!-- Current Settings Card -->
+            <div class="mt-6 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-700">
+              <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                Current Settings
+              </h3>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Pack Price</div>
+                  <div class="text-lg font-bold text-gray-800 dark:text-white">₦{{ vendorPackSettings.price }}</div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Pack Limit</div>
+                  <div class="text-lg font-bold text-gray-800 dark:text-white">{{ vendorPackSettings.limit }}</div>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <button 
-            @click="updatePackSettings"
-            class="w-full bg-[#ee7749] hover:bg-[#e06538] text-white py-3 px-4 rounded-md transition-colors flex items-center justify-center"
-            :disabled="isUpdatingSettings"
-          >
-            <span v-if="isUpdatingSettings" class="inline-block mr-2">
-              <div class="spinner-sm"></div>
-            </span>
-            <span>{{ isUpdatingSettings ? 'Updating...' : 'Update Settings' }}</span>
-          </button>
         </div>
         
-        <!-- Delivery Prices Section -->
-        <div class="bg-white rounded-md shadow p-4 md:p-6 transform transition-all duration-300 hover:shadow-lg">
-          <h2 class="text-lg font-medium text-gray-700 mb-4">Delivery Prices</h2>
-          
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-            <div class="md:col-span-3 group">
-              <label for="locationName" class="block outline-none text-gray-600 text-sm mb-2 transition-all group-focus-within:text-orange-500">Location Name</label>
-              <input 
-                id="locationName"
-                v-model="newLocation.name"
-                type="text"
-                class="w-full border border-gray-300 rounded-md p-2 focus:border-orange-500 focus:ring focus:ring-orange-200 focus:outline-none transition-all"
-                placeholder="e.g Harmony Estate"
-              />
+        <!-- Delivery Locations Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl border border-gray-100 dark:border-gray-700">
+          <div class="flex items-center mb-6">
+            <div class="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mr-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
             </div>
-            
-            <div class="md:col-span-1 group">
-              <label for="deliveryPrice" class="block outline-none text-gray-600 text-sm mb-2 transition-all group-focus-within:text-orange-500">Price</label>
-              <input 
-                id="deliveryPrice"
-                v-model.number="newLocation.price"
-                type="number"
-                class="w-full border border-gray-300 rounded-md p-2 focus:border-orange-500 focus:ring focus:ring-orange-200 focus:outline-none transition-all"
-                placeholder="0.00"
-                step="0.01"
-                min="0"
-              />
+            <div>
+              <h2 class="text-xl font-bold text-gray-800 dark:text-white">Delivery Locations</h2>
+              <p class="text-gray-500 dark:text-gray-400 text-sm">Manage your delivery areas and prices</p>
             </div>
           </div>
           
-          <button 
-            @click="addLocation"
-            class="mb-6 bg-[#ee7749] hover:bg-[#e06538] text-white py-2 px-4 rounded-md flex items-center gap-2 transition-colors"
-            :disabled="isAddingLocation || !canAddLocation"
-            :class="{ 'opacity-70 cursor-not-allowed': !canAddLocation && !isAddingLocation }"
-          >
-            <span v-if="isAddingLocation" class="inline-block">
-              <div class="spinner-sm"></div>
-            </span>
-            <span v-else class="text-lg">+</span>
-            <span>{{ isAddingLocation ? 'Adding...' : 'Add Location' }}</span>
-          </button>
-          
-          <!-- Locations Table -->
-          <div class="overflow-x-auto">
-            <transition-group name="list" tag="table" class="w-full min-w-full">
-              <thead key="header" class="border-b border-gray-200">
-                <tr>
-                  <th class="text-left py-3 px-2 text-sm text-gray-600">Location Name</th>
-                  <th class="text-left py-3 px-2 text-sm text-gray-600">Price</th>
-                  <th class="text-right py-3 px-2 text-sm text-gray-600">Actions</th>
-                </tr>
-              </thead>
-              <tbody key="body">
-                <tr 
-                  v-for="(location, index) in locations" 
-                  :key="location.id || index"
-                  class="border-b text-sm even:bg-gray-50 border-gray-200 transition-all hover:bg-orange-50"
-                >
-                  <td class="py-3 px-2">
+          <div class="space-y-6">
+            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-5 border border-gray-100 dark:border-gray-700">
+              <h3 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-4">Add New Location</h3>
+              
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                <div class="md:col-span-3 group">
+                  <label for="locationName" class="block text-gray-600 dark:text-gray-400 text-sm mb-2 transition-all group-focus-within:text-orange-500">
+                    Location Name
+                  </label>
+                  <input 
+                    id="locationName"
+                    v-model="newLocation.name"
+                    type="text"
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-3 focus:border-orange-500 focus:ring focus:ring-orange-200 dark:focus:ring-orange-800 focus:outline-none transition-all"
+                    placeholder="e.g Harmony Estate"
+                  />
+                </div>
+                
+                <div class="md:col-span-1 group">
+                  <label for="deliveryPrice" class="block text-gray-600 dark:text-gray-400 text-sm mb-2 transition-all group-focus-within:text-orange-500">
+                    Price (₦)
+                  </label>
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span class="text-gray-500 dark:text-gray-400">₦</span>
+                    </div>
                     <input 
-                      v-if="editingIndex === index"
-                      v-model="editingLocation.name"
-                      class="border border-gray-300 focus:border-orange-500 focus:ring focus:ring-orange-200 focus:outline-none rounded-md p-2 w-full transition-all"
-                    />
-                    <span v-else>{{ location.name }}</span>
-                  </td>
-                  <td class="py-3 px-2">
-                    <input 
-                      v-if="editingIndex === index"
-                      v-model.number="editingLocation.deliveryFee"
+                      id="deliveryPrice"
+                      v-model.number="newLocation.price"
                       type="number"
+                      class="w-full pl-8 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-3 focus:border-orange-500 focus:ring focus:ring-orange-200 dark:focus:ring-orange-800 focus:outline-none transition-all"
+                      placeholder="0.00"
                       step="0.01"
                       min="0"
-                      class="border border-gray-300 focus:border-orange-500 focus:ring focus:ring-orange-200 focus:outline-none rounded-md p-2 w-full transition-all"
                     />
-                    <span v-else class="font-medium">₦{{ location?.deliveryFee?.toFixed(2) }}</span>
-                  </td>
-                  <td class="py-3 px-2 flex justify-end gap-1">
-                    <template v-if="editingIndex === index">
-                      <button 
-                        @click="saveEdit"
-                        class="p-2 text-gray-600 cursor-pointer hover:text-gray-800 transition-colors rounded-full hover:bg-gray-100"
-                        :disabled="isUpdatingLocation"
-                      >
-                        <span v-if="isUpdatingLocation">
-                          <div class="spinner-xs"></div>
-                        </span>
-                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
-                          <path d="M224.82,59.34l-28.16-28.16a16,16,0,0,0-22.64,0L55.34,150.82A15.52,15.52,0,0,0,51.2,161.6L40.6,214.54a8,8,0,0,0,7.55,9.79,7.54,7.54,0,0,0,2.24-.32l52.94-10.6a16,16,0,0,0,10.78-4.14L224.82,82A16,16,0,0,0,224.82,59.34ZM156.6,24.2a8,8,0,0,1,11.32,0L196.08,52.36a8,8,0,0,1,0,11.32L184,75.76,132.24,24,144.32,11.88A8,8,0,0,1,156.6,24.2ZM107.11,202a8.08,8.08,0,0,1-5.37,2.08,7.93,7.93,0,0,1-1.58-.16L58.8,195.2l8.71-41.36a7.93,7.93,0,0,1,2.11-5.12L173.37,45,213,84.63Z"></path>
-                        </svg>
-                      </button>
-                      <button 
-                        @click="cancelEdit"
-                        class="p-2 text-red-600 cursor-pointer hover:text-red-800 transition-colors rounded-full hover:bg-red-50"
-                        :disabled="isUpdatingLocation"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
-                          <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
-                        </svg>
-                      </button>
-                    </template>
-                    <template v-else>
-                      <button 
-                        @click="startEdit(index)"
-                        class="p-2 text-gray-600 cursor-pointer hover:text-gray-800 transition-colors rounded-full hover:bg-gray-100"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
-                          <path d="M227.32,73.37,182.63,28.69a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H216a8,8,0,0,0,0-16H115.32l112-112A16,16,0,0,0,227.32,73.37ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.69,147.32,64l24-24L216,84.69Z"></path>
-                        </svg>
-                      </button>
-                      
-                      <button 
-                        @click="confirmLocation(index)"
-                        class="p-2 transition-colors rounded-full hover:bg-green-50"
-                        :class="{ 'text-gray-400 cursor-not-allowed': location.confirmed, 'text-green-600 cursor-pointer hover:text-green-800': !location.confirmed }"
-                        :disabled="location.confirmed || isConfirming === index"
-                      >
-                        <span v-if="isConfirming === index">
-                          <div class="spinner-xs"></div>
-                        </span>
-                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                      </button>
-                      
-                      <button 
-                        @click="removeLocation(index)"
-                        class="p-2 text-red-600 hover:text-red-800 transition-colors rounded-full hover:bg-red-50"
-                        :disabled="isDeleting === index"
-                      >
-                        <span v-if="isDeleting === index">
-                          <div class="spinner-xs"></div>
-                        </span>
-                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
-                          <path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"></path>
-                        </svg>
-                      </button>
-                    </template>
-                  </td>
-                </tr>
-              </tbody>
-            </transition-group>
+                  </div>
+                </div>
+              </div>
+              
+              <button 
+                @click="addLocation"
+                class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                :disabled="isAddingLocation || !canAddLocation"
+              >
+                <span v-if="isAddingLocation" class="inline-block mr-2">
+                  <div class="spinner-sm"></div>
+                </span>
+                <span v-else class="mr-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </span>
+                <span>{{ isAddingLocation ? 'Adding...' : 'Add Location' }}</span>
+              </button>
+            </div>
             
-            <!-- Empty state -->
-            <div 
-              v-if="locations.length === 0" 
-              class="py-12 text-center text-gray-500 animate-appear border-dashed border-2 border-gray-200 rounded-md mt-4"
-            >
-              <div class="flex flex-col items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#9ca3af" viewBox="0 0 256 256">
-                  <path d="M224,128a8,8,0,0,1-8,8H168v40a8,8,0,0,1-8,8H96a8,8,0,0,1-8-8V136H40a8,8,0,0,1,0-16H88V80a8,8,0,0,1,8-8h64a8,8,0,0,1,8,8v40h48A8,8,0,0,1,224,128ZM168,88H96v56h72Z"></path>
-                </svg>
-                <p class="mt-4">No locations added yet.</p>
-                <p class="text-sm mt-2">Add your first delivery location above.</p>
+            <!-- Locations Table -->
+            <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+              <div class="overflow-x-auto">
+                <transition-group name="list" tag="table" class="w-full min-w-full">
+                  <thead key="header" class="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                    <tr>
+                      <th class="text-left py-3 px-4 text-sm font-medium text-gray-600 dark:text-gray-300">Location Name</th>
+                      <th class="text-left py-3 px-4 text-sm font-medium text-gray-600 dark:text-gray-300">Price</th>
+                      <th class="text-right py-3 px-4 text-sm font-medium text-gray-600 dark:text-gray-300">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody key="body">
+                    <tr 
+                      v-for="(location, index) in locations" 
+                      :key="location._id || index"
+                      class="border-b border-gray-200 dark:border-gray-700 text-sm transition-all hover:bg-orange-50 dark:hover:bg-orange-900/10"
+                    >
+                      <td class="py-4 px-4 text-gray-800 dark:text-gray-200">
+                        <input 
+                          v-if="editingIndex === index"
+                          v-model="editingLocation.name"
+                          class="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-orange-500 focus:ring focus:ring-orange-200 dark:focus:ring-orange-800 focus:outline-none rounded-lg p-2 w-full transition-all"
+                        />
+                        <span v-else>{{ location.name }}</span>
+                      </td>
+                      <td class="py-4 px-4 text-gray-800 dark:text-gray-200">
+                        <input 
+                          v-if="editingIndex === index"
+                          v-model.number="editingLocation.deliveryFee"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          class="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-orange-500 focus:ring focus:ring-orange-200 dark:focus:ring-orange-800 focus:outline-none rounded-lg p-2 w-full transition-all"
+                        />
+                        <span v-else class="font-medium">₦{{ location?.deliveryFee?.toFixed(2) }}</span>
+                      </td>
+                      <td class="py-4 px-4 flex justify-end gap-2">
+                        <template v-if="editingIndex === index">
+                          <button 
+                            @click="saveEdit"
+                            class="p-2 text-orange-500 hover:text-orange-600 cursor-pointer transition-colors rounded-full hover:bg-orange-50 dark:hover:bg-orange-900/20"
+                            :disabled="isUpdatingLocation"
+                          >
+                            <span v-if="isUpdatingLocation">
+                              <div class="spinner-xs"></div>
+                            </span>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                              <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                          </button>
+                          <button 
+                            @click="cancelEdit"
+                            class="p-2 text-red-500 hover:text-red-600 cursor-pointer transition-colors rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+                            :disabled="isUpdatingLocation"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <line x1="18" y1="6" x2="6" y2="18"></line>
+                              <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                          </button>
+                        </template>
+                        <template v-else>
+                          <button 
+                            @click="startEdit(index)"
+                            class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 cursor-pointer transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                          </button>
+                          
+                          <button 
+                            @click="confirmLocation(index)"
+                            class="p-2 rounded-full transition-colors hover:bg-green-50 dark:hover:bg-green-900/20"
+                            :class="{ 
+                              'text-gray-400 dark:text-gray-600 cursor-not-allowed': location.confirmed, 
+                              'text-green-500 hover:text-green-600 cursor-pointer': !location.confirmed 
+                            }"
+                            :disabled="location.confirmed || isConfirming === index"
+                          >
+                            <span v-if="isConfirming === index">
+                              <div class="spinner-xs"></div>
+                            </span>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          </button>
+                          
+                          <button 
+                            @click="removeLocation(index)"
+                            class="p-2 text-red-500 hover:text-red-600 transition-colors rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+                            :disabled="isDeleting === index"
+                          >
+                            <span v-if="isDeleting === index">
+                              <div class="spinner-xs"></div>
+                            </span>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="3 6 5 6 21 6"></polyline>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                              <line x1="10" y1="11" x2="10" y2="17"></line>
+                              <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                          </button>
+                        </template>
+                      </td>
+                    </tr>
+                  </tbody>
+                </transition-group>
+              </div>
+              
+              <!-- Empty state -->
+              <div 
+                v-if="locations.length === 0" 
+                class="py-12 text-center text-gray-500 dark:text-gray-400 animate-appear border-dashed border-2 border-gray-200 dark:border-gray-700 rounded-md m-4"
+              >
+                <div class="flex flex-col items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 dark:text-gray-500 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <p class="text-lg font-medium mb-2">No locations added yet</p>
+                  <p class="text-sm max-w-md mx-auto">
+                    Add your first delivery location using the form above to start accepting orders from different areas.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -233,6 +367,47 @@
       </div>
     </transition>
   </div>
+
+  <!-- Toast Notifications -->
+  <Teleport to="body">
+    <transition name="toast">
+      <div 
+        v-if="toast.show" 
+        class="fixed bottom-4 right-4 z-50 max-w-md transform transition-all duration-500 flex"
+      >
+        <div 
+          class="flex items-center p-4 rounded-lg shadow-lg text-white"
+          :class="{
+            'bg-gradient-to-r from-green-500 to-green-600': toast.type === 'success',
+            'bg-gradient-to-r from-red-500 to-red-600': toast.type === 'error',
+            'bg-gradient-to-r from-blue-500 to-blue-600': toast.type === 'info'
+          }"
+        >
+          <div class="mr-3">
+            <svg v-if="toast.type === 'success'" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <!-- <svg v-else-if="toast.type === 'error'" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+              </circle>
+            </svg> -->
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+          </div>
+          <div>
+            <p class="font-medium">{{ toast.message }}</p>
+          </div>
+        </div>
+      </div>
+    </transition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -242,6 +417,8 @@ import { useCreateDeliveryLocation } from '@/composables/modules/delivery/useCre
 import { useUpdateDeliveryLocation } from '@/composables/modules/delivery/useUpdateDeliveryLocation'
 import { useDeleteDeliveryLocation } from '@/composables/modules/delivery/useDeleteDeliveryLocation'
 import { useFetchLoggedInDeliveryLocations } from '@/composables/modules/delivery/useFetchLoggedInDeliveryLocations'
+import { useFetchVendor } from "@/composables/modules/vendor/useFetchVendor"
+
 import type { DeliveryLocation } from '~/types'
 
 // States
@@ -260,17 +437,37 @@ const { updateDeliveryLocation, loading: updateLoading } = useUpdateDeliveryLoca
 const { deleteDeliveryLocation, loading: deleteLoading } = useDeleteDeliveryLocation()
 const { fetchLoggedInDeliveryLocations, loading: fetchLoading } = useFetchLoggedInDeliveryLocations()
 const { updatePackPrice, result, loading: updating } = useUpdatePackPrice()
+const { vendor: vendorObj, fetchVendor, loading: fetchingVendor } = useFetchVendor()
 
-// Pack settings
-const packSettings = ref({
+// Toast notification state
+const toast = reactive({
+  show: false,
+  message: '',
+  type: 'success' as 'success' | 'error' | 'info',
+  timeout: null as NodeJS.Timeout | null
+})
+
+// Pack settings from vendor object
+const vendorPackSettings = reactive({
   price: 0,
-  limit: 10
+  limit: 0
 })
 
 // Temporary form state for pack settings
 const tempPackSettings = reactive({
   price: 0,
-  limit: 10
+  limit: 0
+})
+
+// Computed property to check if pack settings have changed
+const hasPackSettingsChanged = computed(() => {
+  return tempPackSettings.price !== vendorPackSettings.price || 
+         tempPackSettings.limit !== vendorPackSettings.limit
+})
+
+// Loading state
+const isLoading = computed(() => {
+  return loading.value || fetchingVendor.value
 })
 
 // New location form
@@ -293,56 +490,71 @@ const canAddLocation = computed(() => {
   return newLocation.name.trim() !== '' && newLocation.price >= 0
 })
 
-// Fetch locations on component mount
-onMounted(() => {
-  fetchLocations()
-})
+// Initialize pack settings from vendor object
+function initializePackSettings() {
+  if (vendorObj.value && vendorObj.value.packSettings) {
+    vendorPackSettings.price = vendorObj.value.packSettings.price || 0
+    vendorPackSettings.limit = vendorObj.value.packSettings.limit || 0
+    
+    // Also update the form values
+    tempPackSettings.price = vendorPackSettings.price
+    tempPackSettings.limit = vendorPackSettings.limit
+    
+    console.log('Initialized pack settings:', vendorPackSettings)
+  }
+}
 
-// Methods
-const fetchLocations = async () => {
+// Fetch all data
+const fetchData = async () => {
   loading.value = true
   error.value = null
   
   try {
+    // Fetch vendor data first
+    await fetchVendor()
+    
+    // Initialize pack settings from vendor object
+    initializePackSettings()
+    
+    // Then fetch locations
     const result = await fetchLoggedInDeliveryLocations()
     locations.value = result.data || []
-    // Assume pack settings are also returned or fetch them separately
-    if (result.packSettings) {
-      packSettings.value = result.packSettings
-      tempPackSettings.price = result.packSettings.price
-      tempPackSettings.limit = result.packSettings.limit
-    }
   } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Failed to load delivery locations'
+    error.value = err instanceof Error ? err.message : 'Failed to load data'
+    console.error('Error fetching data:', err)
   } finally {
     loading.value = false
   }
 }
 
+// Update pack settings
 const updatePackSettings = async () => {
   if (isUpdatingSettings.value) return
   
   isUpdatingSettings.value = true
   try {
     await updatePackPrice({
-      // id: 'pack-settings', // Assuming an ID or endpoint for pack settings
       price: tempPackSettings.price,
       limit: tempPackSettings.limit
     })
     
-    // Update local state on success
-    packSettings.value = { ...tempPackSettings }
+    // Refresh vendor data to get updated pack settings
+    await fetchVendor()
     
-    // Show success notification - could use a toast system
-    showNotification('Pack settings updated successfully!', 'success')
+    // Re-initialize pack settings with fresh data
+    initializePackSettings()
+    
+    // Show success notification
+    showToast('Pack settings updated successfully!', 'success')
   } catch (err) {
-    showNotification('Failed to update pack settings', 'error')
-    console.error(err)
+    showToast('Failed to update pack settings', 'error')
+    console.error('Error updating pack settings:', err)
   } finally {
     isUpdatingSettings.value = false
   }
 }
 
+// Add new location
 const addLocation = async () => {
   if (isAddingLocation.value || !canAddLocation.value) return
   
@@ -351,10 +563,7 @@ const addLocation = async () => {
     const result = await createDeliveryLocation({
       name: newLocation.name.trim(),
       deliveryFee: newLocation.price,
-      // confirmed: false
     })
-
-    console.log(result, 'res')
     
     // Add the new location to our array
     if (result.data) {
@@ -363,15 +572,16 @@ const addLocation = async () => {
     
     // Reset form on success
     resetLocationForm()
-    showNotification('Location added successfully!', 'success')
+    showToast('Location added successfully!', 'success')
   } catch (err) {
-    showNotification('Failed to add location', 'error')
-    console.error(err)
+    showToast('Failed to add location', 'error')
+    console.error('Error adding location:', err)
   } finally {
     isAddingLocation.value = false
   }
 }
 
+// Start editing a location
 const startEdit = (index: number) => {
   editingIndex.value = index
   const location = locations.value[index]
@@ -380,6 +590,7 @@ const startEdit = (index: number) => {
   editingLocation.confirmed = location.confirmed
 }
 
+// Save edited location
 const saveEdit = async () => {
   if (isUpdatingLocation.value || editingIndex.value === null) return
   
@@ -389,10 +600,8 @@ const saveEdit = async () => {
     const location = locations.value[index]
     
     const result = await updateDeliveryLocation(location._id, {
-      // id: location.id,
       name: editingLocation.name.trim(),
       deliveryFee: editingLocation.deliveryFee,
-      // confirmed: location.confirmed
     })
     
     // Update local state
@@ -408,29 +617,30 @@ const saveEdit = async () => {
     
     // Reset editing state
     editingIndex.value = null
-    showNotification('Location updated successfully!', 'success')
+    showToast('Location updated successfully!', 'success')
   } catch (err) {
-    showNotification('Failed to update location', 'error')
-    console.error(err)
+    showToast('Failed to update location', 'error')
+    console.error('Error updating location:', err)
   } finally {
     isUpdatingLocation.value = false
   }
 }
 
+// Cancel editing
 const cancelEdit = () => {
   editingIndex.value = null
 }
 
+// Confirm a location
 const confirmLocation = async (index: number) => {
   const location = locations.value[index]
   if (location.confirmed) return
   
   isConfirming.value = index
   try {
-    const result = await updateDeliveryLocation({
-      id: location.id,
+    const result = await updateDeliveryLocation(location._id, {
       name: location.name,
-      price: location.price,
+      deliveryFee: location.deliveryFee,
       confirmed: true
     })
     
@@ -444,15 +654,16 @@ const confirmLocation = async (index: number) => {
       }
     }
     
-    showNotification('Location confirmed successfully!', 'success')
+    showToast('Location confirmed successfully!', 'success')
   } catch (err) {
-    showNotification('Failed to confirm location', 'error')
-    console.error(err)
+    showToast('Failed to confirm location', 'error')
+    console.error('Error confirming location:', err)
   } finally {
     isConfirming.value = null
   }
 }
 
+// Remove a location
 const removeLocation = async (index: number) => {
   const location = locations.value[index]
   
@@ -462,26 +673,51 @@ const removeLocation = async (index: number) => {
     
     // Remove from local state
     locations.value.splice(index, 1)
-    showNotification('Location deleted successfully!', 'success')
+    showToast('Location deleted successfully!', 'success')
   } catch (err) {
-    showNotification('Failed to delete location', 'error')
-    console.error(err)
+    showToast('Failed to delete location', 'error')
+    console.error('Error deleting location:', err)
   } finally {
     isDeleting.value = null
   }
 }
 
-// Reset form after successful operation
+// Reset location form
 const resetLocationForm = () => {
   newLocation.name = ''
   newLocation.price = 0
 }
 
-// Simple notification function (could be replaced with a proper toast system)
-const showNotification = (message: string, type: 'success' | 'error') => {
-  // Implementation depends on your UI notification system
-  console.log(`[${type}] ${message}`)
+// Show toast notification
+const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+  // Clear any existing timeout
+  if (toast.timeout) {
+    clearTimeout(toast.timeout)
+  }
+  
+  // Set toast properties
+  toast.message = message
+  toast.type = type
+  toast.show = true
+  
+  // Auto-hide after 3 seconds
+  toast.timeout = setTimeout(() => {
+    toast.show = false
+  }, 3000)
 }
+
+// Watch for changes in the vendor object
+watch(() => vendorObj.value, (newVendor) => {
+  if (newVendor) {
+    console.log('Vendor object updated:', newVendor)
+    initializePackSettings()
+  }
+}, { immediate: true, deep: true })
+
+// Initialize on component mount
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style scoped>
@@ -543,5 +779,31 @@ const showNotification = (message: string, type: 'success' | 'error') => {
 @keyframes appear {
   0% { opacity: 0; transform: translateY(20px); }
   100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Toast animation */
+.toast-enter-active, .toast-leave-active {
+  transition: all 0.3s ease;
+}
+.toast-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 </style>

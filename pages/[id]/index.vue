@@ -24,7 +24,7 @@
       <!-- Restaurant Info Card -->
       <div class="card-container">
         <div
-          class="relative mx-4 -mt-10 md:-mt-16 bg-gradient-to-r from-orange-100 to-yellow-50 rounded-md shadow-xl p-6 z-10 border border-orange-200 restaurant-card"
+          class="relative mx-4 md:-mt-16 bg-gradient-to-r from-orange-100 to-yellow-50 rounded-md shadow-xl p-6 z-10 border border-orange-200 restaurant-card"
         >
           <!-- Decorative elements -->
           <div
@@ -228,6 +228,8 @@
                   @click="addNewPack"
                   class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-sm flex items-center transition-all duration-300 transform hover:scale-105"
                   :class="{ 'relative': true }"
+                  :disabled="cart.packs.value.length >= packLimit"
+                  :title="cart.packs.value.length >= packLimit ? `Maximum ${packLimit} packs allowed` : 'Add a new pack'"
                 >
                   <PlusIcon class="h-4 w-4 mr-1" /> Add Pack
                   <span v-if="isNewPackActive" class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full"></span>
@@ -236,11 +238,19 @@
                   @click="openDuplicatePackModal"
                   class="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-md text-sm flex items-center transition-all duration-300 transform hover:scale-105"
                   :class="{ 'relative': true }"
+                  :disabled="cart.packs.value.length >= packLimit"
+                  :title="cart.packs.value.length >= packLimit ? `Maximum ${packLimit} packs allowed` : 'Duplicate a pack'"
                 >
                   <CopyIcon class="h-4 w-4 mr-1" /> Duplicate
                   <span v-if="isDuplicatedPackActive" class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full"></span>
                 </button>
               </div>
+            </div>
+
+            <!-- Pack Limit Warning -->
+            <div v-if="cart.packs.value.length >= packLimit" class="mb-4 p-2 bg-yellow-50 border border-yellow-200 rounded-md text-sm text-yellow-700 flex items-start">
+              <AlertCircleIcon class="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+              <span>This vendor has a limit of {{ packLimit }} packs per order.</span>
             </div>
 
             <div
@@ -395,14 +405,6 @@
                   <span>Pack Fee (₦{{ packFee }} × {{ cart.packs.value.length }}):</span>
                   <span class="font-medium">₦{{ formatPrice(packFee * cart.packs.value.length) }}</span>
                 </div>
-                <div class="flex justify-between text-sm text-gray-600 mb-1">
-                  <span>Service Charge:</span>
-                  <span class="font-medium">₦50</span>
-                </div>
-                <!-- <div class="flex justify-between text-sm text-gray-600">
-                  <span>Delivery Fee:</span>
-                  <span class="font-medium">From ₦700</span>
-                </div> -->
                 <div class="flex justify-between text-sm font-bold text-gray-800 mt-2 pt-2 border-t border-dashed border-gray-200">
                   <span>Total:</span>
                   <span>₦{{ formatPrice(calculateTotal()) }}</span>
@@ -483,6 +485,14 @@
               </div>
             </div>
 
+            <div v-if="cart.packs.value.length >= packLimit" class="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-sm text-yellow-700 flex items-start">
+              <AlertCircleIcon class="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+              <div>
+                <p class="font-medium mb-1">Pack limit reached</p>
+                <p>This vendor has a maximum limit of {{ packLimit }} packs per order. Please remove a pack before duplicating.</p>
+              </div>
+            </div>
+
             <div class="flex justify-end gap-3">
               <button
                 @click="closeDuplicatePackModal"
@@ -493,6 +503,8 @@
               <button
                 @click="duplicateSelectedPack"
                 class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+                :disabled="cart.packs.value.length >= packLimit"
+                :class="{'opacity-50 cursor-not-allowed': cart.packs.value.length >= packLimit}"
               >
                 Duplicate Pack
               </button>
@@ -668,6 +680,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useCart } from "~/composables/useCart";
 import { useToast } from "~/composables/useToast";
+import { useFetchVendor } from "@/composables/modules/vendor/useFetchVendor"
 import { useFetchVendorById } from "@/composables/modules/vendor/useFetchVendorById";
 import { useFetchVendorMenu } from "@/composables/modules/menu/useFetchVendorMenu";
 import {
@@ -716,13 +729,15 @@ const cart = useCart();
 const { menus, loading: fetchingMenu, fetchVendorMenu } = useFetchVendorMenu();
 const { showToast } = useCustomToast();
 const { vendor, loading, error } = useFetchVendorById(route.params.id as string);
+const { vendor: vendorObj } = useFetchVendor();
 
 // State
 const searchQuery = ref("");
 const activePackIndex = ref(0);
 const isNewPackActive = ref(false);
 const isDuplicatedPackActive = ref(false);
-const packFee = ref(100); // Default pack fee, should be configured by vendor
+const packFee = ref(0); // Will be set from vendor object
+const packLimit = ref(0); // Will be set from vendor object
 
 // Computed properties for filtered meals
 const filteredMeals = computed(() => {
@@ -761,15 +776,12 @@ const formatPrice = (price: number): string => {
   return price.toLocaleString();
 };
 
-// Calculate total including pack fees
+// Calculate total including pack fees (removed service charge)
 const calculateTotal = (): number => {
   const subtotal = cart.subtotal.value;
   const packFees = packFee.value * cart.packs.value.length;
-  const serviceCharge = 50;
-  // const deliveryFee = 700; // Minimum delivery fee
   
-  return subtotal + packFees + serviceCharge 
-  // + deliveryFee;
+  return subtotal + packFees;
 };
 
 // Set active pack index
@@ -878,6 +890,18 @@ const openDuplicatePackModal = () => {
     return;
   }
   
+  // Check if we've reached the pack limit
+  if (cart.packs.value.length >= packLimit.value) {
+    showToast({
+      title: "Pack Limit Reached",
+      message: `This vendor has a maximum limit of ${packLimit.value} packs per order`,
+      toastType: "warning",
+      duration: 3000,
+    });
+    showDuplicatePackModal.value = true;
+    return;
+  }
+  
   if (cart.packs.value.length === 1) {
     // If there's only one pack, duplicate it directly
     duplicatePack(0);
@@ -893,11 +917,33 @@ const closeDuplicatePackModal = () => {
 };
 
 const duplicateSelectedPack = () => {
+  // Check if we've reached the pack limit
+  if (cart.packs.value.length >= packLimit.value) {
+    showToast({
+      title: "Pack Limit Reached",
+      message: `This vendor has a maximum limit of ${packLimit.value} packs per order`,
+      toastType: "warning",
+      duration: 3000,
+    });
+    return;
+  }
+  
   duplicatePack(packToDuplicateIndex.value);
   closeDuplicatePackModal();
 };
 
 const addNewPack = () => {
+  // Check if we've reached the pack limit
+  if (cart.packs.value.length >= packLimit.value) {
+    showToast({
+      title: "Pack Limit Reached",
+      message: `This vendor has a maximum limit of ${packLimit.value} packs per order`,
+      toastType: "warning",
+      duration: 3000,
+    });
+    return;
+  }
+  
   const success = cart.addNewPack();
   if (success) {
     // Set the new pack as active
@@ -915,6 +961,17 @@ const addNewPack = () => {
 };
 
 const duplicatePack = (index: number) => {
+  // Check if we've reached the pack limit
+  if (cart.packs.value.length >= packLimit.value) {
+    showToast({
+      title: "Pack Limit Reached",
+      message: `This vendor has a maximum limit of ${packLimit.value} packs per order`,
+      toastType: "warning",
+      duration: 3000,
+    });
+    return;
+  }
+  
   if (cart.packs.value.length > 0) {
     const success = cart.duplicatePack(index);
     if (success) {
@@ -1060,6 +1117,22 @@ const formatDate = (dateString?: string): string => {
   }).format(date);
 };
 
+// Initialize pack settings from vendor object
+const initializePackSettings = () => {
+  if (vendorObj.value && vendorObj.value.packSettings) {
+    // Set pack fee from vendor's packSettings
+    packFee.value = vendorObj.value.packSettings.price || 0;
+    
+    // Set pack limit from vendor's packSettings
+    packLimit.value = vendorObj.value.packSettings.limit || 0;
+    
+    console.log('Initialized pack settings:', {
+      price: packFee.value,
+      limit: packLimit.value
+    });
+  }
+};
+
 // Lifecycle
 onMounted(() => {
   // Initialize cart from localStorage
@@ -1070,10 +1143,8 @@ onMounted(() => {
     cart.addNewPack();
   }
   
-  // Set the pack fee from vendor configuration if available
-  if (vendor.value && vendor.value.packFee) {
-    packFee.value = vendor.value.packFee;
-  }
+  // Initialize pack settings from vendor object
+  initializePackSettings();
 });
 
 watch(
@@ -1089,15 +1160,27 @@ watch(
   { immediate: true }
 );
 
+// Watch for changes in the vendor object to update pack settings
+watch(
+  () => vendorObj.value,
+  (newVendor) => {
+    if (newVendor) {
+      initializePackSettings();
+    }
+  },
+  { immediate: true, deep: true }
+);
+
 watch(
   () => vendor.value,
   async (newVendor) => {
     if (newVendor) {
       await fetchVendorMenu(newVendor._id);
       
-      // Update pack fee from vendor configuration if available
-      if (newVendor.packFee) {
-        packFee.value = newVendor.packFee;
+      // If vendor has packSettings, update our local values
+      if (newVendor.packSettings) {
+        packFee.value = newVendor.packSettings.price || 0;
+        packLimit.value = newVendor.packSettings.limit || 0;
       }
     }
   }

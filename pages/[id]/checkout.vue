@@ -169,15 +169,21 @@
                   >₦{{ formatPrice(cart.subtotal.value) }}</span
                 >
               </div>
+              <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Service Charge</span>
+              <span class="font-medium"
+                >₦{{ formatPrice(serviceCharge) }}</span
+              >
+            </div>
+
               <div class="flex justify-between text-sm" v-if="deliveryMethod === 'delivery'">
                 <span class="text-gray-600">Delivery</span>
                 <span class="font-medium">₦{{ formatPrice(deliveryFee) }}</span>
               </div>
+              
               <div class="flex justify-between text-sm">
-                <span class="text-gray-600">Service Charge</span>
-                <span class="font-medium"
-                  >₦{{ formatPrice(serviceCharge) }}</span
-                >
+                <span class="text-gray-600">Pack Fee (₦{{ packPrice }} × {{ cart.packs.value.length }})</span>
+                <span class="font-medium">₦{{ formatPrice(calculatePackFees()) }}</span>
               </div>
               <div
                 class="flex justify-between mt-4 pt-4 border-t border-gray-200"
@@ -408,6 +414,12 @@
                     >₦{{ formatPrice(cart.subtotal.value) }}</span
                   >
                 </div>
+                <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Service Charge</span>
+              <span class="font-medium"
+                >₦{{ formatPrice(serviceCharge) }}</span
+              >
+            </div>
                 <div class="flex justify-between text-sm" v-if="deliveryMethod === 'delivery'">
                   <span class="text-gray-600">Delivery</span>
                   <span class="font-medium animate-highlight" key="delivery-fee">
@@ -415,10 +427,8 @@
                   </span>
                 </div>
                 <div class="flex justify-between text-sm">
-                  <span class="text-gray-600">Service Charge</span>
-                  <span class="font-medium"
-                    >₦{{ formatPrice(serviceCharge) }}</span
-                  >
+                  <span class="text-gray-600">Pack Fee (₦{{ packPrice }} × {{ cart.packs.value.length }})</span>
+                  <span class="font-medium">₦{{ formatPrice(calculatePackFees()) }}</span>
                 </div>
                 <div
                   class="flex justify-between mt-4 pt-4 border-t border-gray-200"
@@ -613,6 +623,7 @@ import {
 import ToastContainer from "~/components/ToastContainer.vue";
 import { useCustomToast } from "@/composables/core/useCustomToast";
 import { useFetchVendorById } from "@/composables/modules/vendor/useFetchVendorById";
+import { useFetchVendor } from "@/composables/modules/vendor/useFetchVendor"
 
 // Composables
 const { showToast } = useCustomToast();
@@ -621,7 +632,10 @@ const route = useRoute();
 const cart = useCart();
 const toast = useToast();
 const { createOrder, loading: orderLoading, error, orderResponse } = useCreateOrder();
-const { vendor } = useFetchVendorById(route.params.id as string);
+// const vendorObj = localStorage.getItem('selected-vendor') as any
+const { vendor } = useFetchVendor();
+// const parsedVendor = JSON.parse(vendorObj)
+// const { vendor } = useFetchVendorById(parsedVendor._id as string);
 const { fetchVendorDeliveryLocations, loading: fetchingDeliveryLocations, vendorDeliveryLocations } = useVendorDeliveryLocations();
 
 // State
@@ -647,14 +661,17 @@ const validationErrors = ref({
 const orderSuccess = ref(false);
 const orderIds = ref<string[]>([]);
 
-// Constants
-const serviceCharge = 50;
+// Pack settings from vendor
+const serviceCharge = ref(50);
+const packPrice = ref(0);
+const packLimit = ref(0);
+
+// Computed
 const deliveryFee = computed(() => {
   if (deliveryMethod.value !== "delivery") return 0;
   return selectedLocation.value ? selectedLocation.value.deliveryFee : 0;
 });
 
-// Computed
 const isFormValid = computed(() => {
   if (deliveryMethod.value === 'pickup') {
     return (
@@ -678,8 +695,14 @@ const formatPrice = (price: number): string => {
   return price.toLocaleString();
 };
 
+// Calculate pack fees based on vendor's packSettings
+const calculatePackFees = (): number => {
+  return packPrice.value * cart.packs.value.length;
+};
+
+// Calculate grand total (subtotal + delivery fee + pack fees)
 const calculateGrandTotal = (): number => {
-  return cart.subtotal.value + deliveryFee.value + serviceCharge;
+  return cart.subtotal.value + serviceCharge.value + deliveryFee.value + calculatePackFees();
 };
 
 const incrementItemQuantity = (packIndex: number, itemIndex: number) => {
@@ -877,7 +900,8 @@ const submitOrder = async () => {
     }
 
     // Show success message with animation
-    showOrderSuccessModal.value = true;
+    chatWithVendor()
+    // showOrderSuccessModal.value = true;
 
     // If save order is checked, we would save it to the user's profile
     if (saveOrder.value) {
@@ -893,6 +917,7 @@ const submitOrder = async () => {
     });
   }
 };
+
 
 const chatWithVendor = () => {
   // Get vendor details from local storage
@@ -910,70 +935,52 @@ const chatWithVendor = () => {
   const vendorPhone = vendorData?.phoneNumber || "";
   const vendorName = vendorData?.restaurantName || "Vendor";
   
-  // Create an exciting and user-friendly message
-  let message = `🎉 *NEW ORDER FOR ${vendorName.toUpperCase()}!* 🎉\n\n`;
+  // Create the message in the new format
+  let message = `ORDER FROM SATISFY\n`;
+  message += `ORDER DETAILS\n`;
+  message += `Order ID : ${orderResponse?.value?.orderId || 'Pending'}\n`;
   
-  // Add a friendly greeting
-  message += `Hi there! You've got a delicious new order from ${customerName.value}! 😋\n\n`;
-  
-  // Add order details with emojis and formatting
-  message += `📋 *ORDER DETAILS* (${cart.totalItems.value} items) 📋\n\n`;
-
-  message += `📌 Order ID: ${orderResponse?.value?.orderId || 'Pending'}\n`;
-  
-  // Add items from each pack with friendly formatting
-  let packCounter = 0;
+  // Add items from each pack with the new format, using pack icon
   cart.packs.value.forEach((pack, packIndex) => {
     if (pack.items.length > 0) {
-      packCounter++;
-      message += `🍱 *PACK ${packCounter}* (${pack.items.length} ${pack.items.length === 1 ? 'item' : 'items'}) 🍱\n\n`;
+      message += `--🍱--\n`;
+      message += `PACK${packIndex + 1}\n`;
+      message += `--🍱--\n`;
       
-      // Add each item in the pack with exciting format
+      // Add each item in the pack with the new format
       pack.items.forEach(item => {
-        message += `🔸 *${item.name}*\n`;
-        message += `   ₦${formatPrice(item.price)} × ${item.quantity} = ₦${formatPrice(item.price * item.quantity)}\n\n`;
+        message += `${item.name} | qty:${item.quantity}\n`;
       });
-      
-      // Add pack note if exists
-      if (pack.note) {
-        message += `📝 *Special Request:* ${pack.note}\n\n`;
-      }
     }
   });
   
-  // Add order summary section with eye-catching format
-  message += `💰 *ORDER SUMMARY* 💰\n\n`;
-  message += `📌 Subtotal: ₦${formatPrice(cart.subtotal.value)}\n`;
-  message += `📌 Service Charge: ₦${formatPrice(serviceCharge)}\n`;
+  // Add order summary with the new format
+  message += `SUB TOTAL : ₦${formatPrice(cart.subtotal.value)}\n`;
   
   if (deliveryMethod.value === 'delivery' && selectedLocation.value) {
-    message += `📌 Delivery Fee (${selectedLocation.value.name}): ₦${formatPrice(selectedLocation.value.deliveryFee)}\n`;
-  } else {
-    message += `📌 Pickup: Free\n`;
+    message += `DELIVERY PRICE : ₦${formatPrice(selectedLocation.value.deliveryFee)}\n`;
   }
   
-  message += `🔥 *GRAND TOTAL: ₦${formatPrice(calculateGrandTotal())}* 🔥\n\n`;
+  message += `TOTAL PRICE : ₦${formatPrice(calculateGrandTotal())}\n`;
   
-  // Add customer details section with friendly format
-  message += `👤 *CUSTOMER DETAILS* 👤\n\n`;
-  message += `🙋 Name: ${customerName.value}\n`;
-  message += `📞 Phone: ${phoneNumber.value}\n`;
+  // Add customer details section with the new format
+  message += `------CUSTOMER DETAILS------\n`;
+  message += `Name : ${customerName.value}\n`;
   
-  if (deliveryMethod.value === 'delivery' && selectedLocation.value) {
-    message += `📍 Location: ${selectedLocation.value.name}\n`;
-    message += `🏠 Delivery Address: ${deliveryAddress.value}\n`;
+  if (selectedLocation.value) {
+    message += `Location : ${selectedLocation.value.name}\n`;
   }
   
-  message += `🚚 Delivery Method: ${deliveryMethod.value === 'delivery' ? '🚚 Delivery' : '🏪 Pickup'}\n\n`;
-  
-  // Add additional notes if provided
-  if (additionalNotes.value) {
-    message += `📝 *Additional Notes:* ${additionalNotes.value}\n\n`;
+  if (deliveryMethod.value === 'delivery' && deliveryAddress.value) {
+    message += `Address : ${deliveryAddress.value}\n`;
   }
   
-  // Add a friendly closing message
-  message += `⏰ Order placed at: ${new Date().toLocaleTimeString()}\n\n`;
-  message += `Thank you for your prompt attention! We're excited to receive this delicious order! 🙏\n`;
+  message += `Phone number : ${phoneNumber.value}\n`;
+  
+  // Add price confirmation link with satisfy instead of cttaste
+  message += `---PRICE CONFIRMATION---\n`;
+  const orderId = orderResponse?.value?.orderId || 'Pending';
+  message += `https://satisfy.com/price/11839/${orderId}\n`;
   
   // Encode the message for WhatsApp URL
   const encodedMessage = encodeURIComponent(message);
@@ -1006,6 +1013,137 @@ const chatWithVendor = () => {
   
   // Navigate back to menu
   router.push(`/${route.params.id}`);
+};
+
+// const chatWithVendor = () => {
+//   // Get vendor details from local storage
+//   let vendorData = null;
+//   try {
+//     const vendorString = localStorage.getItem("selected-vendor");
+//     if (vendorString) {
+//       vendorData = JSON.parse(vendorString);
+//     }
+//   } catch (error) {
+//     console.error("Error retrieving vendor data:", error);
+//   }
+
+//   // If no vendor data or phone number, use a fallback approach
+//   const vendorPhone = vendorData?.phoneNumber || "";
+//   const vendorName = vendorData?.restaurantName || "Vendor";
+  
+//   // Create an exciting and user-friendly message
+//   let message = `🎉 *NEW ORDER FOR ${vendorName.toUpperCase()}!* 🎉\n\n`;
+  
+//   // Add a friendly greeting
+//   message += `Hi there! You've got a delicious new order from ${customerName.value}! 😋\n\n`;
+  
+//   // Add order details with emojis and formatting
+//   message += `📋 *ORDER DETAILS* (${cart.totalItems.value} items) 📋\n\n`;
+
+//   message += `📌 Order ID: ${orderResponse?.value?.orderId || 'Pending'}\n`;
+  
+//   // Add items from each pack with friendly formatting
+//   let packCounter = 0;
+//   cart.packs.value.forEach((pack, packIndex) => {
+//     if (pack.items.length > 0) {
+//       packCounter++;
+//       message += `🍱 *PACK ${packCounter}* (${pack.items.length} ${pack.items.length === 1 ? 'item' : 'items'}) 🍱\n\n`;
+      
+//       // Add each item in the pack with exciting format
+//       pack.items.forEach(item => {
+//         message += `🔸 *${item.name}*\n`;
+//         message += `   ₦${formatPrice(item.price)} × ${item.quantity} = ₦${formatPrice(item.price * item.quantity)}\n\n`;
+//       });
+      
+//       // Add pack note if exists
+//       if (pack.note) {
+//         message += `📝 *Special Request:* ${pack.note}\n\n`;
+//       }
+//     }
+//   });
+  
+//   // Add order summary section with eye-catching format
+//   message += `💰 *ORDER SUMMARY* 💰\n\n`;
+//   message += `📌 Subtotal: ₦${formatPrice(cart.subtotal.value)}\n`;
+//   message += `📌 Service Charge: ₦${formatPrice(serviceCharge.value)}\n`;
+  
+//   if (deliveryMethod.value === 'delivery' && selectedLocation.value) {
+//     message += `📌 Delivery Fee (${selectedLocation.value.name}): ₦${formatPrice(selectedLocation.value.deliveryFee)}\n`;
+//   } else {
+//     message += `📌 Pickup: Free\n`;
+//   }
+  
+//   message += `📌 Pack Fee (₦${packPrice.value} × ${cart.packs.value.length}): ₦${formatPrice(calculatePackFees())}\n`;
+//   message += `🔥 *GRAND TOTAL: ₦${formatPrice(calculateGrandTotal())}* 🔥\n\n`;
+  
+//   // Add customer details section with friendly format
+//   message += `👤 *CUSTOMER DETAILS* 👤\n\n`;
+//   message += `🙋 Name: ${customerName.value}\n`;
+//   message += `📞 Phone: ${phoneNumber.value}\n`;
+  
+//   if (deliveryMethod.value === 'delivery' && selectedLocation.value) {
+//     message += `📍 Location: ${selectedLocation.value.name}\n`;
+//     message += `🏠 Delivery Address: ${deliveryAddress.value}\n`;
+//   }
+  
+//   message += `🚚 Delivery Method: ${deliveryMethod.value === 'delivery' ? '🚚 Delivery' : '🏪 Pickup'}\n\n`;
+  
+//   // Add additional notes if provided
+//   if (additionalNotes.value) {
+//     message += `📝 *Additional Notes:* ${additionalNotes.value}\n\n`;
+//   }
+  
+//   // Add a friendly closing message
+//   message += `⏰ Order placed at: ${new Date().toLocaleTimeString()}\n\n`;
+//   message += `Thank you for your prompt attention! We're excited to receive this delicious order! 🙏\n`;
+  
+//   // Encode the message for WhatsApp URL
+//   const encodedMessage = encodeURIComponent(message);
+  
+//   // Format the phone number correctly for WhatsApp
+//   let formattedPhone = "";
+//   if (vendorPhone) {
+//     // Remove any non-digit characters
+//     formattedPhone = vendorPhone.replace(/\D/g, "");
+    
+//     // Ensure it starts with country code (if not already)
+//     if (!formattedPhone.startsWith("234") && formattedPhone.startsWith("0")) {
+//       // Replace leading 0 with 234 (Nigeria's country code)
+//       formattedPhone = "234" + formattedPhone.substring(1);
+//     }
+//   }
+  
+//   // Open WhatsApp with the message and vendor's phone number
+//   const whatsappUrl = formattedPhone 
+//     ? `https://wa.me/${formattedPhone}?text=${encodedMessage}` 
+//     : `https://wa.me/?text=${encodedMessage}`;
+  
+//   window.open(whatsappUrl, '_blank');
+
+//   // Clear cart after successful order
+//   cart.clearCart();
+  
+//   // Close the success modal
+//   showOrderSuccessModal.value = false;
+  
+//   // Navigate back to menu
+//   router.push(`/${route.params.id}`);
+// };
+
+// Initialize pack settings from vendor object
+const initializePackSettings = () => {
+  if (vendor.value && vendor.value.packSettings) {
+    // Set pack price from vendor's packSettings
+    packPrice.value = vendor.value.packSettings.price || 0;
+    
+    // Set pack limit from vendor's packSettings
+    packLimit.value = vendor.value.packSettings.limit || 0;
+    
+    console.log('Initialized pack settings:', {
+      price: packPrice.value,
+      limit: packLimit.value
+    });
+  }
 };
 
 // Watch for delivery method changes to reset validation errors
@@ -1047,16 +1185,33 @@ onMounted(() => {
   if (vendor.value && vendor.value._id) {
     fetchVendorDeliveryLocations(vendor.value._id);
   }
+  
+  // Initialize pack settings from vendor object
+  initializePackSettings();
 });
 
-// Watch for vendor changes to fetch delivery locations
+// Watch for vendor changes to fetch delivery locations and update pack settings
 watch(
   () => vendor.value,
   async (newVendor) => {
     if (newVendor && newVendor._id) {
       await fetchVendorDeliveryLocations(newVendor._id);
+      initializePackSettings();
     }
   }
+);
+
+watch(
+  () => route.params.id,
+  (newVendorId) => {
+    if (newVendorId) {
+      vendor.value = null;
+      // loading.value = true;
+      error.value = null;
+      useFetchVendorById();
+    }
+  },
+  { immediate: true }
 );
 </script>
 

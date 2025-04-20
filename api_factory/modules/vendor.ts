@@ -26,7 +26,7 @@ export const vendor_api = {
     return GATEWAY_ENDPOINT.get(url);
   },
   $_update_pack_price: (payload: { limit: number, price: number}) => {
-    let url = `/vendor/update-pack-price`;
+    let url = `/vendor/update-pack-settings`;
     return GATEWAY_ENDPOINT.patch(url, payload);
   },
   $_update_working_hours: (payload: any) => {

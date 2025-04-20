@@ -4,18 +4,22 @@
       <!-- Working Hours Section -->
       <div class="bg-white dark:bg-gray-800 rounded-md shadow-xl p-8 mb-8 transform transition-all duration-500 hover:shadow-2xl">
         <h2 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center mb-8">
-          <span class="relative">
+          <span class="relative group">
             Vendor Availability
-            <span class="absolute bottom-0 left-0 w-full h-1 bg-orange-500 rounded-full transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+            <span class="absolute bottom-0 left-0 w-full h-1 bg-orange-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
           </span>
           <Clock class="ml-3 h-6 w-6 text-orange-500" />
         </h2>
         
-        <div class="space-y-6">
+        <div v-if="isLoading" class="flex justify-center items-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+        </div>
+        
+        <div v-else class="space-y-6">
           <div 
             v-for="(day, index) in workingHours" 
             :key="day.name"
-            class="grid grid-cols-1 md:grid-cols-3 items-center gap-6 py-5 border-b border-gray-100 dark:border-gray-700 last:border-0 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+            class="grid grid-cols-1 md:grid-cols-3 items-center gap-6 py-5 border-[0.5px] px-2 border-gray-100 dark:border-gray-700 last:border-0 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
             :class="{'animate-pulse-once': day.isUpdating}"
           >
             <div class="text-gray-700 dark:text-gray-300 font-medium text-lg">{{ day.name }}</div>
@@ -24,7 +28,7 @@
               <div 
                 class="w-14 h-14 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 transform hover:scale-110 relative"
                 :class="[
-                  day.isOpen ? 'bg-green-500' : 'bg-red-500',
+                  day.isActive ? 'bg-green-500' : 'bg-red-500',
                   day.isUpdating ? 'opacity-70' : ''
                 ]"
                 @click="toggleDayAvailability(day)"
@@ -32,10 +36,10 @@
                 <div v-if="day.isUpdating" class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-20">
                   <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
                 </div>
-                <Clock v-else-if="day.isOpen" class="h-6 w-6 text-white" />
+                <Clock v-else-if="day.isActive" class="h-6 w-6 text-white" />
                 <X v-else class="h-6 w-6 text-white" />
-                <span class="absolute -bottom-6 text-xs font-medium" :class="day.isOpen ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
-                  {{ day.isOpen ? 'Available' : 'Unavailable' }}
+                <span class="absolute -bottom-6 text-xs font-medium" :class="day.isActive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+                  {{ day.isActive ? 'Available' : 'Unavailable' }}
                 </span>
               </div>
             </div>
@@ -47,25 +51,32 @@
                   <input 
                     type="time" 
                     v-model="day.openingTime"
-                    :disabled="!day.isOpen || day.isUpdating || day.isUpdatingTime === 'opening'"
+                    :disabled="!day.isActive || day.isUpdating"
                     class="w-full border rounded-lg py-3 px-4 pr-10 transition-all duration-200 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    :class="day.isOpen 
+                    :class="day.isActive 
                       ? 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white' 
                       : 'border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed'"
                     @focus="day.isFocused = 'opening'"
                     @blur="day.isFocused = null"
+                    @change="handleTimeChange(day, 'opening')"
                   />
-                  <div v-if="day.isUpdatingTime === 'opening'" class="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500"></div>
-                  </div>
+                  <button 
+                    v-if="day.isActive && day.hasOpeningTimeChanged"
+                    @click="saveTimeChange(day, 'opening')"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-600 transition-all duration-200 animate-fade-in"
+                    :disabled="day.isUpdatingTime === 'opening'"
+                  >
+                    <div v-if="day.isUpdatingTime === 'opening'" class="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500"></div>
+                    <Save v-else class="h-5 w-5" />
+                  </button>
                   <Clock 
                     v-else
                     class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 transition-colors duration-200" 
-                    :class="day.isOpen ? 'text-orange-500' : 'text-gray-400 dark:text-gray-500'"
+                    :class="day.isActive ? 'text-orange-500' : 'text-gray-400 dark:text-gray-500'"
                   />
                   <span 
                     class="absolute inset-0 border-2 border-orange-500 rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none"
-                    :class="{'opacity-100': day.isOpen && day.isFocused === 'opening'}"
+                    :class="{'opacity-100': day.isActive && day.isFocused === 'opening'}"
                   ></span>
                 </div>
               </div>
@@ -76,25 +87,32 @@
                   <input 
                     type="time" 
                     v-model="day.closingTime"
-                    :disabled="!day.isOpen || day.isUpdating || day.isUpdatingTime === 'closing'"
+                    :disabled="!day.isActive || day.isUpdating"
                     class="w-full border rounded-lg py-3 px-4 pr-10 transition-all duration-200 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    :class="day.isOpen 
+                    :class="day.isActive 
                       ? 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white' 
                       : 'border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed'"
                     @focus="day.isFocused = 'closing'"
                     @blur="day.isFocused = null"
+                    @change="handleTimeChange(day, 'closing')"
                   />
-                  <div v-if="day.isUpdatingTime === 'closing'" class="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500"></div>
-                  </div>
+                  <button 
+                    v-if="day.isActive && day.hasClosingTimeChanged"
+                    @click="saveTimeChange(day, 'closing')"
+                    class="absolute right-10 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-600 transition-all duration-200 animate-fade-in"
+                    :disabled="day.isUpdatingTime === 'closing'"
+                  >
+                    <div v-if="day.isUpdatingTime === 'closing'" class="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500"></div>
+                    <Save v-else class="h-5 w-5" />
+                  </button>
                   <Clock 
                     v-else
                     class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 transition-colors duration-200" 
-                    :class="day.isOpen ? 'text-orange-500' : 'text-gray-400 dark:text-gray-500'"
+                    :class="day.isActive ? 'text-orange-500' : 'text-gray-400 dark:text-gray-500'"
                   />
                   <span 
                     class="absolute inset-0 border-2 border-orange-500 rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none"
-                    :class="{'opacity-100': day.isOpen && day.isFocused === 'closing'}"
+                    :class="{'opacity-100': day.isActive && day.isFocused === 'closing'}"
                   ></span>
                 </div>
               </div>
@@ -105,10 +123,19 @@
 
       <!-- Availability Summary Card -->
       <div class="bg-white dark:bg-gray-800 rounded-md shadow-lg p-6 mb-8 transition-all duration-300 hover:shadow-xl">
-        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Availability Summary</h3>
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center">
+          <span class="relative group">
+            Availability Summary
+            <span class="absolute bottom-0 left-0 w-full h-1 bg-orange-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+          </span>
+        </h3>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-100 dark:border-green-800">
+        <div v-if="isLoading" class="flex justify-center items-center py-8">
+          <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500"></div>
+        </div>
+        
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/10 rounded-lg p-4 border border-green-100 dark:border-green-800 transition-all duration-300 hover:shadow-md">
             <h4 class="text-green-700 dark:text-green-400 font-medium mb-2 flex items-center">
               <CheckCircle class="h-5 w-5 mr-2" />
               Available Days
@@ -117,7 +144,7 @@
               <span 
                 v-for="day in availableDays" 
                 :key="day.name"
-                class="px-3 py-1 bg-green-100 dark:bg-green-800/40 text-green-700 dark:text-green-300 rounded-full text-sm"
+                class="px-3 py-1 bg-green-100 dark:bg-green-800/40 text-green-700 dark:text-green-300 rounded-full text-sm transition-all duration-200 hover:bg-green-200 dark:hover:bg-green-800/60"
               >
                 {{ day.name }}
               </span>
@@ -127,7 +154,7 @@
             </div>
           </div>
           
-          <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-100 dark:border-red-800">
+          <div class="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/10 rounded-lg p-4 border border-red-100 dark:border-red-800 transition-all duration-300 hover:shadow-md">
             <h4 class="text-red-700 dark:text-red-400 font-medium mb-2 flex items-center">
               <X class="h-5 w-5 mr-2" />
               Unavailable Days
@@ -136,7 +163,7 @@
               <span 
                 v-for="day in unavailableDays" 
                 :key="day.name"
-                class="px-3 py-1 bg-red-100 dark:bg-red-800/40 text-red-700 dark:text-red-300 rounded-full text-sm"
+                class="px-3 py-1 bg-red-100 dark:bg-red-800/40 text-red-700 dark:text-red-300 rounded-full text-sm transition-all duration-200 hover:bg-red-200 dark:hover:bg-red-800/60"
               >
                 {{ day.name }}
               </span>
@@ -147,7 +174,7 @@
           </div>
         </div>
         
-        <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+        <div class="mt-6 p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/10 rounded-lg border border-blue-100 dark:border-blue-800 transition-all duration-300 hover:shadow-md">
           <h4 class="text-blue-700 dark:text-blue-400 font-medium mb-2 flex items-center">
             <Info class="h-5 w-5 mr-2" />
             Weekly Hours
@@ -188,6 +215,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useUpdateWorkingHours } from "@/composables/modules/vendor/useUpdateWorkngHours"
+import { useFetchVendor } from "@/composables/modules/vendor/useFetchVendor"
 import { 
   Clock, 
   X,
@@ -196,57 +224,52 @@ import {
   Save,
   Info
 } from 'lucide-vue-next'
+import { definePageMeta } from '#imports'
 
-const { updateWorkingHours, loading: globalLoading } = useUpdateWorkingHours()
+const { updateWorkingHours, loading: updateLoading } = useUpdateWorkingHours()
+const { vendor: vendorObj, fetchVendor, loading: fetchingVendor } = useFetchVendor()
 
 // Types
 interface WorkingHour {
+  _id?: string
   name: string
+  day: string
   openingTime: string
   closingTime: string
-  isOpen: boolean
+  isActive: boolean
   isUpdating?: boolean
   isUpdatingTime?: 'opening' | 'closing' | null
   isFocused?: 'opening' | 'closing' | null
-  // Add these properties to track the previous values for comparison
-  prevOpeningTime?: string
-  prevClosingTime?: string
+  originalOpeningTime: string
+  originalClosingTime: string
+  hasOpeningTimeChanged: boolean
+  hasClosingTimeChanged: boolean
 }
 
 // Working Hours Data
-const workingHours = ref<WorkingHour[]>([
-  { name: 'Monday', openingTime: '09:00', closingTime: '17:00', isOpen: true, prevOpeningTime: '09:00', prevClosingTime: '17:00' },
-  { name: 'Tuesday', openingTime: '09:00', closingTime: '17:00', isOpen: true, prevOpeningTime: '09:00', prevClosingTime: '17:00' },
-  { name: 'Wednesday', openingTime: '09:00', closingTime: '17:00', isOpen: true, prevOpeningTime: '09:00', prevClosingTime: '17:00' },
-  { name: 'Thursday', openingTime: '09:00', closingTime: '17:00', isOpen: true, prevOpeningTime: '09:00', prevClosingTime: '17:00' },
-  { name: 'Friday', openingTime: '09:00', closingTime: '17:00', isOpen: true, prevOpeningTime: '09:00', prevClosingTime: '17:00' },
-  { name: 'Saturday', openingTime: '10:00', closingTime: '15:00', isOpen: false, prevOpeningTime: '10:00', prevClosingTime: '15:00' },
-  { name: 'Sunday', openingTime: '10:00', closingTime: '15:00', isOpen: false, prevOpeningTime: '10:00', prevClosingTime: '15:00' }
-])
+const workingHours = ref<WorkingHour[]>([])
+const isLoading = computed(() => fetchingVendor.value || updateLoading.value)
 
 // Toast state
 const showSuccessToast = ref(false)
 const successMessage = ref('')
-const showErrorToast = ref(false)
+// const showErrorToast = ref(false)
 const errorMessage = ref('')
-
-// Time update debounce
-const updateDebounceTimers = ref<Record<string, NodeJS.Timeout>>({})
 
 // Computed properties for summary
 const availableDays = computed(() => {
-  return workingHours.value.filter(day => day.isOpen)
+  return workingHours.value.filter(day => day.isActive)
 })
 
 const unavailableDays = computed(() => {
-  return workingHours.value.filter(day => !day.isOpen)
+  return workingHours.value.filter(day => !day.isActive)
 })
 
 const totalHours = computed(() => {
   let total = 0
   
   for (const day of workingHours.value) {
-    if (day.isOpen) {
+    if (day.isActive) {
       const openTime = new Date(`2000-01-01T${day.openingTime}:00`)
       const closeTime = new Date(`2000-01-01T${day.closingTime}:00`)
       
@@ -264,60 +287,104 @@ const totalHours = computed(() => {
   return total.toFixed(1)
 })
 
-// Watch for changes in opening and closing times
-workingHours.value.forEach((day, index) => {
-  // Watch opening time changes
-  watch(
-    () => workingHours.value[index].openingTime,
-    (newTime, oldTime) => {
-      if (newTime !== oldTime && day.isOpen) {
-        // Store previous value
-        day.prevOpeningTime = oldTime
-        
-        // Clear any existing debounce timer for this day's opening time
-        const timerKey = `${day.name}-opening`
-        if (updateDebounceTimers.value[timerKey]) {
-          clearTimeout(updateDebounceTimers.value[timerKey])
-        }
-        
-        // Set loading state immediately
-        day.isUpdatingTime = 'opening'
-        
-        // Debounce the update to prevent too many API calls while user is still typing/changing
-        updateDebounceTimers.value[timerKey] = setTimeout(() => {
-          updateDayHours(day, 'opening')
-        }, 500) // 500ms debounce
-      }
-    }
-  )
+// Initialize working hours from vendor object
+function initializeWorkingHours() {
+  if (!vendorObj.value || !vendorObj.value.workingHours || !Array.isArray(vendorObj.value.workingHours)) {
+    console.error('Vendor object or working hours not available', vendorObj.value)
+    return
+  }
   
-  // Watch closing time changes
-  watch(
-    () => workingHours.value[index].closingTime,
-    (newTime, oldTime) => {
-      if (newTime !== oldTime && day.isOpen) {
-        // Store previous value
-        day.prevClosingTime = oldTime
-        
-        // Clear any existing debounce timer for this day's closing time
-        const timerKey = `${day.name}-closing`
-        if (updateDebounceTimers.value[timerKey]) {
-          clearTimeout(updateDebounceTimers.value[timerKey])
-        }
-        
-        // Set loading state immediately
-        day.isUpdatingTime = 'closing'
-        
-        // Debounce the update to prevent too many API calls while user is still typing/changing
-        updateDebounceTimers.value[timerKey] = setTimeout(() => {
-          updateDayHours(day, 'closing')
-        }, 500) // 500ms debounce
-      }
+  const vendorWorkingHours = vendorObj.value.workingHours
+  
+  // Map the vendor working hours to our component format
+  workingHours.value = vendorWorkingHours.map(dayData => {
+    return {
+      _id: dayData._id,
+      name: dayData.day,
+      day: dayData.day,
+      openingTime: dayData.openingTime,
+      closingTime: dayData.closingTime,
+      isActive: dayData.isActive,
+      originalOpeningTime: dayData.openingTime,
+      originalClosingTime: dayData.closingTime,
+      hasOpeningTimeChanged: false,
+      hasClosingTimeChanged: false
     }
-  )
-})
+  })
+  
+  // Sort days in correct order if needed
+  const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+  workingHours.value.sort((a, b) => {
+    return dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day)
+  })
+  
+  console.log('Initialized working hours:', workingHours.value)
+}
 
-// Update functions
+// Handle time changes
+function handleTimeChange(day: WorkingHour, timeType: 'opening' | 'closing') {
+  if (timeType === 'opening') {
+    day.hasOpeningTimeChanged = day.openingTime !== day.originalOpeningTime
+  } else {
+    day.hasClosingTimeChanged = day.closingTime !== day.originalClosingTime
+  }
+}
+
+// Save time changes
+async function saveTimeChange(day: WorkingHour, timeType: 'opening' | 'closing') {
+  try {
+    // Set loading state
+    day.isUpdatingTime = timeType
+    
+    // Prepare the payload for the API
+    const payload = {
+      day: day.day,
+      openingTime: day.openingTime,
+      closingTime: day.closingTime,
+      isActive: day.isActive
+    }
+    
+    console.log('Updating working hours with payload:', payload)
+    
+    // Call the backend API
+    await updateWorkingHours(payload)
+    
+    // Update the original values after successful update
+    if (timeType === 'opening') {
+      day.originalOpeningTime = day.openingTime
+      day.hasOpeningTimeChanged = false
+    } else {
+      day.originalClosingTime = day.closingTime
+      day.hasClosingTimeChanged = false
+    }
+    
+    // Refresh vendor data
+    await fetchVendor()
+    
+    // Re-initialize working hours with fresh data
+    initializeWorkingHours()
+    
+    // Show success message
+    showToast(`Updated ${day.day} ${timeType === 'opening' ? 'opening' : 'closing'} time`)
+  } catch (error) {
+    // Revert to original value on error
+    if (timeType === 'opening') {
+      day.openingTime = day.originalOpeningTime
+      day.hasOpeningTimeChanged = false
+    } else {
+      day.closingTime = day.originalClosingTime
+      day.hasClosingTimeChanged = false
+    }
+    
+    // Show error message
+    showErrorToast(`Failed to update ${day.day} hours: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  } finally {
+    // Clear loading state
+    day.isUpdatingTime = null
+  }
+}
+
+// Toggle day availability
 async function toggleDayAvailability(day: WorkingHour) {
   // Don't allow toggling if already updating
   if (day.isUpdating || day.isUpdatingTime) return
@@ -327,73 +394,39 @@ async function toggleDayAvailability(day: WorkingHour) {
     day.isUpdating = true
     
     // Toggle the state locally first (optimistic UI update)
-    const newIsOpen = !day.isOpen
-    day.isOpen = newIsOpen
+    const newIsActive = !day.isActive
+    day.isActive = newIsActive
     
     // Prepare the payload for the API
     const payload = {
-      day: day.name,
+      day: day.day,
       openingTime: day.openingTime,
       closingTime: day.closingTime,
-      isActive: newIsOpen
+      isActive: newIsActive
     }
+    
+    console.log('Toggling availability with payload:', payload)
     
     // Call the backend API
     await updateWorkingHours(payload)
     
+    // Refresh vendor data
+    await fetchVendor()
+    
+    // Re-initialize working hours with fresh data
+    initializeWorkingHours()
+    
     // Show success message
-    showToast(`${day.name} is now ${newIsOpen ? 'available' : 'unavailable'}`)
+    showToast(`${day.day} is now ${newIsActive ? 'available' : 'unavailable'}`)
   } catch (error) {
     // Revert the optimistic update on error
-    day.isOpen = !day.isOpen
+    day.isActive = !day.isActive
     
     // Show error message
-    showErrorToast(`Failed to update ${day.name}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    showErrorToast(`Failed to update ${day.day}: ${error instanceof Error ? error.message : 'Unknown error'}`)
   } finally {
     // Clear loading state
     day.isUpdating = false
-  }
-}
-
-async function updateDayHours(day: WorkingHour, timeField?: 'opening' | 'closing') {
-  // If timeField is provided, use it; otherwise try to determine from day.isUpdatingTime
-  const fieldBeingUpdated = timeField || day.isUpdatingTime
-  if (!fieldBeingUpdated) return
-  
-  try {
-    // Prepare the payload for the API
-    const payload = {
-      day: day.name,
-      openingTime: day.openingTime,
-      closingTime: day.closingTime,
-      isActive: day.isOpen
-    }
-    
-    // Call the backend API
-    await updateWorkingHours(payload)
-    
-    // Update the previous values to match current values after successful update
-    if (fieldBeingUpdated === 'opening') {
-      day.prevOpeningTime = day.openingTime
-    } else {
-      day.prevClosingTime = day.closingTime
-    }
-    
-    // Show success message
-    showToast(`Updated ${day.name} ${fieldBeingUpdated === 'opening' ? 'opening' : 'closing'} time`)
-  } catch (error) {
-    // Revert to previous value on error
-    if (fieldBeingUpdated === 'opening' && day.prevOpeningTime) {
-      day.openingTime = day.prevOpeningTime
-    } else if (fieldBeingUpdated === 'closing' && day.prevClosingTime) {
-      day.closingTime = day.prevClosingTime
-    }
-    
-    // Show error message
-    showErrorToast(`Failed to update ${day.name} hours: ${error instanceof Error ? error.message : 'Unknown error'}`)
-  } finally {
-    // Clear loading state
-    day.isUpdatingTime = null
   }
 }
 
@@ -406,17 +439,30 @@ function showToast(message: string) {
   }, 3000)
 }
 
-// function showErrorToast(message: string) {
-//   errorMessage.value = message
-//   showErrorToast.value = true
-//   setTimeout(() => {
-//     showErrorToast.value = false
-//   }, 4000)
-// }
+function showErrorToast(message: string) {
+  errorMessage.value = message
+  showErrorToast.value = true
+  setTimeout(() => {
+    showErrorToast.value = false
+  }, 4000)
+}
+
+// Watch for changes in the vendor object
+watch(() => vendorObj.value, (newVendor) => {
+  if (newVendor) {
+    console.log('Vendor object updated:', newVendor)
+    initializeWorkingHours()
+  }
+}, { immediate: true, deep: true })
 
 // Initialize on component mount
-onMounted(() => {
-  // Any initialization code if needed
+onMounted(async () => {
+  try {
+    console.log('Component mounted, fetching vendor data')
+    await fetchVendor()
+  } catch (error) {
+    showErrorToast(`Failed to fetch vendor data: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
 })
 
 definePageMeta({
@@ -437,6 +483,22 @@ definePageMeta({
   50% {
     opacity: 0.5;
     background-color: rgba(249, 115, 22, 0.1);
+  }
+}
+
+/* Fade in animation for save buttons */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-5px, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
   }
 }
 

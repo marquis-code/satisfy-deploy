@@ -16,6 +16,7 @@ export const useUpdateDeliveryLocation = () => {
       const res = await delivery_location_api.$_update_delivery_location(id, payload) as any
       if (res.type !== "ERROR") {
         success.value = true
+        window.location.reload()
         return res
       } else {
         error.value = res.message || "Failed to update delivery location"
