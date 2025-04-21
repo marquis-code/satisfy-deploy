@@ -26,10 +26,18 @@
               <div v-for="i in 5" :key="i" class="absolute rounded-full bg-white opacity-10 animate-float-random" 
                    :style="`width: ${20 + i * 10}px; height: ${20 + i * 10}px; top: ${Math.random() * 100}%; left: ${Math.random() * 100}%;`">
               </div>
+              
+              <!-- Store Open Badge -->
+              <div class="absolute top-4 right-4 bg-white bg-opacity-90 rounded-full px-3 py-1 shadow-md animate-pulse-slow">
+                <span :class="[user?.isStoreOpen ? 'text-green-500' : 'text-red-500', 'flex items-center text-sm font-medium']">
+                  <div :class="[user?.isStoreOpen ? 'bg-green-500' : 'bg-red-500', 'w-2 h-2 rounded-full mr-2']"></div>
+                  {{ user?.isStoreOpen ? 'Open Now' : 'Closed' }}
+                </span>
+              </div>
             </div>
             <div class="absolute -bottom-12 left-6 transform transition-transform duration-500 hover:scale-105">
               <div class="profile-image-container rounded-full border-4 border-white overflow-hidden shadow-lg">
-                <img v-if="profileData.imageUrl" :src="profileData.imageUrl" alt="Profile" class="w-24 h-24 object-cover" />
+                <img v-if="user?.displayImage" :src="user.displayImage" alt="Profile" class="w-24 h-24 object-cover" />
                 <svg v-else xmlns="http://www.w3.org/2000/svg" width="96" height="96" fill="#000000" viewBox="0 0 256 256" class="w-24 h-24 bg-gray-200"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM74.08,197.5a64,64,0,0,1,107.84,0,87.83,87.83,0,0,1-107.84,0ZM96,120a32,32,0,1,1,32,32A32,32,0,0,1,96,120Zm97.76,66.41a79.66,79.66,0,0,0-36.06-28.75,48,48,0,1,0-59.4,0,79.66,79.66,0,0,0-36.06,28.75,88,88,1,1,1,131.52,0Z"></path></svg>
               </div>
             </div>
@@ -56,8 +64,15 @@
               </button>
             </div>
             
+            <!-- Category Badge -->
+            <div class="mt-2 animate-fade-in-up" style="animation-delay: 0.1s">
+              <span class="inline-block px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm font-medium border border-orange-200">
+                {{ user?.category || 'Uncategorized' }}
+              </span>
+            </div>
+            
             <!-- Location and Contact -->
-            <div class="grid grid-cols-2 gap-4 mt-8 border-b border-gray-100 pb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 border-b border-gray-100 pb-6">
               <div class="flex items-start transform transition-all duration-300 hover:translate-x-1">
                 <div class="p-2 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 mr-3 shadow-sm">
                   <MapPin class="h-5 w-5 text-orange-500" />
@@ -67,6 +82,7 @@
                   <p class="font-medium">
                     {{ user?.locationName || 'Not specified' }}
                   </p>
+                  <p class="text-sm text-gray-500">{{ user?.address || 'No address provided' }}</p>
                 </div>
               </div>
               <div class="flex items-start transform transition-all duration-300 hover:translate-x-1">
@@ -90,16 +106,42 @@
               </button>
             </div>
             
-            <!-- Additional info with animation -->
-            <div class="mt-6 p-4 bg-orange-50 rounded-lg border border-orange-100 animate-fade-in-up">
-              <h3 class="font-medium text-orange-700 mb-2">About Us</h3>
-              <p class="text-gray-600">{{ profileData.description || 'No description provided yet. Click Edit to add information about your business.' }}</p>
-              <div v-if="profileData.tags && profileData.tags.length > 0" class="flex mt-3 space-x-2 flex-wrap">
-                <span v-for="(tag, index) in profileData.tags" :key="index"
-                      class="px-3 py-1 bg-white text-xs text-orange-600 rounded-full border border-orange-200 shadow-sm mb-2">
-                  {{ tag }}
-                </span>
+            <!-- Working Hours Section -->
+            <div class="mt-6 bg-orange-50 rounded-lg border border-orange-100 animate-fade-in-up">
+              <div class="p-4 border-b border-orange-100">
+                <h3 class="font-medium text-orange-700 flex items-center">
+                  <Clock class="h-5 w-5 mr-2 text-orange-500" />
+                  Working Hours
+                </h3>
               </div>
+              
+              <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div v-for="(hours, index) in user?.workingHours" :key="index" 
+                     :class="[hours.isActive ? 'opacity-100' : 'opacity-50', 'flex justify-between items-center transform transition-all duration-300 hover:translate-x-1 animate-fade-in-up']"
+                     :style="`animation-delay: ${0.1 + index * 0.05}s`">
+                  <span :class="[hours.isActive ? 'font-medium' : 'text-gray-500', 'text-sm']">{{ hours.day }}</span>
+                  <span v-if="hours.isActive" class="text-sm text-gray-700">{{ hours.openingTime }} - {{ hours.closingTime }}</span>
+                  <span v-else class="text-sm text-gray-500">Closed</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Packaging Section -->
+            <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100 animate-fade-in-up" style="animation-delay: 0.6s">
+              <h3 class="font-medium text-blue-700 mb-2 flex items-center">
+                <Box class="h-5 w-5 mr-2 text-blue-500" />
+                Packaging Settings
+              </h3>
+              <div class="flex items-center justify-between">
+                <p class="text-gray-600 text-sm">Limit: <span class="font-medium">{{ user?.packSettings?.limit || 0 }} items</span></p>
+                <p class="text-gray-600 text-sm">Price: <span class="font-medium">₦{{ user?.packSettings?.price || 0 }}</span></p>
+              </div>
+            </div>
+            
+            <!-- Registration Info -->
+            <div class="mt-4 flex justify-between items-center text-xs text-gray-400 animate-fade-in-up" style="animation-delay: 0.7s">
+              <p>Registered: {{ formatDate(user?.createdAt) }}</p>
+              <p>Last Updated: {{ formatDate(user?.updatedAt) }}</p>
             </div>
           </div>
         </div>
@@ -139,12 +181,12 @@
             </div>
 
             <div v-if="uploading" class="py-8 flex flex-col items-center">
-            <svg class="animate-spin h-12 w-12 text-orange-500 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p class="text-gray-600">Uploading image...</p>
-          </div>
+              <svg class="animate-spin h-12 w-12 text-orange-500 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p class="text-gray-600">Uploading image...</p>
+            </div>
             
             <!-- Image preview with animation -->
             <div v-if="editForm.imageUrl" class="mt-3 animate-fade-in">
@@ -210,52 +252,69 @@
             />
           </div>
           
-          <!-- Description -->
+          <!-- Address -->
           <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.5s">
             <label class="block text-gray-700 mb-2 flex items-center">
-              <FileText class="h-4 w-4 mr-2 text-orange-500" />
-              Description
+              <Home class="h-4 w-4 mr-2 text-orange-500" />
+              Address
             </label>
-            <textarea 
-              v-model="editForm.description" 
-              placeholder="Tell customers about your restaurant"
-              rows="4"
+            <input 
+              v-model="editForm.address" 
+              type="text" 
+              placeholder="Full address"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300 bg-gray-50 focus:bg-white"
-            ></textarea>
+            />
           </div>
           
-          <!-- Tags -->
+          <!-- Category -->
           <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.6s">
             <label class="block text-gray-700 mb-2 flex items-center">
               <Tag class="h-4 w-4 mr-2 text-orange-500" />
-              Tags (comma separated)
+              Category
             </label>
-            <input 
-              v-model="tagsInput" 
-              type="text" 
-              placeholder="e.g. Bakery, Fast Food, Drinks"
+            <select 
+              v-model="editForm.category" 
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300 bg-gray-50 focus:bg-white"
-            />
-            <div v-if="parsedTags.length > 0" class="mt-2 flex flex-wrap gap-2">
-              <span v-for="(tag, index) in parsedTags" :key="index"
-                    class="px-3 py-1 bg-orange-50 text-xs text-orange-600 rounded-full border border-orange-200">
-                {{ tag }}
-              </span>
-            </div>
+            >
+              <option value="fast food">Fast Food</option>
+              <option value="restaurant">Restaurant</option>
+              <option value="cafe">Cafe</option>
+              <option value="bakery">Bakery</option>
+              <option value="dessert">Dessert</option>
+              <option value="drinks">Drinks</option>
+              <option value="grocery">Grocery</option>
+              <option value="other">Other</option>
+            </select>
           </div>
           
-          <!-- Opening Hours -->
-          <div class="mb-10 animate-fade-in-up" style="animation-delay: 0.7s">
+          <!-- Store Status -->
+          <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.7s">
             <label class="block text-gray-700 mb-2 flex items-center">
-              <Clock class="h-4 w-4 mr-2 text-orange-500" />
-              Opening Hours
+              <Activity class="h-4 w-4 mr-2 text-orange-500" />
+              Store Status
             </label>
-            <input 
-              v-model="editForm.openingHours" 
-              type="text" 
-              placeholder="e.g. Mon-Fri: 9am-5pm, Sat: 10am-3pm"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300 bg-gray-50 focus:bg-white"
-            />
+            <div class="flex items-center space-x-2">
+              <div class="flex items-center">
+                <input 
+                  type="radio" 
+                  id="open" 
+                  v-model="editForm.isStoreOpen" 
+                  :value="true"
+                  class="mr-2 text-orange-500 focus:ring-orange-500"
+                />
+                <label for="open" class="text-gray-700">Open</label>
+              </div>
+              <div class="flex items-center">
+                <input 
+                  type="radio" 
+                  id="closed" 
+                  v-model="editForm.isStoreOpen" 
+                  :value="false"
+                  class="mr-2 text-orange-500 focus:ring-orange-500"
+                />
+                <label for="closed" class="text-gray-700">Closed</label>
+              </div>
+            </div>
           </div>
           
           <!-- Action Buttons -->
@@ -266,17 +325,17 @@
             >
               <div class="flex items-center">
                 <X class="h-4 w-4 mr-2" />
-                Discard
+                Cancel
               </div>
             </button>
             <button 
               :disabled="isUpdating"
               @click="saveChanges" 
-              class="px-6 py-3 bg-gradient-to-r disabled:cursor-not-allowed disabled:opacity-25 from-orange-400 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              class="px-6 py-3 bg-gradient-to-r disabled:cursor-not-allowed disabled:opacity-50 from-orange-400 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               <div class="flex items-center">
                 <Save class="h-4 w-4 mr-2" />
-                {{ isUpdating ? 'updating...' : 'Update'}}
+                {{ isUpdating ? 'Updating...' : 'Update Profile' }}
               </div>
             </button>
           </div>
@@ -318,31 +377,51 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useUser } from '@/composables/auth/user'
-import { useUpdateProfile } from '@/composables/modules/customer/useUpdateProfile'
+import { useUpdateProfile } from '@/composables/modules/vendor/useUpdateProfile'
 import { useRestaurantUrl } from '@/composables/useRestaurantUrl'
 import AnimatedCopyModal from '@/components/AnimatedCopyModal.vue'
+import { useFetchVendor } from "@/composables/modules/vendor/useFetchVendor"
+import { useFetchVendorById } from "@/composables/modules/vendor/useFetchVendorById"
+import { useUploadFile } from '@/composables/core/useUpload'
 import { 
   CheckCircle, Edit2, MapPin, Phone, Copy, Tag, Clock, User, 
-  ImageIcon, Briefcase, FileText, Mail, X, Save 
+  ImageIcon, Briefcase, FileText, Mail, X, Save, Activity,
+  Home, Box
 } from 'lucide-vue-next'
-import { useUploadFile } from '@/composables/core/useUpload'
-const {  uploadFile, loading: uploading } = useUploadFile()
+
+const { uploadFile, loading: uploading } = useUploadFile()
 
 // Get user data from composable
 const { user } = useUser()
 const { updateProfile, loading: isUpdating } = useUpdateProfile()
+const { vendor } = useFetchVendorById()
+const { vendor: vendorObj } = useFetchVendor()
 
 // Define extended profile data type
 interface ProfileData {
   _id?: string
   imageUrl: string
+  displayImage: string
   restaurantName: string
   email: string
   phoneNumber: string
   locationName: string
-  description: string
-  tags: string[]
-  openingHours: string
+  address: string
+  category: string
+  isStoreOpen: boolean
+  description?: string
+  tags?: string[]
+  packSettings?: {
+    limit: number
+    price: number
+  }
+  workingHours?: {
+    _id: string
+    day: string
+    isActive: boolean
+    openingTime: string
+    closingTime: string
+  }[]
 }
 
 // Initialize the URL composable
@@ -351,32 +430,47 @@ const { getRestaurantUrl } = useRestaurantUrl()
 // State
 const isEditing = ref(false)
 const imageFileName = ref('')
-const tagsInput = ref('')
 const showCopyModal = ref(false)
 const copiedUrl = ref('')
 
 // Initialize profile data with empty values
 const profileData = reactive<ProfileData>({
   imageUrl: '',
+  displayImage: '',
   restaurantName: '',
   email: '',
   phoneNumber: '',
   locationName: '',
+  address: '',
+  category: 'fast food',
+  isStoreOpen: true,
   description: '',
   tags: [],
-  openingHours: ''
+  packSettings: {
+    limit: 0,
+    price: 0
+  },
+  workingHours: []
 })
 
 // Edit form state - will be populated when editing starts
 const editForm = reactive<ProfileData>({
   imageUrl: '',
+  displayImage: '',
   restaurantName: '',
   email: '',
   phoneNumber: '',
   locationName: '',
+  address: '',
+  category: 'fast food',
+  isStoreOpen: true,
   description: '',
   tags: [],
-  openingHours: ''
+  packSettings: {
+    limit: 0,
+    price: 0
+  },
+  workingHours: []
 })
 
 // Computed URL based on restaurant name
@@ -384,13 +478,16 @@ const restaurantUrl = computed(() => {
   return getRestaurantUrl(user.value?.slug || 'restaurant')
 })
 
-// Parse tags from comma-separated input
-const parsedTags = computed(() => {
-  return tagsInput.value
-    .split(',')
-    .map(tag => tag.trim())
-    .filter(tag => tag.length > 0)
-})
+// Format date helper function
+const formatDate = (dateStr: string | undefined) => {
+  if (!dateStr) return 'N/A'
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  })
+}
 
 // Watch for user data changes and update profile data
 watch(() => user.value, (newUser) => {
@@ -400,12 +497,19 @@ watch(() => user.value, (newUser) => {
     profileData.email = newUser.email || ''
     profileData.phoneNumber = newUser.phoneNumber || ''
     profileData.locationName = newUser.locationName || ''
+    profileData.address = newUser.address || ''
+    profileData.category = newUser.category || 'fast food'
+    profileData.isStoreOpen = newUser.isStoreOpen !== undefined ? newUser.isStoreOpen : true
+    
+    // Handle display image
+    profileData.displayImage = newUser.displayImage || ''
+    profileData.imageUrl = newUser.displayImage || ''
     
     // If we have additional fields in the user object, map them too
     if (newUser.description) profileData.description = newUser.description
-    if (newUser.imageUrl) profileData.imageUrl = newUser.imageUrl
     if (newUser.tags) profileData.tags = newUser.tags
-    if (newUser.openingHours) profileData.openingHours = newUser.openingHours
+    if (newUser.packSettings) profileData.packSettings = newUser.packSettings
+    if (newUser.workingHours) profileData.workingHours = newUser.workingHours
   }
 }, { immediate: true, deep: true })
 
@@ -413,10 +517,6 @@ watch(() => user.value, (newUser) => {
 const startEditing = () => {
   // Copy current profile data to edit form
   Object.assign(editForm, profileData)
-  
-  // Set tags input from tags array
-  tagsInput.value = editForm.tags.join(', ')
-  
   isEditing.value = true
 }
 
@@ -427,19 +527,16 @@ const cancelEdit = () => {
 
 const saveChanges = async () => {
   try {
-    // Update tags from input
-    editForm.tags = parsedTags.value
-    
     // Prepare update data
     const updateData = {
       restaurantName: editForm.restaurantName,
       email: editForm.email,
       phoneNumber: editForm.phoneNumber,
       locationName: editForm.locationName,
-      description: editForm.description,
-      tags: editForm.tags,
-      openingHours: editForm.openingHours,
-      displayImage: editForm.imageUrl
+      address: editForm.address,
+      category: editForm.category,
+      isStoreOpen: editForm.isStoreOpen,
+      displayImage: editForm.displayImage || editForm.imageUrl
     }
     
     // Call update profile composable
@@ -451,8 +548,7 @@ const saveChanges = async () => {
     // Exit edit mode
     isEditing.value = false
     
-    // Show success notification (you could use your AnimatedCopyModal here too)
-    // For now we'll just log success
+    // Show success notification (could use AnimatedCopyModal)
     console.log('Profile updated successfully!')
   } catch (error) {
     console.error('Failed to update profile:', error)
@@ -467,35 +563,17 @@ const handleImageUpload = async (event: Event) => {
     imageFileName.value = file.name
 
     try {
-    // Call the uploadFile method from your composable
-    const fileUrl = await uploadFile(file);
-    
-    // Set the returned URL to the form data
-    editForm.image = fileUrl;
-    editForm.imageUrl = fileUrl;
-    
-    // Show success toast
-    // showToast('Image uploaded successfully', 'success');
-  } catch (error) {
-    // Handle upload error
-    // showToast(`Failed to upload image: ${error}`, 'error');
-    console.error('Upload error:', error);
-  } finally {
-    // Reset uploading state
-    uploading.value = false;
-  }
-    
-    // // Create a URL for the image preview
-    // const reader = new FileReader()
-    // reader.onload = (e) => {
-    //   if (e.target?.result) {
-    //     editForm.imageUrl = e.target.result as string
-    //   }
-    // }
-    // reader.readAsDataURL(file)
-    
-    // Here you would typically upload the image to your server/storage
-    // and get back a URL to store in the profile
+      // Call the uploadFile method from the composable
+      const fileUrl = await uploadFile(file)
+      
+      // Set the returned URL to the form data
+      editForm.displayImage = fileUrl
+      editForm.imageUrl = fileUrl
+      
+      console.log('Image uploaded successfully:', fileUrl)
+    } catch (error) {
+      console.error('Upload error:', error)
+    }
   }
 }
 

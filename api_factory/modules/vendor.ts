@@ -32,5 +32,9 @@ export const vendor_api = {
   $_update_working_hours: (payload: any) => {
     let url = `/vendor/update-working-hours`;
     return GATEWAY_ENDPOINT.patch(url, payload);
-  }
+  },
+  $_update_profile: (payload: any) => {
+    let url = `/vendor/update-profile`;
+    return GATEWAY_ENDPOINT.patch(url, payload);
+  },
 };
