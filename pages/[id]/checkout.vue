@@ -863,6 +863,8 @@ const submitOrder = async () => {
     const orderData = {
       vendorId: vendor.value._id,
       customerName: customerName.value,
+      packPrice: calculatePackFees(),
+      deliveryPrice: deliveryFee.value,
       phoneNumber: phoneNumber.value,
       deliveryType: deliveryMethod.value as "delivery" | "pickup",
       location: deliveryMethod.value === "delivery" && selectedLocation.value ? selectedLocation.value.name : "",

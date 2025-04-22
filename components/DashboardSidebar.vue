@@ -61,6 +61,7 @@
               <!-- Regular Nav Item -->
               <NuxtLink 
                 v-if="!item.children"
+                 @click="isMobileMenuOpen = !isMobileMenuOpen"
                 :to="item.path"
                 :class="[
                   'flex items-center px-4 py-2.5 rounded-full text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 menu-item relative overflow-hidden',
@@ -134,10 +135,11 @@
                 >
                   <NuxtLink 
                     v-for="child in item.children" 
+                    @click="isMobileMenuOpen = !isMobileMenuOpen"
                     :key="child.label"
                     :to="child.path"
                     :class="[
-                      'flex items-center py-1.5 px-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 rounded-md relative submenu-item overflow-hidden',
+                      'flex items-center py-2 text-sm mt-6 rounded-full px-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 relative submenu-item overflow-hidden',
                       isActiveRoute(child.path) && 'bg-blue-600 text-white'
                     ]"
                   >
@@ -161,13 +163,14 @@
             {{ !isCollapsed ? "SUPPORT" : "SUP" }}
           </p>
           
-          <nav>
+          <nav class="space-y-2.5">
             <NuxtLink 
               v-for="item in supportItems.filter(item => item.label !== 'Logout')" 
+               @click="isMobileMenuOpen = !isMobileMenuOpen"
               :key="item.label"
               :to="item.path"
               :class="[
-                'flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 relative menu-item overflow-hidden',
+                'flex items-center px-4 text-sm py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 relative menu-item overflow-hidden',
                 isCollapsed && 'justify-center',
                 isActiveRoute(item.path) && 'bg-blue-600 text-white'
               ]"
@@ -176,7 +179,7 @@
                 :is="item.icon" 
                 size="20" 
                 :class="[
-                  'transition-transform duration-300',
+                  'transition-transform text-sm duration-300',
                   isActiveRoute(item.path) ? 'text-white animate-float' : 'text-gray-400'
                 ]"
               />
@@ -199,7 +202,7 @@
             <button 
               @click="showLogoutModal = true"
               :class="[
-                'flex items-center px-4 py-2 text-gray-300 hover:bg-red-500 hover:text-white transition-all duration-300 relative w-full menu-item overflow-hidden',
+                'flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-red-500 hover:text-white transition-all duration-300 relative w-full menu-item overflow-hidden',
                 isCollapsed && 'justify-center'
               ]"
             >
@@ -425,12 +428,12 @@ const supportItems = reactive<NavItem[]>([
   { 
     icon: HelpCircle, 
     label: "Help Center", 
-    path: "/dashboard/help" 
+    path: "#" 
   },
   { 
     icon: MessageSquare, 
     label: "FAQs", 
-    path: "/dashboard/faqs" 
+    path: "#" 
   },
   { 
     icon: LogOut, 

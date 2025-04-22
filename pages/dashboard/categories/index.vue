@@ -19,7 +19,7 @@
               <div class="bg-gradient-to-br from-orange-400 to-orange-600 p-3 rounded-md shadow-lg mr-4 transform transition-transform hover:scale-105">
                 <UtensilsCrossedIcon class="w-6 h-6 text-white" />
               </div>
-              <h1 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+              <h1 class="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
                 All Categories List
               </h1>
             </div>

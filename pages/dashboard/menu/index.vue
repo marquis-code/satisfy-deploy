@@ -15,7 +15,7 @@
         </div>
         <button
           @click="openCreateModal"
-          class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-5 py-2.5 rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center group"
+          class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-5 py-3 rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center group"
           :disabled="creating"
         >
           <span v-if="creating" class="mr-2">
@@ -425,18 +425,18 @@
 
               <form @submit.prevent="submitForm" class="space-y-5">
                 <div>
-                  <label class="block text-gray-700 font-medium mb-2">Name</label>
+                  <label class="block text-gray-700 font-medium mb-2 text-sm">Name</label>
                   <input
                     v-model="formData.name"
                     type="text"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
                     placeholder="e.g fried rice, full chicken, chocolate cake"
                     required
                   />
                 </div>
 
                 <div>
-                  <label class="block text-gray-700 font-medium mb-2">Price(₦)</label>
+                  <label class="block text-gray-700 font-medium mb-2 text-sm">Price(₦)</label>
                   <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <span class="text-gray-500">₦</span>
@@ -444,7 +444,7 @@
                     <input
                       v-model="formattedPrice"
                       type="text"
-                      class="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                      class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
                       placeholder="Input Food Price"
                       required
                       @input="handlePriceInput"
@@ -453,11 +453,11 @@
                 </div>
 
                 <div>
-                  <label class="block text-gray-700 font-medium mb-2">Choose Category</label>
+                  <label class="block text-gray-700 font-medium mb-2 text-sm">Choose Category</label>
                   <div class="relative">
                     <select
                       v-model="formData.category"
-                      class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 appearance-none"
+                      class="w-full px-4 py-3 border text-sm border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 appearance-none"
                       required
                     >
                       <option value="" disabled>Select Category</option>
@@ -470,7 +470,7 @@
                 </div>
 
                 <!-- <div>
-                  <label class="block text-gray-700 font-medium mb-2">Image</label>
+                  <label class="block text-gray-700 font-medium mb-2 text-sm">Image</label>
                   <div class="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:border-orange-500 transition-colors duration-200">
                     <div v-if="formData.image" class="mb-4">
                       <img
@@ -501,7 +501,7 @@
                 </div> -->
 
                 <div>
-        <label class="block text-gray-700 font-medium mb-2">Image</label>
+        <label class="block text-gray-700 font-medium mb-2 text-sm">Image</label>
         <div class="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:border-orange-500 transition-colors duration-200">
           <div v-if="formData.image" class="mb-4">
             <img
@@ -543,13 +543,13 @@
                   <button
                     type="button"
                     @click="closeModal"
-                    class="px-6 py-2.5 w-full bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
+                    class="px-6 py-3 w-full bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
                   >
                     Discard
                   </button>
                   <button
                     type="submit"
-                    class="px-6 py-2.5 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-md hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
+                    class="px-6 py-3 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-md hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
                     :disabled="creating || editing"
                   >
                     <span v-if="creating || editing" class="mr-2">
@@ -606,13 +606,13 @@
             <div class="flex justify-center space-x-4">
               <button
                 @click="closeDeleteModal"
-                class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
+                class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
               >
                 Cancel
               </button>
               <button
                 @click="deleteMeal"
-                class="px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-md hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
+                class="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-md hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
                 :disabled="deleting"
               >
                 <span v-if="deleting" class="mr-2">
@@ -674,13 +674,13 @@
             <div class="flex justify-center space-x-4">
               <button
                 @click="closeToggleModal"
-                class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
+                class="px-6 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-200 transform hover:scale-105"
               >
                 Cancel
               </button>
               <button
                 @click="confirmToggleVisibility"
-                class="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-md hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
+                class="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-md hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center"
                 :disabled="enabling || disabling"
               >
                 <span v-if="enabling || disabling" class="mr-2">
@@ -985,8 +985,11 @@ async function handleFileUpload(event: Event) {
   uploading.value = true;
   
   try {
-    // Call the uploadFile method from your composable
-    const fileUrl = await uploadFile(file);
+    // Compress the image before uploading
+    const compressedFile = await compressImage(file);
+    
+    // Call the uploadFile method with the compressed file
+    const fileUrl = await uploadFile(compressedFile);
     
     // Set the returned URL to the form data
     formData.value.image = fileUrl;
@@ -1002,6 +1005,132 @@ async function handleFileUpload(event: Event) {
     uploading.value = false;
   }
 }
+
+/**
+ * Compresses an image file while maintaining reasonable quality
+ * Supports all image types and preserves original format
+ * @param {File} file - The original image file to compress
+ * @param {number} quality - Compression quality from 0 to 1 (default: 0.7)
+ * @returns {Promise<File>} - A promise that resolves to the compressed file
+ */
+function compressImage(file: File, quality = 0.7): Promise<File> {
+  return new Promise((resolve, reject) => {
+    // Check if file is an image
+    if (!file.type.startsWith('image/')) {
+      return resolve(file); // Return original file if not an image
+    }
+    
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      
+      img.onload = () => {
+        // Create canvas with original dimensions
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, img.width, img.height);
+        
+        // Determine the appropriate mime type based on original file
+        let mimeType = file.type;
+        
+        // For some image types that don't compress well with canvas,
+        // we might need to convert to a more compressible format
+        if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(mimeType)) {
+          // For formats like BMP, TIFF, etc., convert to PNG which supports transparency
+          if (hasTransparency(canvas)) {
+            mimeType = 'image/png';
+          } else {
+            // If no transparency, JPEG offers better compression
+            mimeType = 'image/jpeg';
+          }
+        }
+        
+        // Convert to blob with appropriate quality setting
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            reject(new Error('Canvas to Blob conversion failed'));
+            return;
+          }
+          
+          // Create new file with original name but compressed content
+          const compressedFile = new File(
+            [blob], 
+            file.name,
+            { type: mimeType }
+          );
+          
+          console.log(`Original size: ${(file.size / 1024).toFixed(2)} KB, Compressed: ${(compressedFile.size / 1024).toFixed(2)} KB`);
+          
+          resolve(compressedFile);
+        }, mimeType, quality);
+      };
+      
+      img.onerror = () => {
+        reject(new Error('Error loading image'));
+      };
+    };
+    
+    reader.onerror = () => {
+      reject(new Error('Error reading file'));
+    };
+  });
+}
+
+/**
+ * Checks if the canvas contains any transparent pixels
+ * @param {HTMLCanvasElement} canvas - Canvas to check for transparency
+ * @returns {boolean} - True if transparency is detected
+ */
+function hasTransparency(canvas: HTMLCanvasElement): boolean {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return false;
+  
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+  
+  // Check the alpha channel (every 4th byte) for transparency
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] < 255) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+// async function handleFileUpload(event: Event) {
+//   const input = event.target as HTMLInputElement;
+//   if (!input.files || input.files.length === 0) return;
+  
+//   const file = input.files[0];
+//   fileName.value = file.name;
+  
+//   // Set uploading state to true to show spinner
+//   uploading.value = true;
+  
+//   try {
+//     // Call the uploadFile method from your composable
+//     const fileUrl = await uploadFile(file);
+    
+//     // Set the returned URL to the form data
+//     formData.value.image = fileUrl;
+    
+//     // Show success toast
+//     showToast('Image uploaded successfully', 'success');
+//   } catch (error) {
+//     // Handle upload error
+//     showToast(`Failed to upload image: ${error}`, 'error');
+//     console.error('Upload error:', error);
+//   } finally {
+//     // Reset uploading state
+//     uploading.value = false;
+//   }
+// }
 
 // function handleFileUpload(event: Event) {
 //   const input = event.target as HTMLInputElement;

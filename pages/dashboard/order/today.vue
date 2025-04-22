@@ -135,7 +135,7 @@
                 Order ID
               </th>
               <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                customerName
+                customer Name
               </th>
               <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Total
@@ -174,7 +174,7 @@
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-semibold text-emerald-700">₦{{ formatPrice(order.totalAmount) }}</div>
+                <div class="text-sm font-semibold text-emerald-700">₦{{ calculatedTotal(order) }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-600">{{ formatDate(order.createdAt) }}</div>
@@ -604,6 +604,17 @@ const handleUpdateOrderStatus = async () => {
     // toast.error('Failed to update order status')
   }
 }
+
+const calculatedTotal = (order: any) => {
+   const totalAmount = 
+      (order?.totalAmount ?? 0) + 
+      (order?.charge ?? 0) + 
+      (order?.deliveryPrice ?? 0) + 
+      (order?.packPrice ?? 0);
+   
+   return formatPrice(totalAmount);
+}
+
 
 // const handleUpdateOrderStatus = async () => {
 //   if (!selectedOrder.value) return

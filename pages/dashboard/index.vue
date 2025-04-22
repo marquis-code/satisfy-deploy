@@ -17,7 +17,7 @@
     
     <div class="space-y-9">
       <!-- Welcome Card -->
-      <div class="md:col-span-1 bg-white rounded-lg shadow-sm overflow-hidden">
+      <div class="md:col-span-1 z-[9999] bg-white rounded-lg shadow-sm overflow-hidden">
         <div class="relative h-64 bg-gradient-to-r from-amber-500 to-amber-300">
           <div class="absolute inset-0 bg-black/20"></div>
           <div class="absolute inset-0 flex items-center justify-center">

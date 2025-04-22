@@ -94,7 +94,7 @@
             </p>
             <p class="text-gray-700 flex items-center">
               <span class="font-medium w-24">Total:</span> 
-              <span class="text-orange-600 font-bold">₦{{ formatPrice(order?.totalAmount || 0) }}</span>
+              <span class="text-orange-600 font-bold">₦{{ formatPrice((order?.totalAmount + order?.deliveryPrice + order?.packPrice + order?.charge) || 0) }}</span>
             </p>
           </div>
         </div>
@@ -196,17 +196,28 @@
       <div class="flex justify-end animate-fade-in-up">
         <div class="w-full md:w-1/3">
           <div class="bg-orange-50 p-5 rounded-md border border-orange-100 shadow-sm">
+            <!-- {{order}} -->
             <div class="flex justify-between py-2">
               <span class="text-gray-600">Subtotal:</span>
               <span class="text-gray-800 font-medium">₦{{ formatPrice(calculateSubtotal()) }}</span>
             </div>
             <div class="flex justify-between py-2">
-              <span class="text-gray-600">Delivery Fee:</span>
+              <span class="text-gray-600">Service Fee:</span>
               <span class="text-gray-800 font-medium">₦{{ formatPrice(order?.charge || 0) }}</span>
+            </div>
+
+            <div class="flex justify-between py-2">
+              <span class="text-gray-600">Pack Fee:</span>
+              <span class="text-gray-800 font-medium">₦{{ formatPrice(order?.packPrice || 0) }}</span>
+            </div>
+
+            <div v-if="order?.deliveryType  === 'delivery'" class="flex justify-between py-2">
+              <span class="text-gray-600">Delivery Fee:</span>
+              <span class="text-gray-800 font-medium">₦{{ formatPrice(order?.deliveryPrice || 0) }}</span>
             </div>
             <div class="flex justify-between py-3 border-t border-orange-200 mt-2">
               <span class="text-gray-800 font-semibold">Total:</span>
-              <span class="text-orange-600 font-bold text-xl">₦{{ formatPrice(order?.totalAmount || 0) }}</span>
+              <span class="text-orange-600 font-bold text-xl">₦{{ formatPrice((order?.totalAmount + order?.deliveryPrice + order?.packPrice + order?.charge) || 0) }}</span>
             </div>
           </div>
         </div>

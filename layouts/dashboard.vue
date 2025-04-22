@@ -47,7 +47,7 @@
         </div>
       </header>
       
-      <main class="p-6">
+      <main class="p-2 lg:p-6">
         <slot />
       </main>
     </div>

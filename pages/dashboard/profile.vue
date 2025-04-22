@@ -13,7 +13,7 @@
       <div class="w-6 h-6 rounded-full bg-orange-400 opacity-30"></div>
     </div>
     
-    <div class="max-w-7xl mx-auto p-4 relative z-10">
+    <div class="lg:max-w-7xl mx-auto  relative z-10">
       <transition 
         :name="isEditing ? 'slide-up' : 'slide-down'" 
         mode="out-in"
