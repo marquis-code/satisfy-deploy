@@ -2,6 +2,7 @@
   <div class="min-h-screen bg-gray-50 pb-10">
     <div class="container mx-auto px-4 py-6">
       <!-- Header with back button -->
+       {{vendor}}
       <div class="flex items-center mb-6">
         <button
           @click="goBack"
@@ -96,7 +97,7 @@
                       class="w-16 h-16 rounded-md overflow-hidden bg-gray-100"
                     >
                       <img
-                        src="@/assets/img/meal1.jpg"
+                        :src="item.image"
                         :alt="item.name"
                         class="w-full h-full object-cover"
                       />
@@ -622,7 +623,7 @@ import {
 } from "lucide-vue-next";
 import ToastContainer from "~/components/ToastContainer.vue";
 import { useCustomToast } from "@/composables/core/useCustomToast";
-import { useFetchVendorById } from "@/composables/modules/vendor/useFetchVendorById";
+// import { useFetchVendorById } from "@/composables/modules/vendor/useFetchVendorById";
 import { useFetchVendor } from "@/composables/modules/vendor/useFetchVendor"
 
 // Composables
@@ -837,6 +838,23 @@ const validateForm = () => {
   return isValid;
 };
 
+interface OrderData {
+  vendorId: string;
+  customerName: string;
+  packPrice: number;
+  deliveryPrice: number;
+  phoneNumber: string;
+  deliveryType: "delivery" | "pickup";
+  location?: string;  // Marked as optional
+  address?: string;   // Marked as optional
+  packs: Array<{
+    items: Array<{ menuItemId: string, quantity: number }>;
+    quantity?: number;
+  }>;
+  notes: string;
+}
+
+
 const submitOrder = async () => {
   if (!validateForm()) {
     showToast({
@@ -860,7 +878,7 @@ const submitOrder = async () => {
 
   try {
     // Create a single order with all packs
-    const orderData = {
+    const orderData: OrderData = {
       vendorId: vendor.value._id,
       customerName: customerName.value,
       packPrice: calculatePackFees(),
@@ -894,6 +912,14 @@ const submitOrder = async () => {
     }
 
     console.log(orderData, 'Order payload');
+
+    if(orderData.location == ''){
+      delete orderData.location
+    }
+
+    if(orderData.address == ''){
+      delete orderData.address
+    }
     
     // Submit the order
     const response = await createOrder(orderData);
@@ -1196,6 +1222,7 @@ onMounted(() => {
 watch(
   () => vendor.value,
   async (newVendor) => {
+    console.log(vendor.value, 'vendor again')
     if (newVendor && newVendor._id) {
       await fetchVendorDeliveryLocations(newVendor._id);
       initializePackSettings();
@@ -1203,18 +1230,19 @@ watch(
   }
 );
 
-watch(
-  () => route.params.id,
-  (newVendorId) => {
-    if (newVendorId) {
-      vendor.value = null;
-      // loading.value = true;
-      error.value = null;
-      useFetchVendorById();
-    }
-  },
-  { immediate: true }
-);
+// watch(
+//   () => route.params.id,
+//   (newVendorId) => {
+//     console.log('i ma hgee', vendor.value)
+//     if (newVendorId) {
+//       vendor.value = null;
+//       // loading.value = true;
+//       error.value = null;
+//       useFetchVendorById();
+//     }
+//   },
+//   { immediate: true }
+// );
 </script>
 
 <style scoped>

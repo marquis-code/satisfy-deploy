@@ -7,17 +7,17 @@ export const useFetchVendorById = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const vendor = ref(null)
+  const vendorObj = localStorage.getItem('selected-vendor') as any
+  const parsedVendor = JSON.parse(vendorObj)
   const route  = useRoute()
 
   const fetchVendorById = async () => {
     loading.value = true
     error.value = null
-    const user = JSON.parse(localStorage.getItem('user'))
-    const formatted = formatString(user.restaurantName)
-    const id = route?.params?.id || formatted as any
+    const id = route?.params?.id  || vendorObj._id
 
     try {
-      const res = (await vendor_api.$_fetch_vendor_by_name(id)) as any
+      const res = (await vendor_api.$_fetch_vendor_by_id(id)) as any
       if (res.type !== "ERROR") {
         vendor.value = res.data
         return res.data
@@ -32,8 +32,14 @@ export const useFetchVendorById = () => {
   }
 
   onMounted(() => {
-    fetchVendorById()
+    if(parsedVendor._id){
+      fetchVendorById()
+    }
   })
+
+  // if(parsedVendor._id){
+  //   fetchVendorDeliveryLocations()
+  //  }
 
   return { fetchVendorById, vendor, loading, error }
 }

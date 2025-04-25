@@ -7,11 +7,12 @@ export const useFetchVendorBySlug = () => {
   const vendor = ref(null)
   const route  = useRoute()
 
+  const user = JSON.parse(localStorage.getItem('user'))
+  const slug = route?.params?.id || user.slug  as any
+
   const fetchVendorBySlug = async () => {
     loading.value = true
     error.value = null
-    const user = JSON.parse(localStorage.getItem('user'))
-    const slug = route?.params?.id || user.name  as any
 
     try {
       const res = (await vendor_api.$_fetch_vendor_by_name(slug)) as any
@@ -29,7 +30,9 @@ export const useFetchVendorBySlug = () => {
   }
 
   onMounted(() => {
-    fetchVendorBySlug()
+    if(slug.length){
+      fetchVendorBySlug()
+    }
   })
 
   return { fetchVendorBySlug, vendor, loading, error }

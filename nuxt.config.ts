@@ -3,7 +3,7 @@ export default {
   target: "static",
   app: {
     head: {
-      title: "Black Country",
+      title: "Satisfy",
       htmlAttrs: { lang: "en" },
       meta: [
         { charset: "utf-8" },

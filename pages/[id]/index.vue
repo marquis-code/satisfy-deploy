@@ -681,6 +681,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useCart } from "~/composables/useCart";
 import { useToast } from "~/composables/useToast";
 import { useFetchVendor } from "@/composables/modules/vendor/useFetchVendor"
+import { useFetchVendorBySlug } from '@/composables/modules/vendor/useFetchVendorBySlug'
 import { useFetchVendorById } from "@/composables/modules/vendor/useFetchVendorById";
 import { useFetchVendorMenu } from "@/composables/modules/menu/useFetchVendorMenu";
 import {
@@ -703,6 +704,7 @@ import {
   CheckIcon,
 } from "lucide-vue-next";
 import { useCustomToast } from "@/composables/core/useCustomToast";
+const { vendor, loading } = useFetchVendorBySlug()
 
 const route = useRoute();
 
@@ -728,7 +730,7 @@ const router = useRouter();
 const cart = useCart();
 const { menus, loading: fetchingMenu, fetchVendorMenu } = useFetchVendorMenu();
 const { showToast } = useCustomToast();
-const { vendor, loading, error } = useFetchVendorById(route.params.id as string);
+// const { vendor, loading, error } = useFetchVendorById(route.params.id as string);
 const { vendor: vendorObj } = useFetchVendor();
 
 // State
@@ -1153,7 +1155,7 @@ watch(
     if (newVendorId) {
       vendor.value = null;
       loading.value = true;
-      error.value = null;
+      // error.value = null;
       useFetchVendorById(newVendorId as string);
     }
   },

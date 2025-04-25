@@ -5,13 +5,15 @@ export const useVendorDeliveryLocations = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const vendorDeliveryLocations = ref<any[]>([])
+  const vendor = localStorage.getItem('selected-vendor') as any
+  const parsedVendor = JSON.parse(vendor)
 
-  const fetchVendorDeliveryLocations = async (vendorId: string) => {
+  const fetchVendorDeliveryLocations = async (vendorId?: string) => {
     loading.value = true
     error.value = null
 
     try {
-      const res = await delivery_location_api.$_vendor_delivery_locations(vendorId) as any
+      const res = await delivery_location_api.$_vendor_delivery_locations(vendorId || parsedVendor._id) as any
       if (res.type !== "ERROR") {
         vendorDeliveryLocations.value = res.data || []
         return res
@@ -24,6 +26,12 @@ export const useVendorDeliveryLocations = () => {
       loading.value = false
     }
   }
+
+  onMounted(() => {
+ if(parsedVendor._id){
+  fetchVendorDeliveryLocations()
+ }
+  })
 
   return { fetchVendorDeliveryLocations, loading, error, vendorDeliveryLocations }
 }

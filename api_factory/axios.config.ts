@@ -112,12 +112,12 @@ instanceArray.forEach((instance) => {
           ...err.response,
         };
       } else if (err.response.status === 500) {
-        showToast({
-          title: "Error",
-          message: err?.response?.data?.message || err?.response?.data?.error || "An error occured",
-          toastType: "error",
-          duration: 3000
-        });
+        // showToast({
+        //   title: "Error",
+        //   message: err?.response?.data?.message || err?.response?.data?.error || "An error occured",
+        //   toastType: "error",
+        //   duration: 3000
+        // });
         return {
           type: "ERROR",
           ...err.response,
