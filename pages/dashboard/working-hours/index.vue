@@ -45,14 +45,15 @@
             </div>
             
             <div class="grid grid-cols-2 gap-4">
+              <!-- Opening Time -->
               <div>
                 <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">Opening Time</div>
-                <div class="relative group">
+                <div class="relative">
                   <input 
                     type="time" 
                     v-model="day.openingTime"
                     :disabled="!day.isActive || day.isUpdating"
-                    class="w-full border rounded-lg py-3 px-4 pr-10 transition-all duration-200 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    class="w-full border rounded-lg py-3 px-4 transition-all duration-200 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     :class="day.isActive 
                       ? 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white' 
                       : 'border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed'"
@@ -60,35 +61,40 @@
                     @blur="day.isFocused = null"
                     @change="handleTimeChange(day, 'opening')"
                   />
-                  <button 
-                    v-if="day.isActive && day.hasOpeningTimeChanged"
-                    @click="saveTimeChange(day, 'opening')"
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-600 transition-all duration-200 animate-fade-in"
-                    :disabled="day.isUpdatingTime === 'opening'"
-                  >
-                    <div v-if="day.isUpdatingTime === 'opening'" class="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500"></div>
-                    <Save v-else class="h-5 w-5" />
-                  </button>
-                  <Clock 
-                    v-else
+                  <!-- <Clock 
                     class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 transition-colors duration-200" 
                     :class="day.isActive ? 'text-orange-500' : 'text-gray-400 dark:text-gray-500'"
-                  />
+                  /> -->
                   <span 
                     class="absolute inset-0 border-2 border-orange-500 rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none"
                     :class="{'opacity-100': day.isActive && day.isFocused === 'opening'}"
                   ></span>
                 </div>
+                
+                <!-- Opening Time Save Button - Separate and animated -->
+                <Transition name="slide-up">
+                  <button 
+                    v-if="day.isActive && day.hasOpeningTimeChanged"
+                    @click="saveTimeChange(day, 'opening')"
+                    class="mt-2 w-full text-xs flex items-center justify-center py-2 px-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg"
+                    :disabled="day.isUpdatingTime === 'opening'"
+                  >
+                    <div v-if="day.isUpdatingTime === 'opening'" class="animate-spin rounded-full h-4 w-4 border-2 border-white mr-2"></div>
+                    <Save v-else class="h-4 w-4 mr-2" />
+                    <span>Save Opening Time</span>
+                  </button>
+                </Transition>
               </div>
               
+              <!-- Closing Time -->
               <div>
                 <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">Closing Time</div>
-                <div class="relative group">
+                <div class="relative">
                   <input 
                     type="time" 
                     v-model="day.closingTime"
                     :disabled="!day.isActive || day.isUpdating"
-                    class="w-full border rounded-lg py-3 px-4 pr-10 transition-all duration-200 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    class="w-full border rounded-lg py-3 px-4 transition-all duration-200 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     :class="day.isActive 
                       ? 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white' 
                       : 'border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed'"
@@ -96,25 +102,29 @@
                     @blur="day.isFocused = null"
                     @change="handleTimeChange(day, 'closing')"
                   />
-                  <button 
-                    v-if="day.isActive && day.hasClosingTimeChanged"
-                    @click="saveTimeChange(day, 'closing')"
-                    class="absolute right-10 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-600 transition-all duration-200 animate-fade-in"
-                    :disabled="day.isUpdatingTime === 'closing'"
-                  >
-                    <div v-if="day.isUpdatingTime === 'closing'" class="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500"></div>
-                    <Save v-else class="h-5 w-5" />
-                  </button>
-                  <Clock 
-                    v-else
+                  <!-- <Clock 
                     class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 transition-colors duration-200" 
                     :class="day.isActive ? 'text-orange-500' : 'text-gray-400 dark:text-gray-500'"
-                  />
+                  /> -->
                   <span 
                     class="absolute inset-0 border-2 border-orange-500 rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none"
                     :class="{'opacity-100': day.isActive && day.isFocused === 'closing'}"
                   ></span>
                 </div>
+                
+                <!-- Closing Time Save Button - Separate and animated -->
+                <Transition name="slide-up">
+                  <button 
+                    v-if="day.isActive && day.hasClosingTimeChanged"
+                    @click="saveTimeChange(day, 'closing')"
+                    class="mt-2 w-full flex text-xs items-center justify-center py-2 px-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg"
+                    :disabled="day.isUpdatingTime === 'closing'"
+                  >
+                    <div v-if="day.isUpdatingTime === 'closing'" class="animate-spin rounded-full h-4 w-4 border-2 border-white mr-2"></div>
+                    <Save v-else class="h-4 w-4 mr-2" />
+                    <span>Save Closing Time</span>
+                  </button>
+                </Transition>
               </div>
             </div>
           </div>
@@ -253,7 +263,7 @@ const isLoading = computed(() => fetchingVendor.value || updateLoading.value)
 // Toast state
 const showSuccessToast = ref(false)
 const successMessage = ref('')
-// const showErrorToast = ref(false)
+const showErrorToast = ref(false)
 const errorMessage = ref('')
 
 // Computed properties for summary
@@ -439,13 +449,13 @@ function showToast(message: string) {
   }, 3000)
 }
 
-function showErrorToast(message: string) {
-  errorMessage.value = message
-  showErrorToast.value = true
-  setTimeout(() => {
-    showErrorToast.value = false
-  }, 4000)
-}
+// function showErrorToast(message: string) {
+//   errorMessage.value = message
+//   showErrorToast.value = true
+//   setTimeout(() => {
+//     showErrorToast.value = false
+//   }, 4000)
+// }
 
 // Watch for changes in the vendor object
 watch(() => vendorObj.value, (newVendor) => {
@@ -486,20 +496,20 @@ definePageMeta({
   }
 }
 
-/* Fade in animation for save buttons */
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-in-out;
+/* Slide up animation for save buttons */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s ease-out;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-5px, -50%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(0, -50%);
-  }
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
 }
 
 /* Toast transitions */
@@ -514,9 +524,26 @@ definePageMeta({
   transform: translateY(20px);
 }
 
-/* Ensure smooth transitions for all interactive elements */
-button, a, input, select {
-  transition: all 0.2s ease;
+/* Button hover effect */
+button:not(:disabled):hover {
+  filter: brightness(1.05);
+}
+
+/* Input focus animation */
+input:focus {
+  animation: pulse-border 1.5s infinite;
+}
+
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
+  }
 }
 
 /* Custom scrollbar */

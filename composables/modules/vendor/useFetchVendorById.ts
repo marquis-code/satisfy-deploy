@@ -8,13 +8,15 @@ export const useFetchVendorById = () => {
   const error = ref<string | null>(null)
   const vendor = ref(null)
   const vendorObj = localStorage.getItem('selected-vendor') as any
+  const userObj = localStorage.getItem('user') as any
   const parsedVendor = JSON.parse(vendorObj)
+  const parsedUser = JSON.parse(userObj)
   const route  = useRoute()
 
   const fetchVendorById = async () => {
     loading.value = true
     error.value = null
-    const id = route?.params?.id  || vendorObj._id
+    const id = route?.params?.id  || vendorObj?._id || parsedUser?._id
 
     try {
       const res = (await vendor_api.$_fetch_vendor_by_id(id)) as any
@@ -32,7 +34,7 @@ export const useFetchVendorById = () => {
   }
 
   onMounted(() => {
-    if(parsedVendor._id){
+    if(parsedVendor?._id || parsedUser?._id){
       fetchVendorById()
     }
   })

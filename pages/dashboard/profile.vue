@@ -1,6 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-orange-50 to-white relative overflow-hidden">
     <!-- Decorative background elements -->
+     <!-- {{vendorObj}} -->
     <div class="absolute top-0 right-0 w-64 h-64 bg-orange-200 rounded-full filter blur-3xl opacity-20 animate-float"></div>
     <div class="absolute bottom-0 left-0 w-80 h-80 bg-orange-300 rounded-full filter blur-3xl opacity-20 animate-float-delay"></div>
     <div class="absolute top-1/3 left-1/4 w-40 h-40 bg-yellow-200 rounded-full filter blur-3xl opacity-10 animate-pulse"></div>
@@ -29,15 +30,15 @@
               
               <!-- Store Open Badge -->
               <div class="absolute top-4 right-4 bg-white bg-opacity-90 rounded-full px-3 py-1 shadow-md animate-pulse-slow">
-                <span :class="[user?.isStoreOpen ? 'text-green-500' : 'text-red-500', 'flex items-center text-sm font-medium']">
-                  <div :class="[user?.isStoreOpen ? 'bg-green-500' : 'bg-red-500', 'w-2 h-2 rounded-full mr-2']"></div>
-                  {{ user?.isStoreOpen ? 'Open Now' : 'Closed' }}
+                <span :class="[vendor?.isStoreOpen ? 'text-green-500' : 'text-red-500', 'flex items-center text-sm font-medium']">
+                  <div :class="[vendor?.isStoreOpen ? 'bg-green-500' : 'bg-red-500', 'w-2 h-2 rounded-full mr-2']"></div>
+                  {{ vendor?.isStoreOpen ? 'Open Now' : 'Closed' }}
                 </span>
               </div>
             </div>
             <div class="absolute -bottom-12 left-6 transform transition-transform duration-500 hover:scale-105">
               <div class="profile-image-container rounded-full border-4 border-white overflow-hidden shadow-lg">
-                <img v-if="user?.displayImage" :src="user.displayImage" alt="Profile" class="w-24 h-24 object-cover" />
+                <img v-if="vendor?.displayImage" :src="vendor.displayImage" alt="Profile" class="w-24 h-24 object-cover" />
                 <svg v-else xmlns="http://www.w3.org/2000/svg" width="96" height="96" fill="#000000" viewBox="0 0 256 256" class="w-24 h-24 bg-gray-200"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM74.08,197.5a64,64,0,0,1,107.84,0,87.83,87.83,0,0,1-107.84,0ZM96,120a32,32,0,1,1,32,32A32,32,0,0,1,96,120Zm97.76,66.41a79.66,79.66,0,0,0-36.06-28.75,48,48,0,1,0-59.4,0,79.66,79.66,0,0,0-36.06,28.75,88,88,1,1,1,131.52,0Z"></path></svg>
               </div>
             </div>
@@ -48,11 +49,11 @@
             <div class="flex justify-between items-start mb-2">
               <div class="animate-fade-in">
                 <h1 class="text-2xl font-bold text-gray-800 flex items-center">
-                  {{ user?.restaurantName || 'Your Restaurant' }}
+                  {{ vendor?.restaurantName || 'Your Restaurant' }}
                   <CheckCircle class="ml-2 text-green-500 h-5 w-5 animate-pulse-slow" />
                 </h1>
                 <p class="text-gray-600">
-                  {{ user?.email || 'No email provided' }}
+                  {{ vendor?.email || 'No email provided' }}
                 </p>
               </div>
               <button 
@@ -67,7 +68,7 @@
             <!-- Category Badge -->
             <div class="mt-2 animate-fade-in-up" style="animation-delay: 0.1s">
               <span class="inline-block px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm font-medium border border-orange-200">
-                {{ user?.category || 'Uncategorized' }}
+                {{ vendor?.category || 'Uncategorized' }}
               </span>
             </div>
             
@@ -80,9 +81,9 @@
                 <div>
                   <p class="text-gray-500 text-sm">Location</p>
                   <p class="font-medium">
-                    {{ user?.locationName || 'Not specified' }}
+                    {{ vendor?.locationName || 'Not specified' }}
                   </p>
-                  <p class="text-sm text-gray-500">{{ user?.address || 'No address provided' }}</p>
+                  <p class="text-sm text-gray-500">{{ vendor?.address || 'No address provided' }}</p>
                 </div>
               </div>
               <div class="flex items-start transform transition-all duration-300 hover:translate-x-1">
@@ -92,7 +93,7 @@
                 <div>
                   <p class="text-gray-500 text-sm">Contact</p>
                   <p class="font-medium">
-                    {{ user?.phoneNumber || 'Not provided' }}
+                    {{ vendor?.phoneNumber || 'Not provided' }}
                   </p>
                 </div>
               </div>
@@ -100,8 +101,8 @@
             
             <!-- Website -->
             <div class="mt-4 flex items-center justify-between bg-gradient-to-r from-gray-50 to-orange-50 p-3 rounded-lg border border-gray-100 shadow-sm hover:shadow transition-all duration-300">
-              <p class="text-gray-700 text-sm truncate">{{ restaurantUrl }}</p>
-              <button @click="copyToClipboard(restaurantUrl)" class="p-1 text-gray-500 hover:text-orange-500 transition-colors duration-300 transform hover:scale-110">
+              <p class="text-gray-700 text-sm truncate">{{ computedName }}</p>
+              <button @click="copyToClipboard(computedName)" class="p-1 text-gray-500 hover:text-orange-500 transition-colors duration-300 transform hover:scale-110">
                 <Copy class="h-5 w-5" />
               </button>
             </div>
@@ -116,7 +117,7 @@
               </div>
               
               <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div v-for="(hours, index) in user?.workingHours" :key="index" 
+                <div v-for="(hours, index) in vendor?.workingHours" :key="index" 
                      :class="[hours.isActive ? 'opacity-100' : 'opacity-50', 'flex justify-between items-center transform transition-all duration-300 hover:translate-x-1 animate-fade-in-up']"
                      :style="`animation-delay: ${0.1 + index * 0.05}s`">
                   <span :class="[hours.isActive ? 'font-medium' : 'text-gray-500', 'text-sm']">{{ hours.day }}</span>
@@ -133,15 +134,15 @@
                 Packaging Settings
               </h3>
               <div class="flex items-center justify-between">
-                <p class="text-gray-600 text-sm">Limit: <span class="font-medium">{{ user?.packSettings?.limit || 0 }} items</span></p>
-                <p class="text-gray-600 text-sm">Price: <span class="font-medium">₦{{ user?.packSettings?.price || 0 }}</span></p>
+                <p class="text-gray-600 text-sm">Limit: <span class="font-medium">{{ vendor?.packSettings?.limit || 0 }} items</span></p>
+                <p class="text-gray-600 text-sm">Price: <span class="font-medium">₦{{ vendor?.packSettings?.price || 0 }}</span></p>
               </div>
             </div>
             
             <!-- Registration Info -->
             <div class="mt-4 flex justify-between items-center text-xs text-gray-400 animate-fade-in-up" style="animation-delay: 0.7s">
-              <p>Registered: {{ formatDate(user?.createdAt) }}</p>
-              <p>Last Updated: {{ formatDate(user?.updatedAt) }}</p>
+              <p>Registered: {{ formatDate(vendor?.createdAt) }}</p>
+              <p>Last Updated: {{ formatDate(vendor?.updatedAt) }}</p>
             </div>
           </div>
         </div>
@@ -376,7 +377,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
-import { useUser } from '@/composables/auth/user'
+// import { useUser } from '@/composables/auth/vendor'
 import { useUpdateProfile } from '@/composables/modules/vendor/useUpdateProfile'
 import { useRestaurantUrl } from '@/composables/useRestaurantUrl'
 import AnimatedCopyModal from '@/components/AnimatedCopyModal.vue'
@@ -391,8 +392,8 @@ import {
 
 const { uploadFile, loading: uploading } = useUploadFile()
 
-// Get user data from composable
-const { user } = useUser()
+// Get vendor data from composable
+// const { vendor } = useUser()
 const { updateProfile, loading: isUpdating } = useUpdateProfile()
 const { vendor } = useFetchVendorById()
 const { vendor: vendorObj } = useFetchVendor()
@@ -453,6 +454,11 @@ const profileData = reactive<ProfileData>({
   workingHours: []
 })
 
+const siteUrl = ref(process.client ? window.location.origin : 'https://satisfy.com')
+const computedName = computed(() => {
+  return `${siteUrl.value}/${vendor?.value?.slug}`
+})
+
 // Edit form state - will be populated when editing starts
 const editForm = reactive<ProfileData>({
   imageUrl: '',
@@ -475,7 +481,7 @@ const editForm = reactive<ProfileData>({
 
 // Computed URL based on restaurant name
 const restaurantUrl = computed(() => {
-  return getRestaurantUrl(user.value?.slug || 'restaurant')
+  return getRestaurantUrl(vendor.value?.slug || 'restaurant')
 })
 
 // Format date helper function
@@ -489,10 +495,10 @@ const formatDate = (dateStr: string | undefined) => {
   })
 }
 
-// Watch for user data changes and update profile data
-watch(() => user.value, (newUser) => {
+// Watch for vendor data changes and update profile data
+watch(() => vendor.value, (newUser) => {
   if (newUser) {
-    // Update profile data with user data
+    // Update profile data with vendor data
     profileData.restaurantName = newUser.restaurantName || ''
     profileData.email = newUser.email || ''
     profileData.phoneNumber = newUser.phoneNumber || ''
@@ -505,7 +511,7 @@ watch(() => user.value, (newUser) => {
     profileData.displayImage = newUser.displayImage || ''
     profileData.imageUrl = newUser.displayImage || ''
     
-    // If we have additional fields in the user object, map them too
+    // If we have additional fields in the vendor object, map them too
     if (newUser.description) profileData.description = newUser.description
     if (newUser.tags) profileData.tags = newUser.tags
     if (newUser.packSettings) profileData.packSettings = newUser.packSettings
@@ -590,8 +596,8 @@ const closeCopyModal = () => {
 }
 
 onMounted(() => {
-  // If we have user data, initialize the profile
-  if (user.value) {
+  // If we have vendor data, initialize the profile
+  if (vendor.value) {
     // This will be handled by the watcher
   }
 })

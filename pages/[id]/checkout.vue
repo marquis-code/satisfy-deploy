@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50 pb-10">
     <div class="container mx-auto px-4 py-6">
       <!-- Header with back button -->
-       {{vendor}}
+       <!-- {{vendor}} -->
       <div class="flex items-center mb-6">
         <button
           @click="goBack"
@@ -967,6 +967,7 @@ const chatWithVendor = () => {
   let message = `ORDER FROM SATISFY\n`;
   message += `ORDER DETAILS\n`;
   message += `Order ID : ${orderResponse?.value?.orderId || 'Pending'}\n`;
+  message += `Delivery Method : ${deliveryMethod.value}\n`;
   
   // Add items from each pack with the new format, using pack icon
   cart.packs.value.forEach((pack, packIndex) => {

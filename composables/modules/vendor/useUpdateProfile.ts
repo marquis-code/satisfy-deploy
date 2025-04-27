@@ -16,6 +16,7 @@ export const useUpdateProfile = () => {
       const res = (await vendor_api.$_update_profile(profileData)) as any
       if (res.type !== "ERROR") {
         success.value = true
+        window.location.reload()
         return res
       } else {
         error.value = res.message || "Failed to update profile"
