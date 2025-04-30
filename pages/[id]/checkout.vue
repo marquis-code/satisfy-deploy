@@ -3,6 +3,7 @@
     <div class="container mx-auto px-4 py-6">
       <!-- Header with back button -->
        <!-- {{vendor}} -->
+       <!-- <h1>Helllo</h1> -->
       <div class="flex items-center mb-6">
         <button
           @click="goBack"
@@ -667,6 +668,9 @@ const serviceCharge = ref(50);
 const packPrice = ref(0);
 const packLimit = ref(0);
 
+const localVendor = localStorage.getItem('selected-vendor')
+const parsedLocalVendorObj = JSON.parse(localVendor)
+
 // Computed
 const deliveryFee = computed(() => {
   if (deliveryMethod.value !== "delivery") return 0;
@@ -879,7 +883,7 @@ const submitOrder = async () => {
   try {
     // Create a single order with all packs
     const orderData: OrderData = {
-      vendorId: vendor.value._id,
+      vendorId: parsedLocalVendorObj._id || vendor?.value?._id,
       customerName: customerName.value,
       packPrice: calculatePackFees(),
       deliveryPrice: deliveryFee.value,
@@ -1161,12 +1165,12 @@ const chatWithVendor = () => {
 
 // Initialize pack settings from vendor object
 const initializePackSettings = () => {
-  if (vendor.value && vendor.value.packSettings) {
+  if (parsedLocalVendorObj && parsedLocalVendorObj.packSettings) {
     // Set pack price from vendor's packSettings
-    packPrice.value = vendor.value.packSettings.price || 0;
+    packPrice.value = parsedLocalVendorObj.packSettings.price || 0;
     
     // Set pack limit from vendor's packSettings
-    packLimit.value = vendor.value.packSettings.limit || 0;
+    packLimit.value = parsedLocalVendorObj.packSettings.limit || 0;
     
     console.log('Initialized pack settings:', {
       price: packPrice.value,
@@ -1211,8 +1215,8 @@ onMounted(() => {
   }
   
   // Fetch vendor delivery locations
-  if (vendor.value && vendor.value._id) {
-    fetchVendorDeliveryLocations(vendor.value._id);
+  if (parsedLocalVendorObj && parsedLocalVendorObj._id) {
+    fetchVendorDeliveryLocations(parsedLocalVendorObj._id);
   }
   
   // Initialize pack settings from vendor object
@@ -1221,11 +1225,11 @@ onMounted(() => {
 
 // Watch for vendor changes to fetch delivery locations and update pack settings
 watch(
-  () => vendor.value,
+  () => parsedLocalVendorObj,
   async (newVendor) => {
-    console.log(vendor.value, 'vendor again')
-    if (newVendor && newVendor._id) {
-      await fetchVendorDeliveryLocations(newVendor._id);
+    console.log(parsedLocalVendorObj, 'vendor again')
+    if (parsedLocalVendorObj && parsedLocalVendorObj._id) {
+      await fetchVendorDeliveryLocations(parsedLocalVendorObj._id);
       initializePackSettings();
     }
   }
