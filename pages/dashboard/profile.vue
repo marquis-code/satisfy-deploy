@@ -294,7 +294,26 @@
               <Activity class="h-4 w-4 mr-2 text-orange-500" />
               Store Status
             </label>
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-4">
+  <label for="storeToggle" class="text-gray-700">Store Status</label>
+  
+  <label class="relative inline-flex items-center cursor-pointer">
+    <input
+      type="checkbox"
+      id="storeToggle"
+      v-model="editForm.isStoreOpen"
+      class="sr-only peer"
+    />
+    <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-orange-500 rounded-full peer peer-checked:bg-orange-500 transition-all duration-200"></div>
+    <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition-all duration-200 peer-checked:translate-x-full"></div>
+  </label>
+
+  <span class="text-sm font-semibold text-gray-700">
+    {{ editForm.isStoreOpen ? 'Open' : 'Closed' }}
+  </span>
+</div>
+
+            <!-- <div class="flex items-center space-x-2">
               <div class="flex items-center">
                 <input 
                   type="radio" 
@@ -315,7 +334,7 @@
                 />
                 <label for="closed" class="text-gray-700">Closed</label>
               </div>
-            </div>
+            </div> -->
           </div>
           
           <!-- Action Buttons -->

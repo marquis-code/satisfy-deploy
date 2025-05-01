@@ -1,6 +1,6 @@
 <template>
   <div class="delivery-container">
-    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-8 flex items-center">
+    <h1 class="text-xl font-bold text-gray-800 dark:text-white mb-8 flex items-center">
       <span class="relative group">
         Delivery & Pack Settings
         <span class="absolute bottom-0 left-0 w-full h-1 bg-orange-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
@@ -49,7 +49,7 @@
               </svg>
             </div>
             <div>
-              <h2 class="text-xl font-bold text-gray-800 dark:text-white">Pack Settings</h2>
+              <h2 class="text-lg font-bold text-gray-800 dark:text-white">Pack Settings</h2>
               <p class="text-gray-500 dark:text-gray-400 text-sm">Configure your packaging options</p>
             </div>
           </div>
@@ -170,7 +170,7 @@
               </svg>
             </div>
             <div>
-              <h2 class="text-xl font-bold text-gray-800 dark:text-white">Delivery Locations</h2>
+              <h2 class="text-lg font-bold text-gray-800 dark:text-white">Delivery Locations</h2>
               <p class="text-gray-500 dark:text-gray-400 text-sm">Manage your delivery areas and prices</p>
             </div>
           </div>

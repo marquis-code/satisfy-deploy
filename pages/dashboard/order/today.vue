@@ -608,7 +608,7 @@ const handleUpdateOrderStatus = async () => {
 const calculatedTotal = (order: any) => {
    const totalAmount = 
       (order?.totalAmount ?? 0) + 
-      (order?.charge ?? 0) + 
+      // (order?.charge ?? 0) + 
       (order?.deliveryPrice ?? 0) + 
       (order?.packPrice ?? 0);
    

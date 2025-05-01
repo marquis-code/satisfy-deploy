@@ -2,6 +2,7 @@
   <div class="container mx-auto">
     <div class="bg-white rounded-md shadow-lg p-6 mb-6 print:shadow-none transform transition-all duration-300 hover:shadow-xl">
       <!-- Header with back button and print button -->
+       <!-- {{order}} -->
       <div class="flex justify-between items-center mb-6 print:hidden">
         <button 
           @click="router.back()" 
@@ -94,7 +95,7 @@
             </p>
             <p class="text-gray-700 flex items-center">
               <span class="font-medium w-24">Total:</span> 
-              <span class="text-orange-600 font-bold">₦{{ formatPrice((order?.totalAmount + order?.deliveryPrice + order?.packPrice + order?.charge) || 0) }}</span>
+              <span class="text-orange-600 font-bold">{{calculateFormattedOrderTotal(order)}}</span>
             </p>
           </div>
         </div>
@@ -117,11 +118,11 @@
           <PackageIcon class="h-5 w-5 mr-2 text-orange-500" />
           Order Packs
         </h2>
-        
+        <!-- {{order?.packs}} -->
         <div class="space-y-6">
           <div 
             v-for="(pack, packIndex) in order?.packs" 
-            :key="pack._id"
+            :key="packIndex"
             class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden transform transition-all duration-300 hover:shadow-md animate-fade-in"
             :style="{ animationDelay: `${packIndex * 150}ms` }"
           >
@@ -161,18 +162,21 @@
                     :style="{ animationDelay: `${(packIndex * 150) + (itemIndex * 50)}ms` }"
                   >
                     <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {{ getItemName(item.menuItemId) }}
+                     <div class="flex items-center gap-x-3">
+                        <img :src="item?.menuItemId?.image" class="h-10 w-10 rounded-full" />
+                        <span>{{ item?.menuItemId?.name }}</span>
+                     </div>
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                      <span class="inline-flex items-center justify-center bg-orange-100 text-orange-800 px-2.5 py-0.5 rounded-full">
-                        {{ item.quantity }}
+                      <span class="inline-flex text-lg items-center justify-center bg-orange-100 text-orange-800 px-2.5 py-0.5 rounded-full">
+                        {{ item?.quantity }}
                       </span>
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                      ₦{{ formatPrice(item.price) }}
+                      ₦{{ formatPrice(item?.menuItemId?.price) }}
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                      ₦{{ formatPrice(item.price * item.quantity) }}
+                      ₦{{ formatPrice(item?.price * item?.quantity) }}
                     </td>
                   </tr>
                 </tbody>
@@ -201,10 +205,10 @@
               <span class="text-gray-600">Subtotal:</span>
               <span class="text-gray-800 font-medium">₦{{ formatPrice(calculateSubtotal()) }}</span>
             </div>
-            <div class="flex justify-between py-2">
+            <!-- <div class="flex justify-between py-2">
               <span class="text-gray-600">Service Fee:</span>
               <span class="text-gray-800 font-medium">₦{{ formatPrice(order?.charge || 0) }}</span>
-            </div>
+            </div> -->
 
             <div class="flex justify-between py-2">
               <span class="text-gray-600">Pack Fee:</span>
@@ -217,7 +221,7 @@
             </div>
             <div class="flex justify-between py-3 border-t border-orange-200 mt-2">
               <span class="text-gray-800 font-semibold">Total:</span>
-              <span class="text-orange-600 font-bold text-xl">₦{{ formatPrice((order?.totalAmount + order?.deliveryPrice + order?.packPrice + order?.charge) || 0) }}</span>
+              <span class="text-orange-600 font-bold text-xl">{{ calculateFormattedOrderTotal(order) }}</span>
             </div>
           </div>
         </div>
@@ -282,6 +286,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useFetchOrderById } from "@/composables/modules/order/useFetcchOrder"
 import { useRouter, useRoute } from 'vue-router'
 import { 
   ArrowLeftIcon, 
@@ -296,6 +301,7 @@ import {
   ClipboardIcon
 } from 'lucide-vue-next'
 import { useUpdateOrderStatus } from '@/composables/modules/order/useUpdateOrderStatus'
+const { order: orderObj } = useFetchOrderById()
 
 // Define the Order interface based on the provided structure
 interface Order {
@@ -355,29 +361,29 @@ const loadOrderDetails = () => {
       
       // In a real app, you would fetch menu item names from an API
       // For now, we'll create a mapping with mock names
-      const itemIds = new Set<string>()
-      parsedOrder.packs.forEach(pack => {
-        pack.items.forEach(item => {
-          itemIds.add(item.menuItemId)
-        })
-      })
+      // const itemIds = new Set<string>()
+      // parsedOrder.packs.forEach(pack => {
+      //   pack.items.forEach(item => {
+      //     itemIds.add(item.menuItemId)
+      //   })
+      // })
       
       // Create mock menu item names
-      const mockMenuItems: Record<string, string> = {}
-      const foodNames = [
-        'Jollof Rice', 'Fried Rice', 'Chicken Suya', 'Egusi Soup', 
-        'Pounded Yam', 'Moin Moin', 'Pepper Soup', 'Suya', 
-        'Akara', 'Puff Puff', 'Chin Chin', 'Dodo', 
-        'Efo Riro', 'Ogbono Soup', 'Banga Soup', 'Afang Soup'
-      ]
+      // const mockMenuItems: Record<string, string> = {}
+      // const foodNames = [
+      //   'Jollof Rice', 'Fried Rice', 'Chicken Suya', 'Egusi Soup', 
+      //   'Pounded Yam', 'Moin Moin', 'Pepper Soup', 'Suya', 
+      //   'Akara', 'Puff Puff', 'Chin Chin', 'Dodo', 
+      //   'Efo Riro', 'Ogbono Soup', 'Banga Soup', 'Afang Soup'
+      // ]
       
-      let index = 0
-      itemIds.forEach(id => {
-        mockMenuItems[id] = foodNames[index % foodNames.length]
-        index++
-      })
+      // let index = 0
+      // itemIds.forEach(id => {
+      //   mockMenuItems[id] = foodNames[index % foodNames.length]
+      //   index++
+      // })
       
-      menuItems.value = mockMenuItems
+      // menuItems.value = mockMenuItems
     }
   } catch (error) {
     console.error('Failed to load order details:', error)
@@ -443,6 +449,24 @@ const handleUpdateOrderStatus = async (): Promise<void> => {
     // Show error notification (in a real app)
   }
 }
+
+function calculateFormattedOrderTotal(order: any): string {
+  const totalAmount = order?.totalAmount || 0;
+  const deliveryPrice = order?.deliveryPrice || 0;
+  const packPrice = order?.packPrice || 0;
+  const charge = order?.charge || 0;
+
+  const total = totalAmount + deliveryPrice + packPrice
+  //  + charge;
+
+  // Format as Nigerian Naira currency
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: 0,
+  }).format(total);
+}
+
 
 // Lifecycle
 onMounted(() => {

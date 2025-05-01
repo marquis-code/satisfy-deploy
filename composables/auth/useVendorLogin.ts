@@ -21,6 +21,7 @@ export const useVendorLogin = () => {
         // console.log(res, 'reshere')
         createUser(res)
         router.push('/dashboard')
+        window.location.href = "/dashboard"
         return res
       } else {
         error.value = res.data.message || "Login failed"

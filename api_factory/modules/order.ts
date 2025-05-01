@@ -26,5 +26,9 @@ export const order_api = {
   $_update_order_status: (id: string, payload: any) => {
     let url = `/orders/${id}`;
     return GATEWAY_ENDPOINT.patch(url, payload);
+  },
+  $_get_order_by_id: (id: any) => {
+    let url = `/orders/${id}`;
+    return GATEWAY_ENDPOINT.get(url);
   }
 };

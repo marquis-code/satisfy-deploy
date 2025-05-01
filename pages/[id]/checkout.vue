@@ -171,12 +171,12 @@
                   >₦{{ formatPrice(cart.subtotal.value) }}</span
                 >
               </div>
-              <div class="flex justify-between text-sm">
+              <!-- <div class="flex justify-between text-sm">
               <span class="text-gray-600">Service Charge</span>
               <span class="font-medium"
                 >₦{{ formatPrice(serviceCharge) }}</span
               >
-            </div>
+            </div> -->
 
               <div class="flex justify-between text-sm" v-if="deliveryMethod === 'delivery'">
                 <span class="text-gray-600">Delivery</span>
@@ -416,12 +416,12 @@
                     >₦{{ formatPrice(cart.subtotal.value) }}</span
                   >
                 </div>
-                <div class="flex justify-between text-sm">
+                <!-- <div class="flex justify-between text-sm">
               <span class="text-gray-600">Service Charge</span>
               <span class="font-medium"
                 >₦{{ formatPrice(serviceCharge) }}</span
               >
-            </div>
+            </div> -->
                 <div class="flex justify-between text-sm" v-if="deliveryMethod === 'delivery'">
                   <span class="text-gray-600">Delivery</span>
                   <span class="font-medium animate-highlight" key="delivery-fee">
@@ -549,6 +549,7 @@
     </Teleport>
 
     <!-- Order Success Modal -->
+    <!-- calculateFormattedOrderTotal(order) -->
     <Teleport to="body">
       <div
         v-if="showOrderSuccessModal"
@@ -706,8 +707,12 @@ const calculatePackFees = (): number => {
 };
 
 // Calculate grand total (subtotal + delivery fee + pack fees)
+// const calculateGrandTotal = (): number => {
+//   return cart.subtotal.value + serviceCharge.value + deliveryFee.value + calculatePackFees();
+// };
+
 const calculateGrandTotal = (): number => {
-  return cart.subtotal.value + serviceCharge.value + deliveryFee.value + calculatePackFees();
+  return cart.subtotal.value + deliveryFee.value + calculatePackFees();
 };
 
 const incrementItemQuantity = (packIndex: number, itemIndex: number) => {

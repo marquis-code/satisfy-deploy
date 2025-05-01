@@ -14,6 +14,7 @@ export const useCloseStore = () => {
       const res = (await vendor_api.$_close_store()) as any
       if (res.type !== "ERROR") {
         result.value = res.data
+        window.location.reload()
         return res
       } else {
         error.value = res.message || "Failed to close store"

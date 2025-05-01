@@ -129,7 +129,7 @@
                 <div 
                   v-if="!isCollapsed" 
                   :class="[
-                    'pl-12 py-1 overflow-hidden text-sm transition-all duration-300 ease-in-out submenu',
+                    'pl-12 overflow-hidden text-sm transition-all duration-300 ease-in-out submenu',
                     expandedMenus[item.key] ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
                   ]"
                 >
@@ -139,7 +139,7 @@
                     :key="child.label"
                     :to="child.path"
                     :class="[
-                      'flex items-center py-2 text-sm mt-6 rounded-full px-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 relative submenu-item overflow-hidden',
+                      'flex items-center py-2 text-sm  rounded-full px-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 relative submenu-item overflow-hidden',
                       isActiveRoute(child.path) && 'bg-blue-600 text-white'
                     ]"
                   >
@@ -428,12 +428,7 @@ const supportItems = reactive<NavItem[]>([
   { 
     icon: HelpCircle, 
     label: "Help Center", 
-    path: "#" 
-  },
-  { 
-    icon: MessageSquare, 
-    label: "FAQs", 
-    path: "#" 
+    path: "https://wa.me/2347070759619?text=Hello%2C%20I%20need%20help%20with%20my%20account" 
   },
   { 
     icon: LogOut, 
@@ -441,6 +436,25 @@ const supportItems = reactive<NavItem[]>([
     path: "/logout" 
   }
 ]);
+
+
+// const supportItems = reactive<NavItem[]>([
+//   { 
+//     icon: HelpCircle, 
+//     label: "Help Center", 
+//     path: "#" 
+//   },
+//   // { 
+//   //   icon: MessageSquare, 
+//   //   label: "FAQs", 
+//   //   path: "#" 
+//   // },
+//   { 
+//     icon: LogOut, 
+//     label: "Logout", 
+//     path: "/logout" 
+//   }
+// ]);
 
 // Updated active route checking functions
 const isActiveRoute = (path: string): boolean => {

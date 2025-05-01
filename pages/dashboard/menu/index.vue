@@ -112,8 +112,9 @@
               class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
             />
             <div class="absolute top-2 right-2 flex space-x-1">
+              <!-- confirmToggleVisibility -->
               <button
-                @click.stop="toggleVisibility(meal)"
+                @click.stop="confirmToggleVisibility(meal)"
                 class="p-1.5 rounded-full transition-all duration-200 bg-white/80 backdrop-blur-sm hover:bg-white"
                 :class="meal.isEnabled ? 'text-orange-500' : 'text-gray-400'"
                 :disabled="enabling || disabling"
@@ -139,7 +140,7 @@
           </div>
           <div class="p-4">
             <div class="flex items-center text-sm text-gray-500 mb-3">
-              <Tag class="w-4 h-4 mr-1" />
+              <!-- <Tag class="w-4 h-4 mr-1" /> -->
               <span class="capitalize">{{ meal?.category?.name }}</span>
             </div>
             <div class="flex justify-between items-center">
@@ -247,13 +248,28 @@
                     'bg-pink-100 text-pink-800': meal.category === 'dessert',
                   }"
                 >
-                  {{ meal.category }}
+                  {{ meal?.categoryId?.name }}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
+                <!-- <button
+                @click.stop="confirmToggleVisibility(meal)"
+                class="p-1.5 rounded-full transition-all duration-200 bg-white/80 backdrop-blur-sm hover:bg-white"
+                :class="meal.isEnabled ? 'text-orange-500' : 'text-gray-400'"
+                :disabled="enabling || disabling"
+              >
+                <div v-if="enabling && selectedMeal?.id === meal.id || disabling && selectedMeal?.id === meal.id" class="w-4 h-4">
+                  <svg class="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </div>
+                <Eye v-else-if="meal.isEnabled" class="w-6 h-6" />
+                <EyeOff v-else class="w-6 h-6" />
+              </button> -->
                 <div class="relative">
                   <button
-                    @click="toggleVisibility(meal)"
+                    @click="confirmToggleVisibility(meal)"
                     class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                     :class="meal.isEnabled ? 'bg-orange-500' : 'bg-gray-200'"
                     :disabled="enabling || disabling"
@@ -263,7 +279,7 @@
                       :class="meal.isEnabled ? 'translate-x-5' : 'translate-x-0'"
                     ></span>
                   </button>
-                  <div v-if="(enabling || disabling) && selectedMeal?.id === meal.id" class="absolute inset-0 flex items-center justify-center">
+                  <div v-if="(enabling || disabling) && selectedMeal?._id === meal._id" class="absolute inset-0 flex items-center justify-center">
                     <svg class="animate-spin h-5 w-5 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -630,7 +646,7 @@
     </Transition>
 
     <!-- Toggle Visibility Confirmation Modal -->
-    <Transition
+    <!-- <Transition
       enter-active-class="transition duration-300 ease-out"
       enter-from-class="transform scale-95 opacity-0"
       enter-to-class="transform scale-100 opacity-100"
@@ -695,7 +711,7 @@
           </div>
         </div>
       </div>
-    </Transition>
+    </Transition> -->
 
     <!-- Toast Notification -->
     <Transition
@@ -947,26 +963,27 @@ function closeToggleModal() {
   showToggleModal.value = false;
 }
 
-async function confirmToggleVisibility() {
-  if (!selectedMeal.value) return;
+async function confirmToggleVisibility(meal: any) {
+  if (!meal) return;
+  selectedMeal.value = meal
   
   try {
-    if (selectedMeal.value.isEnabled) {
-      await disableMenu(selectedMeal.value._id);
+    if (meal.isEnabled) {
+      await disableMenu(meal._id);
     } else {
-      await enableMenu(selectedMeal.value._id);
+      await enableMenu(meal._id);
     }
     
     // Update local state after API call succeeds
-    const index = meals.value.findIndex(m => m.id === selectedMeal.value!.id);
-    if (index !== -1) {
-      meals.value[index].isEnabled = !meals.value[index].isEnabled;
+    // const index = meals.value.findIndex(m => m.id === selectedMeal.value!.id);
+    // if (index !== -1) {
+    //   meals.value[index].isEnabled = !meals.value[index].isEnabled;
       
-      showToast(
-        `${meals.value[index].name} is now ${meals.value[index].isEnabled ? 'visible' : 'hidden'} to users`,
-        'success'
-      );
-    }
+    //   // showToast(
+    //   //   `${meals.value[index].name} is now ${meals.value[index].isEnabled ? 'visible' : 'hidden'} to users`,
+    //   //   'success'
+    //   // );
+    // }
   } catch (error) {
     showToast(`Failed to update visibility: ${error}`, 'error');
   }

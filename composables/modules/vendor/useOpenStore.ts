@@ -13,6 +13,7 @@ export const useOpenStore = () => {
     try {
       const res = (await vendor_api.$_open_store()) as any
       if (res.type !== "ERROR") {
+        window.location.reload()
         result.value = res.data
         return res
       } else {
