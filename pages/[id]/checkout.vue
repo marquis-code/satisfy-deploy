@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50 pb-10">
     <div class="container mx-auto px-4 py-6">
       <!-- Header with back button -->
-       <!-- {{vendor}} -->
+       <!-- {{vendor?.deliveryLocation}} -->
        <!-- <h1>Helllo</h1> -->
       <div class="flex items-center mb-6">
         <button
@@ -304,16 +304,16 @@
                 
                 <div class="relative location-dropdown">
                   <select 
-                    v-if="vendorDeliveryLocations.length"  
+                    v-if="vendor?.deliveryLocation?.length"  
                     class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent appearance-none"
                     v-model="selectedLocationId"
                     @change="handleLocationChange"
                   >
                     <option value="" disabled selected>Select a location</option>
                     <option 
-                      v-for="item in vendorDeliveryLocations" 
-                      :key="item._id" 
-                      :value="item._id"
+                      v-for="item in vendor?.deliveryLocation" 
+                      :key="item?._id" 
+                      :value="item?._id"
                     >
                       {{item.name}} - ₦{{ formatPrice(item.deliveryFee) }}
                     </option>
@@ -323,7 +323,7 @@
                   />
                 </div>
 
-                <div v-if="vendorDeliveryLocations.length === 0" class="p-4 text-center text-gray-500 border border-gray-200 rounded-md mt-2">
+                <div v-if="vendor?.deliveryLocation?.length === 0" class="p-4 text-center text-gray-500 border border-gray-200 rounded-md mt-2">
                   <MapPinOffIcon class="h-6 w-6 mx-auto mb-2 text-gray-400" />
                   <p>This vendor hasn't set up delivery locations yet.</p>
                   <p class="text-xs mt-1">Please choose pickup or contact the vendor.</p>
@@ -770,8 +770,8 @@ const setDeliveryMethod = (method: 'pickup' | 'delivery') => {
 
 const handleLocationChange = () => {
   // Find the full location object based on the selected ID
-  selectedLocation.value = vendorDeliveryLocations.value.find(
-    location => location._id === selectedLocationId.value
+  selectedLocation.value = vendor.value.deliveryLocation.find(
+    location => location?._id === selectedLocationId.value
   );
   
   if (selectedLocation.value) {
@@ -888,7 +888,7 @@ const submitOrder = async () => {
   try {
     // Create a single order with all packs
     const orderData: OrderData = {
-      vendorId: parsedLocalVendorObj._id || vendor?.value?._id,
+      vendorId: parsedLocalVendorObj?._id || vendor?.value?._id,
       customerName: customerName.value,
       packPrice: calculatePackFees(),
       deliveryPrice: deliveryFee.value,
@@ -932,8 +932,8 @@ const submitOrder = async () => {
     
     // Submit the order
     const response = await createOrder(orderData);
-    if (response && response._id) {
-      orderIds.value = [response._id];
+    if (response && response?._id) {
+      orderIds.value = [response?._id];
     }
 
     // Show success message with animation
@@ -1220,8 +1220,8 @@ onMounted(() => {
   }
   
   // Fetch vendor delivery locations
-  if (parsedLocalVendorObj && parsedLocalVendorObj._id) {
-    fetchVendorDeliveryLocations(parsedLocalVendorObj._id);
+  if (parsedLocalVendorObj && parsedLocalVendorObj?._id) {
+    fetchVendorDeliveryLocations(parsedLocalVendorObj?._id);
   }
   
   // Initialize pack settings from vendor object
@@ -1233,8 +1233,8 @@ watch(
   () => parsedLocalVendorObj,
   async (newVendor) => {
     console.log(parsedLocalVendorObj, 'vendor again')
-    if (parsedLocalVendorObj && parsedLocalVendorObj._id) {
-      await fetchVendorDeliveryLocations(parsedLocalVendorObj._id);
+    if (parsedLocalVendorObj && parsedLocalVendorObj?._id) {
+      await fetchVendorDeliveryLocations(parsedLocalVendorObj?._id);
       initializePackSettings();
     }
   }

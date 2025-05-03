@@ -2,8 +2,16 @@ import { GATEWAY_ENDPOINT } from "../axios.config";
 
 export const delivery_location_api = {
   $_create_delivery_location: (payload: { name: string, deliveryFee: number}) => {
-    let url = `/delivery-location`;
+    let url = `/updated-delivery-location`;
     return GATEWAY_ENDPOINT.post(url, payload);
+  },
+  $_fetch_delivery_location: () => {
+    let url = `/updated-delivery-location`;
+    return GATEWAY_ENDPOINT.get(url);
+  },
+  $_fetch_delivery_location_by_vendor_id: (id: string) => {
+    let url = `/updated-delivery-location/vendor/${id}`;
+    return GATEWAY_ENDPOINT.get(url);
   },
   $_fetch_loggedIn_delivery_location: () => {
     let url = `/delivery-location/all`;

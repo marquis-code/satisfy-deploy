@@ -1,5 +1,31 @@
 <template>
   <div class="min-h-screen">
+    <!-- Full-screen Loading Animation -->
+    <Transition name="fade">
+      <div v-if="!vendor && loading" class="fixed inset-0 z-50 bg-amber-50 flex flex-col items-center justify-center">
+        <div class="restaurant-loader">
+          <div class="plate">
+            <div class="plate-base"></div>
+            <div class="plate-food">
+              <div class="rice"></div>
+              <div class="meat"></div>
+              <div class="vegetable vegetable-1"></div>
+              <div class="vegetable vegetable-2"></div>
+              <div class="vegetable vegetable-3"></div>
+            </div>
+            <div class="steam steam-1"></div>
+            <div class="steam steam-2"></div>
+            <div class="steam steam-3"></div>
+            <div class="steam steam-4"></div>
+            <div class="fork"></div>
+            <div class="knife"></div>
+          </div>
+        </div>
+        <h2 class="mt-8 text-3xl font-bold text-amber-800 animate-pulse">Preparing your meal...</h2>
+        <p class="mt-2 text-amber-700">Setting the table for a delicious experience</p>
+      </div>
+    </Transition>
+
     <!-- Hero Banner with Restaurant Info -->
     <div class="relative">
       <div
@@ -56,7 +82,7 @@
             </div>
 
             <button
-              class="mt-4 md:mt-0 px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-md transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 hover:scale-105 flex items-center review-button"
+              class="mt-4 md:mt-0 px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-md transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 hover:scale-105 flex items-center review-button group"
               @click="showReviewModal = true"
             >
               <StarIcon class="h-4 w-4 mr-1 animate-spin-slow" />
@@ -110,13 +136,18 @@
         <!-- Menu List Section -->
         <div class="w-full lg:w-2/3">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Menu List</h2>
+            <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+              <span class="relative">
+                Menu List
+                <span class="absolute -bottom-1 left-0 w-1/2 h-1 bg-orange-400 rounded-full"></span>
+              </span>
+            </h2>
             <div class="relative">
               <input
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search menu..."
-                class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent shadow-sm"
               />
               <SearchIcon
                 class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
@@ -156,12 +187,13 @@
               :style="{ animationDelay: `${index * 0.05}s` }"
             >
               <div class="flex h-full">
-                <div class="w-1/3 overflow-hidden">
+                <div class="w-1/3 overflow-hidden relative group">
                   <img
                     :src="meal.image"
                     :alt="meal.name"
-                    class="w-full h-full rounded-l-xl object-cover"
+                    class="w-full h-full rounded-l-xl object-cover transition-transform duration-500 group-hover:scale-110"
                   />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
                 <div class="w-2/3 p-4 flex flex-col justify-between">
                   <div>
@@ -215,7 +247,10 @@
             <div class="flex justify-between items-center mb-6">
               <h2 class="text-base font-bold text-gray-800 flex items-center">
                 <ShoppingBagIcon class="h-5 w-5 mr-2 text-orange-500" />
-                Your Orders
+                <span class="relative">
+                  Your Orders
+                  <span class="absolute -bottom-1 left-0 w-1/2 h-0.5 bg-orange-400 rounded-full"></span>
+                </span>
                 <span
                   v-if="cart.totalItems.value > 0"
                   class="ml-2 px-2 py-0.5 bg-orange-100 text-orange-800 text-xs font-bold rounded-full animate-pulse"
@@ -704,7 +739,6 @@ import {
   CheckIcon,
 } from "lucide-vue-next";
 import { useCustomToast } from "@/composables/core/useCustomToast";
-const { vendor, loading } = useFetchVendorBySlug()
 
 const route = useRoute();
 
@@ -1135,6 +1169,8 @@ const initializePackSettings = () => {
   }
 };
 
+const { vendor, loading } = useFetchVendorBySlug()
+
 // Lifecycle
 onMounted(() => {
   // Initialize cart from localStorage
@@ -1153,10 +1189,10 @@ watch(
   () => route.params.id,
   (newVendorId) => {
     if (newVendorId) {
-      vendor.value = null;
-      loading.value = true;
+      // vendor.value = null;
+      // loading.value = true;
       // error.value = null;
-      useFetchVendorById(newVendorId as string);
+      // useFetchVendorById(newVendorId as string);
     }
   },
   { immediate: true }
@@ -1228,6 +1264,159 @@ watch(
   animation: spinSlow 3s linear infinite;
 }
 
+/* Fade transition for loading screen */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+/* Restaurant loader animations */
+.restaurant-loader {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.plate {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+}
+
+.plate-base {
+  position: absolute;
+  width: 150px;
+  height: 30px;
+  bottom: 0;
+  border-radius: 50%;
+  background: linear-gradient(to right, #e5e7eb, #f3f4f6, #e5e7eb);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 1;
+}
+
+.plate-food {
+  position: absolute;
+  width: 120px;
+  height: 80px;
+  bottom: 20px;
+  left: 15px;
+  border-radius: 50%;
+  background: #fef3c7;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.rice {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #f9fafb;
+  z-index: 2;
+}
+
+.meat {
+  position: absolute;
+  width: 60px;
+  height: 30px;
+  top: 20px;
+  left: 30px;
+  border-radius: 15px;
+  background: linear-gradient(to right, #b91c1c, #ef4444);
+  z-index: 3;
+  transform-origin: center;
+  animation: sizzle 2s infinite;
+}
+
+.vegetable {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  z-index: 4;
+}
+
+.vegetable-1 {
+  top: 15px;
+  left: 20px;
+  background: #22c55e;
+  animation: float 3s infinite ease-in-out;
+}
+
+.vegetable-2 {
+  top: 50px;
+  left: 80px;
+  background: #f97316;
+  animation: float 2.5s infinite ease-in-out 0.3s;
+}
+
+.vegetable-3 {
+  top: 30px;
+  left: 100px;
+  background: #eab308;
+  animation: float 3.5s infinite ease-in-out 0.6s;
+}
+
+.steam {
+  position: absolute;
+  width: 8px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+  z-index: 5;
+  opacity: 0;
+}
+
+.steam-1 {
+  top: -30px;
+  left: 40px;
+  animation: steam 3s infinite ease-out;
+}
+
+.steam-2 {
+  top: -30px;
+  left: 70px;
+  animation: steam 3s infinite ease-out 0.5s;
+}
+
+.steam-3 {
+  top: -30px;
+  left: 100px;
+  animation: steam 3s infinite ease-out 1s;
+}
+
+.steam-4 {
+  top: -30px;
+  left: 55px;
+  animation: steam 3s infinite ease-out 1.5s;
+}
+
+.fork {
+  position: absolute;
+  width: 6px;
+  height: 80px;
+  bottom: 10px;
+  left: -20px;
+  background: #9ca3af;
+  border-radius: 3px;
+  transform: rotate(-30deg);
+  z-index: 0;
+}
+
+.knife {
+  position: absolute;
+  width: 6px;
+  height: 90px;
+  bottom: 10px;
+  right: -20px;
+  background: #9ca3af;
+  border-radius: 3px;
+  transform: rotate(30deg);
+  z-index: 0;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -1276,6 +1465,35 @@ watch(
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes steam {
+  0% {
+    transform: translateY(0) scaleY(1);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-20px) scaleY(1.5);
+  }
+  95% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-40px) scaleY(1);
+    opacity: 0;
+  }
+}
+
+@keyframes sizzle {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
   }
 }
 
