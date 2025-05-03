@@ -3,6 +3,7 @@
     <div class="container mx-auto px-4 py-6">
       <!-- Header with back button -->
        <!-- {{vendor?.deliveryLocation}} -->
+        <!-- {{vendor}} -->
        <!-- <h1>Helllo</h1> -->
       <div class="flex items-center mb-6">
         <button
@@ -301,17 +302,19 @@
                 <label class="block text-gray-600 mb-1 text-sm font-medium"
                   >Location <span class="text-red-500">*</span></label
                 >
+                <!-- {{vendor?.deliveryLocation}} -->
+                 <!-- {{selectedLocationId}} -->
                 
                 <div class="relative location-dropdown">
                   <select 
-                    v-if="vendor?.deliveryLocation?.length"  
+                    v-if="vendor?.deliveryLocations?.length"  
                     class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent appearance-none"
                     v-model="selectedLocationId"
                     @change="handleLocationChange"
                   >
                     <option value="" disabled selected>Select a location</option>
                     <option 
-                      v-for="item in vendor?.deliveryLocation" 
+                      v-for="item in vendor?.deliveryLocations" 
                       :key="item?._id" 
                       :value="item?._id"
                     >
@@ -605,6 +608,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useCart } from "~/composables/useCart";
 import { useToast } from "~/composables/useToast";
+import { useFetchVendorBySlug } from '@/composables/modules/vendor/useFetchVendorBySlug'
 import { useVendorDeliveryLocations } from "@/composables/modules/delivery/useVendorDeliveryLocations";
 import { useCreateOrder } from "@/composables/modules/order/useCreateOrder";
 import {
@@ -636,7 +640,8 @@ const cart = useCart();
 const toast = useToast();
 const { createOrder, loading: orderLoading, error, orderResponse } = useCreateOrder();
 // const vendorObj = localStorage.getItem('selected-vendor') as any
-const { vendor } = useFetchVendor();
+// const { vendor } = useFetchVendor();
+const { vendor, loading } = useFetchVendorBySlug()
 // const parsedVendor = JSON.parse(vendorObj)
 // const { vendor } = useFetchVendorById(parsedVendor._id as string);
 const { fetchVendorDeliveryLocations, loading: fetchingDeliveryLocations, vendorDeliveryLocations } = useVendorDeliveryLocations();
@@ -770,8 +775,8 @@ const setDeliveryMethod = (method: 'pickup' | 'delivery') => {
 
 const handleLocationChange = () => {
   // Find the full location object based on the selected ID
-  selectedLocation.value = vendor.value.deliveryLocation.find(
-    location => location?._id === selectedLocationId.value
+  selectedLocation.value = vendor?.value?.deliveryLocations?.find(
+    location => location?._id === selectedLocationId?.value
   );
   
   if (selectedLocation.value) {
@@ -894,8 +899,8 @@ const submitOrder = async () => {
       deliveryPrice: deliveryFee.value,
       phoneNumber: phoneNumber.value,
       deliveryType: deliveryMethod.value as "delivery" | "pickup",
-      location: deliveryMethod.value === "delivery" && selectedLocation.value ? selectedLocation.value.name : "",
-      address: deliveryMethod.value === "delivery" ? deliveryAddress.value : "",
+      location: deliveryMethod.value === "delivery" && selectedLocation?.value ? selectedLocation?.value?.name : "",
+      address: deliveryMethod.value === "delivery" ? deliveryAddress?.value : "",
       // Transform cart packs to match the new structure
       packs: cart.packs.value
         .filter(pack => pack.items.length > 0)
@@ -905,7 +910,7 @@ const submitOrder = async () => {
             quantity: item.quantity
           })),
           // Add pack quantity if it exists, otherwise it defaults to 1
-          ...(pack.quantity && pack.quantity > 1 ? { quantity: pack.quantity } : {})
+          ...(pack?.quantity && pack?.quantity > 1 ? { quantity: pack?.quantity } : {})
         })),
       // Add general notes if provided
       notes: additionalNotes.value.trim()

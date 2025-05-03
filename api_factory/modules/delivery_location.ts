@@ -22,11 +22,11 @@ export const delivery_location_api = {
     return GATEWAY_ENDPOINT.get(url);
   },
   $_update_delivery_location: (id: string, payload: any) => {
-    let url = `/delivery-location/${id}`;
+    let url = `/updated-delivery-location/${id}`;
     return GATEWAY_ENDPOINT.patch(url, payload);
   },
   $_delete_delivery_location: (id: string) => {
-    let url = `/delivery-location/${id}`;
+    let url = `/updated-delivery-location/${id}`;
     return GATEWAY_ENDPOINT.delete(url);
   }
 };

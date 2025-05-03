@@ -13,7 +13,7 @@ export const useVendorDeliveryLocations = () => {
     error.value = null
 
     try {
-      const res = await delivery_location_api.$_vendor_delivery_locations(vendorId || parsedVendor._id) as any
+      const res = await delivery_location_api.$_vendor_delivery_locations(vendorId || parsedVendor?._id) as any
       if (res.type !== "ERROR") {
         vendorDeliveryLocations.value = res.data || []
         return res
@@ -28,7 +28,7 @@ export const useVendorDeliveryLocations = () => {
   }
 
   onMounted(() => {
- if(parsedVendor._id){
+ if(parsedVendor?._id){
   fetchVendorDeliveryLocations()
  }
   })
