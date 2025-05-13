@@ -1,314 +1,356 @@
 <template>
-  <div class="min-h-screen bg-gray-50 pb-10">
-    <div class="container mx-auto px-4 py-6">
-      <!-- Header with back button -->
-       <!-- {{vendor?.deliveryLocation}} -->
-        <!-- {{vendor}} -->
-       <!-- <h1>Helllo</h1> -->
-      <div class="flex items-center mb-6">
-        <button
-          @click="goBack"
-          class="px-3 py-3 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-md transition-all duration-300 mr-3 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center"
-        >
-          <ArrowLeftIcon class="h-4 w-4 mr-1" />
-          Back
-        </button>
-        <h1 class="text-2xl font-bold text-gray-800">Checkout</h1>
+  <div class="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 overflow-hidden">
+    <!-- Page Loader -->
+    <Transition name="fade">
+      <div v-if="isLoading" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-gradient-to-br from-amber-50 to-rose-50">
+        <div class="relative w-24 h-24 md:w-32 md:h-32">
+          <!-- Animated plate -->
+          <div class="absolute inset-0 rounded-full bg-white shadow-lg animate-pulse"></div>
+          
+          <!-- Food icons -->
+          <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div class="relative">
+              <div class="absolute -top-10 -left-8 animate-float-staggered" style="animation-delay: 0s;">
+                <UtensilsIcon class="h-6 w-6 text-amber-500" />
+              </div>
+              <div class="absolute -top-6 left-6 animate-float-staggered" style="animation-delay: 0.5s;">
+                <CakeIcon class="h-6 w-6 text-rose-500" />
+              </div>
+              <div class="absolute top-4 -left-10 animate-float-staggered" style="animation-delay: 1s;">
+                <CoffeeIcon class="h-6 w-6 text-amber-700" />
+              </div>
+              <div class="absolute top-6 left-4 animate-float-staggered" style="animation-delay: 1.5s;">
+                <SaladIcon class="h-6 w-6 text-green-500" />
+              </div>
+            </div>
+          </div>
+          
+          <!-- Circular spinner -->
+          <svg class="absolute inset-0 animate-spin-slow" viewBox="0 0 100 100">
+            <circle 
+              cx="50" cy="50" r="45" 
+              fill="none" 
+              stroke="url(#gradient)" 
+              stroke-width="3" 
+              stroke-linecap="round"
+              stroke-dasharray="70 30"
+            />
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f59e0b" />
+                <stop offset="100%" stop-color="#e11d48" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        
+        <h2 class="mt-8 text-2xl font-bold text-gray-800 animate-pulse">
+          Preparing Your Checkout
+        </h2>
+        <p class="mt-2 text-gray-600">Just a moment while we get everything ready...</p>
+        
+        <!-- Loading progress bar -->
+        <div class="w-64 h-1.5 mt-6 bg-gray-200 rounded-full overflow-hidden">
+          <div 
+            class="h-full bg-gradient-to-r from-amber-500 to-rose-500 rounded-full animate-progress"
+          ></div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Floating Back Button -->
+    <button 
+      @click="goBack" 
+      class="fixed top-4 left-4 z-50 p-3 bg-white rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 group"
+    >
+      <ArrowLeftIcon class="h-5 w-5 text-gray-700 group-hover:text-rose-500 transition-colors" />
+      <span class="absolute left-full ml-2 px-2 py-1 text-sm font-medium text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+        Back to Menu
+      </span>
+    </button>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-16 md:py-20">
+      <!-- Checkout Header -->
+      <div class="text-center mb-10 animate-fade-in-down">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Complete Your Order</h1>
+        <p class="text-gray-600">
+          <span v-if="vendor?.restaurantName">{{ vendor.restaurantName }}</span>
+          <span v-else>Restaurant</span>
+          <span class="mx-2">•</span>
+          <span v-if="cart?.totalItems.value" class="text-rose-500 font-medium">{{ cart.totalItems.value }} items</span>
+          <span v-else class="text-rose-500 font-medium">Your cart</span>
+        </p>
       </div>
 
-      <div class="flex flex-col md:flex-row gap-6">
-        <!-- Order Details Section -->
-        <div class="w-full md:w-2/3">
-          <div class="bg-white rounded-md shadow-md p-6 border border-gray-100">
-            <div class="flex items-center justify-between mb-6">
-              <h2 class="text-xl font-bold text-gray-800 flex items-center">
-                <ShoppingBagIcon class="h-5 w-5 mr-2 text-orange-500" />
-                Order Details
-              </h2>
-              <span
-                class="text-sm bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full font-medium animate-pulse"
-                v-if="cart?.totalItems.value > 0"
-              >
-                {{ cart?.totalItems.value }} items
-              </span>
+      <!-- Checkout Steps -->
+      <div class="flex justify-center mb-10 overflow-x-auto pb-2 animate-fade-in">
+        <div class="flex items-center space-x-2 md:space-x-4">
+          <div class="flex flex-col items-center">
+            <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-md">
+              <ShoppingCartIcon class="h-5 w-5" />
             </div>
-
-            <div
-              v-if="cart.loading.value"
-              class="flex justify-center items-center py-8"
-            >
-              <div
-                class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-orange-500"
-              ></div>
-            </div>
-
-            <div
-              v-else-if="cart.totalItems.value === 0"
-              class="text-center py-8"
-            >
-              <ShoppingCartIcon
-                class="h-12 w-12 mx-auto text-gray-300 mb-3 animate-bounce-slow"
-              />
-              <p class="text-gray-500 mb-4">Your cart is empty</p>
-              <button
-                @click="goBack"
-                class="px-4 py-3 bg-orange-400 hover:bg-orange-500 text-white rounded-md transition-colors transform hover:scale-105"
-              >
-                Go back to menu
-              </button>
-            </div>
-
-            <div
-              v-else
-              class="space-y-8 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar"
-            >
-              <div
-                v-for="(pack, packIndex) in cart.packs.value"
-                :key="pack.id"
-                class="border border-gray-100 rounded-md p-4 hover:border-orange-200 transition-colors"
-                :class="{ 'animate-fade-in': true }"
-                :style="{ animationDelay: `${packIndex * 0.1}s` }"
-              >
-                <div class="flex justify-between items-center mb-4">
-                  <h3
-                    class="text-lg font-semibold text-gray-800 flex items-center"
-                  >
-                    <span
-                      :class="
-                        pack.items.length > 0 ? 'bg-orange-500' : 'bg-gray-300'
-                      "
-                      class="w-2 h-2 rounded-full mr-2"
-                    ></span>
-                    Pack {{ packIndex + 1 }}
-                  </h3>
-                  <span class="text-sm text-gray-500"
-                    >{{ pack.items.length }} items</span
-                  >
-                </div>
-
-                <div
-                  v-for="(item, itemIndex) in pack.items"
-                  :key="`${pack.id}-${itemIndex}`"
-                  class="flex items-center justify-between mb-4 hover:bg-gray-50 p-2 rounded-md transition-colors animate-slide-in"
-                  :style="{
-                    animationDelay: `${packIndex * 0.1 + itemIndex * 0.05}s`,
-                  }"
-                >
-                  <div class="flex items-center">
-                    <div
-                      class="w-16 h-16 rounded-md overflow-hidden bg-gray-100"
-                    >
-                      <img
-                        :src="item.image"
-                        :alt="item.name"
-                        class="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div class="ml-4">
-                      <h4 class="font-medium text-gray-800">{{ item.name }}</h4>
-                      <p class="text-sm text-gray-600">
-                        ₦{{ formatPrice(item.price) }}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="flex items-center">
-                    <div
-                      class="flex items-center bg-gray-100 rounded-md overflow-hidden"
-                    >
-                      <button
-                        @click="decrementItemQuantity(packIndex, itemIndex)"
-                        class="w-8 h-8 flex items-center justify-center hover:bg-gray-200 transition-colors"
-                      >
-                        <MinusIcon class="h-4 w-4" />
-                      </button>
-                      <div class="w-10 text-center">
-                        {{ item.quantity }}
-                      </div>
-                      <button
-                        @click="incrementItemQuantity(packIndex, itemIndex)"
-                        class="w-8 h-8 flex items-center justify-center bg-orange-400 text-white hover:bg-orange-500 transition-colors"
-                      >
-                        <PlusIcon class="h-4 w-4" />
-                      </button>
-                    </div>
-
-                    <div class="ml-4 text-right">
-                      <p class="font-medium text-gray-800">
-                        ₦{{ formatPrice(item.price * item.quantity) }}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  v-if="pack.note"
-                  class="mt-2 text-sm italic text-gray-600 bg-gray-50 p-3 rounded-md"
-                >
-                  <span class="font-medium">Note:</span> {{ pack.note }}
-                </div>
-
-                <button
-                  @click="openPackNoteModal(packIndex)"
-                  class="mt-3 text-xs text-blue-500 hover:text-blue-700 transition-colors flex items-center transform hover:translate-x-1"
-                >
-                  <PencilIcon class="h-3 w-3 mr-1" />
-                  {{ pack.note ? "Edit" : "Add" }} note
-                </button>
-              </div>
-            </div>
+            <span class="mt-2 text-xs md:text-sm font-medium text-gray-700">Cart</span>
           </div>
-
-          <!-- Order Summary for Mobile -->
-          <div
-            class="md:hidden mt-6 bg-white rounded-md shadow-md p-6 border border-gray-100"
-          >
-            <h3 class="font-semibold text-gray-800 mb-3">Order Summary</h3>
-
-            <div class="space-y-2">
-              <div class="flex justify-between text-sm">
-                <span class="text-gray-600">Subtotal</span>
-                <span class="font-medium"
-                  >₦{{ formatPrice(cart.subtotal.value) }}</span
-                >
-              </div>
-              <!-- <div class="flex justify-between text-sm">
-              <span class="text-gray-600">Service Charge</span>
-              <span class="font-medium"
-                >₦{{ formatPrice(serviceCharge) }}</span
-              >
-            </div> -->
-
-              <div class="flex justify-between text-sm" v-if="deliveryMethod === 'delivery'">
-                <span class="text-gray-600">Delivery</span>
-                <span class="font-medium">₦{{ formatPrice(deliveryFee) }}</span>
-              </div>
-              
-              <div class="flex justify-between text-sm">
-                <span class="text-gray-600">Pack Fee (₦{{ packPrice }} × {{ cart.packs.value.length }})</span>
-                <span class="font-medium">₦{{ formatPrice(calculatePackFees()) }}</span>
-              </div>
-              <div
-                class="flex justify-between mt-4 pt-4 border-t border-gray-200"
-              >
-                <span class="text-lg font-semibold">Grand Total</span>
-                <span class="text-lg font-bold text-orange-600"
-                  >₦{{ formatPrice(calculateGrandTotal()) }}</span
-                >
-              </div>
+          
+          <div class="w-10 md:w-16 h-0.5 bg-rose-300"></div>
+          
+          <div class="flex flex-col items-center">
+            <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-md relative">
+              <MapPinIcon class="h-5 w-5" />
+              <span class="absolute -top-1 -right-1 w-3 h-3 bg-rose-300 rounded-full animate-ping-slow"></span>
             </div>
+            <span class="mt-2 text-xs md:text-sm font-medium text-gray-700">Delivery</span>
+          </div>
+          
+          <div class="w-10 md:w-16 h-0.5 bg-gray-300"></div>
+          
+          <div class="flex flex-col items-center">
+            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center">
+              <CreditCardIcon class="h-5 w-5" />
+            </div>
+            <span class="mt-2 text-xs md:text-sm font-medium text-gray-500">Payment</span>
+          </div>
+          
+          <div class="w-10 md:w-16 h-0.5 bg-gray-300"></div>
+          
+          <div class="flex flex-col items-center">
+            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center">
+              <CheckIcon class="h-5 w-5" />
+            </div>
+            <span class="mt-2 text-xs md:text-sm font-medium text-gray-500">Confirm</span>
           </div>
         </div>
+      </div>
 
-        <!-- Delivery Details Section -->
-        <div class="w-full md:w-1/3">
-          <div
-            class="bg-white rounded-md shadow-md p-6 sticky top-4 border border-gray-100"
-          >
-            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-              <TruckIcon class="h-5 text-sm w-5 mr-2 text-orange-500" />
-              Delivery Details
-            </h2>
-
-            <div class="space-y-4">
-              <!-- Delivery Method Selection -->
-              <div class="mb-2">
-                <label class="block text-gray-600 mb-2 text-sm font-medium"
-                  >Delivery Method <span class="text-red-500">*</span></label
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Left Column: Order Details -->
+        <div class="w-full lg:w-7/12 animate-slide-in-left" style="--delay: 0.2s">
+          <!-- Order Summary Card -->
+          <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-gray-100 transform transition-all duration-500 hover:shadow-2xl">
+            <div class="p-6 md:p-8">
+              <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                  <ShoppingBagIcon class="h-5 w-5 mr-2 text-rose-500" />
+                  <span class="relative">
+                    Order Summary
+                    <span class="absolute -bottom-1 left-0 w-1/2 h-0.5 bg-rose-400 rounded-full"></span>
+                  </span>
+                </h2>
+                <span 
+                  v-if="cart?.totalItems.value > 0"
+                  class="px-3 py-1 bg-rose-100 text-rose-800 rounded-full text-sm font-medium animate-pulse-slow"
                 >
-                <div class="grid grid-cols-2 gap-3">
-                  <div
-                    @click="setDeliveryMethod('delivery')"
-                    class="border rounded-md p-3 cursor-pointer transition-all duration-300 flex flex-col items-center transform hover:scale-105"
-                    :class="[
-                      deliveryMethod === 'delivery' 
-                        ? 'border-orange-400 bg-orange-50 shadow-md' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    ]"
-                  >
-                    <div class="relative">
-                      <TruckIcon
-                        class="h-6 w-6 mb-1 transition-colors duration-300"
-                        :class="
-                          deliveryMethod === 'delivery'
-                            ? 'text-orange-500'
-                            : 'text-gray-400'
-                        "
-                      />
-                      <div 
-                        v-if="deliveryMethod === 'delivery'"
-                        class="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full animate-ping-slow"
-                      ></div>
+                  {{ cart.totalItems.value }} items
+                </span>
+              </div>
+
+              <!-- Loading State -->
+              <div v-if="cart.loading.value" class="flex justify-center items-center py-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"></div>
+              </div>
+
+              <!-- Empty Cart State -->
+              <div v-else-if="cart.totalItems.value === 0" class="text-center py-12">
+                <div class="w-20 h-20 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4 animate-bounce-slow">
+                  <ShoppingCartIcon class="h-10 w-10 text-gray-400" />
+                </div>
+                <h3 class="text-lg font-medium text-gray-700 mb-2">Your cart is empty</h3>
+                <p class="text-gray-500 mb-6">Add some delicious items to get started</p>
+                <button
+                  @click="goBack"
+                  class="px-6 py-3 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  Browse Menu
+                </button>
+              </div>
+
+              <!-- Cart Items -->
+              <div v-else class="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                <div 
+                  v-for="(pack, packIndex) in cart.packs.value" 
+                  :key="pack.id"
+                  class="border border-gray-100 rounded-xl p-5 hover:border-rose-200 transition-all duration-300 hover:shadow-md bg-white animate-fade-in"
+                  :style="{ animationDelay: `${packIndex * 0.1}s` }"
+                >
+                  <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-rose-500 flex items-center justify-center text-white font-bold text-sm">
+                        {{ packIndex + 1 }}
+                      </div>
+                      <h3 class="ml-3 font-medium text-gray-800">Pack {{ packIndex + 1 }}</h3>
                     </div>
-                    <span
-                      class="text-sm font-medium transition-colors duration-300"
-                      :class="
-                        deliveryMethod === 'delivery'
-                          ? 'text-orange-800'
-                          : 'text-gray-600'
-                      "
-                      >Delivery</span
+                    <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
+                      {{ pack.items.length }} items
+                    </span>
+                  </div>
+
+                  <div 
+                    v-for="(item, itemIndex) in pack.items" 
+                    :key="`${pack.id}-${itemIndex}`"
+                    class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 group animate-slide-in"
+                    :style="{ animationDelay: `${packIndex * 0.1 + itemIndex * 0.05}s` }"
+                  >
+                    <div class="flex items-center">
+                      <div class="w-14 h-14 rounded-lg overflow-hidden bg-gray-100 shadow-sm group-hover:shadow-md transition-all duration-300">
+                        <img 
+                          :src="item.image" 
+                          :alt="item.name"
+                          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      </div>
+                      <div class="ml-4">
+                        <h4 class="font-medium text-gray-800 group-hover:text-rose-600 transition-colors">{{ item.name }}</h4>
+                        <p class="text-sm text-gray-500">₦{{ formatPrice(item.price) }} × {{ item.quantity }}</p>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <p class="font-medium text-gray-800">₦{{ formatPrice(item.price * item.quantity) }}</p>
+                      <div class="flex items-center mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          @click="decrementItemQuantity(packIndex, itemIndex)"
+                          class="w-6 h-6 rounded-l-md bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                        >
+                          <MinusIcon class="h-3 w-3 text-gray-600" />
+                        </button>
+                        <span class="w-6 text-center text-xs font-medium bg-gray-50">{{ item.quantity }}</span>
+                        <button 
+                          @click="incrementItemQuantity(packIndex, itemIndex)"
+                          class="w-6 h-6 rounded-r-md bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center transition-colors"
+                        >
+                          <PlusIcon class="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div v-if="pack.note" class="mt-3 p-3 bg-amber-50 rounded-lg text-sm text-amber-800 border-l-2 border-amber-400">
+                    <span class="font-medium">Note:</span> {{ pack.note }}
+                  </div>
+
+                  <button
+                    @click="openPackNoteModal(packIndex)"
+                    class="mt-3 text-xs text-rose-500 hover:text-rose-700 transition-colors flex items-center transform hover:translate-x-1"
+                  >
+                    <PencilIcon class="h-3 w-3 mr-1" />
+                    {{ pack.note ? "Edit" : "Add" }} special instructions
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delivery Method Card -->
+          <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-gray-100 transform transition-all duration-500 hover:shadow-2xl animate-slide-in-left" style="--delay: 0.4s">
+            <div class="p-6 md:p-8">
+              <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                <TruckIcon class="h-5 w-5 mr-2 text-rose-500" />
+                <span class="relative">
+                  Delivery Method
+                  <span class="absolute -bottom-1 left-0 w-1/2 h-0.5 bg-rose-400 rounded-full"></span>
+                </span>
+              </h2>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div 
+                  @click="setDeliveryMethod('delivery')"
+                  class="relative overflow-hidden rounded-xl border-2 transition-all duration-300 cursor-pointer transform hover:scale-[1.02] hover:shadow-md"
+                  :class="[
+                    deliveryMethod === 'delivery' 
+                      ? 'border-rose-500 bg-rose-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  ]"
+                >
+                  <div class="p-5">
+                    <div class="flex items-center mb-3">
+                      <div 
+                        class="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+                        :class="deliveryMethod === 'delivery' ? 'bg-rose-100 text-rose-600' : 'bg-gray-100 text-gray-500'"
+                      >
+                        <TruckIcon class="h-5 w-5" />
+                      </div>
+                      <div class="ml-3">
+                        <h3 class="font-medium text-gray-800">Delivery</h3>
+                        <p class="text-sm text-gray-500">Delivered to your location</p>
+                      </div>
+                    </div>
+                    <div 
+                      class="text-sm font-medium transition-colors"
+                      :class="deliveryMethod === 'delivery' ? 'text-rose-600' : 'text-gray-600'"
                     >
-                    <span class="text-xs text-orange-600 mt-1 font-medium">
                       <template v-if="selectedLocation">
                         ₦{{ formatPrice(selectedLocation.deliveryFee) }}
                       </template>
                       <template v-else>
-                        Select location
+                        Select location for fee
                       </template>
-                    </span>
+                    </div>
                   </div>
                   
-                  <div
-                    @click="setDeliveryMethod('pickup')"
-                    class="border rounded-md p-3 cursor-pointer transition-all duration-300 flex flex-col items-center transform hover:scale-105"
-                    :class="[
-                      deliveryMethod === 'pickup' 
-                        ? 'border-green-400 bg-green-50 shadow-md' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    ]"
-                  >
-                    <div class="relative">
-                      <ShoppingBagIcon
-                        class="h-6 w-6 mb-1 transition-colors duration-300"
-                        :class="
-                          deliveryMethod === 'pickup'
-                            ? 'text-green-500'
-                            : 'text-gray-400'
-                        "
-                      />
-                      <div 
-                        v-if="deliveryMethod === 'pickup'"
-                        class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-ping-slow"
-                      ></div>
-                    </div>
-                    <span
-                      class="text-sm font-medium transition-colors duration-300"
-                      :class="
-                        deliveryMethod === 'pickup'
-                          ? 'text-green-800'
-                          : 'text-gray-600'
-                      "
-                      >Pickup</span
-                    >
-                    <span class="text-xs text-green-600 mt-1 font-medium">Free</span>
-                  </div>
+                  <div 
+                    v-if="deliveryMethod === 'delivery'"
+                    class="absolute top-0 right-0 w-0 h-0 border-t-[40px] border-r-[40px] border-t-transparent border-r-rose-500"
+                  ></div>
+                  <CheckIcon 
+                    v-if="deliveryMethod === 'delivery'"
+                    class="absolute top-1 right-1 h-4 w-4 text-white"
+                  />
+                </div>
 
+                <div 
+                  @click="setDeliveryMethod('pickup')"
+                  class="relative overflow-hidden rounded-xl border-2 transition-all duration-300 cursor-pointer transform hover:scale-[1.02] hover:shadow-md"
+                  :class="[
+                    deliveryMethod === 'pickup' 
+                      ? 'border-emerald-500 bg-emerald-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  ]"
+                >
+                  <div class="p-5">
+                    <div class="flex items-center mb-3">
+                      <div 
+                        class="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+                        :class="deliveryMethod === 'pickup' ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500'"
+                      >
+                        <ShoppingBagIcon class="h-5 w-5" />
+                      </div>
+                      <div class="ml-3">
+                        <h3 class="font-medium text-gray-800">Pickup</h3>
+                        <p class="text-sm text-gray-500">Collect from restaurant</p>
+                      </div>
+                    </div>
+                    <div 
+                      class="text-sm font-medium transition-colors"
+                      :class="deliveryMethod === 'pickup' ? 'text-emerald-600' : 'text-gray-600'"
+                    >
+                      Free
+                    </div>
+                  </div>
+                  
+                  <div 
+                    v-if="deliveryMethod === 'pickup'"
+                    class="absolute top-0 right-0 w-0 h-0 border-t-[40px] border-r-[40px] border-t-transparent border-r-emerald-500"
+                  ></div>
+                  <CheckIcon 
+                    v-if="deliveryMethod === 'pickup'"
+                    class="absolute top-1 right-1 h-4 w-4 text-white"
+                  />
                 </div>
               </div>
 
-              <!-- Location Dropdown - Only shown for delivery -->
-              <div v-if="deliveryMethod === 'delivery'" class="mt-4 animate-fade-in">
-                <label class="block text-gray-600 mb-1 text-sm font-medium"
-                  >Location <span class="text-red-500">*</span></label
-                >
-                <!-- {{vendor?.deliveryLocation}} -->
-                 <!-- {{selectedLocationId}} -->
+              <!-- Delivery Location Selector - Only shown for delivery -->
+              <div 
+                v-if="deliveryMethod === 'delivery'" 
+                class="mt-6 animate-fade-in"
+              >
+                <label class="block text-gray-700 mb-2 text-sm font-medium">
+                  Delivery Location <span class="text-rose-500">*</span>
+                </label>
                 
-                <div class="relative location-dropdown">
+                <div class="relative">
                   <select 
                     v-if="vendor?.deliveryLocations?.length"  
-                    class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent appearance-none"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all duration-300 pr-10 bg-white"
                     v-model="selectedLocationId"
                     @change="handleLocationChange"
                   >
@@ -321,181 +363,227 @@
                       {{item.name}} - ₦{{ formatPrice(item.deliveryFee) }}
                     </option>
                   </select>
-                  <ChevronDownIcon
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none"
-                  />
+                  <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                    <ChevronDownIcon class="h-5 w-5 text-gray-400" />
+                  </div>
                 </div>
 
-                <div v-if="vendor?.deliveryLocation?.length === 0" class="p-4 text-center text-gray-500 border border-gray-200 rounded-md mt-2">
-                  <MapPinOffIcon class="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                  <p>This vendor hasn't set up delivery locations yet.</p>
-                  <p class="text-xs mt-1">Please choose pickup or contact the vendor.</p>
-                </div>
-                
-                <p
-                  v-if="validationErrors.location"
-                  class="mt-1 text-xs text-red-500 animate-shake"
+                <div 
+                  v-if="validationErrors.location" 
+                  class="mt-1 text-sm text-rose-500 animate-shake"
                 >
                   {{ validationErrors.location }}
-                </p>
-              </div>        
+                </div>
 
-              <!-- Delivery Address - Only shown for delivery -->
-              <div v-if="deliveryMethod === 'delivery'" class="animate-fade-in">
-                <label class="block text-gray-600 mb-1 text-sm font-medium"
-                  >Delivery Address <span class="text-red-500">*</span></label
+                <div 
+                  v-if="!vendor?.deliveryLocations?.length" 
+                  class="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-lg text-center"
                 >
-                <textarea
-                  v-model="deliveryAddress"
-                  rows="3"
-                  class="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
-                  placeholder="A proper description of your address"
-                ></textarea>
-                <p
-                  v-if="validationErrors.deliveryAddress"
-                  class="mt-1 text-xs text-red-500 animate-shake"
-                >
-                  {{ validationErrors.deliveryAddress }}
-                </p>
-              </div>
-
-              <div>
-                <label class="block text-gray-600 mb-1 text-sm font-medium"
-                  >Customer Name <span class="text-red-500">*</span></label
-                >
-                <input
-                  v-model="customerName"
-                  type="text"
-                  class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
-                  placeholder="Name"
-                />
-                <p
-                  v-if="validationErrors.customerName"
-                  class="mt-1 text-xs text-red-500"
-                >
-                  {{ validationErrors.customerName}}
-                </p>
-              </div>
-
-              <div>
-                <label class="block text-gray-600 mb-1 text-sm font-medium"
-                  >Phone Number <span class="text-red-500">*</span></label
-                >
-                <input
-                  v-model="phoneNumber"
-                  type="tel"
-                  class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
-                  placeholder="Phone Number"
-                />
-                <p
-                  v-if="validationErrors.phoneNumber"
-                  class="mt-1 text-xs text-red-500"
-                >
-                  {{ validationErrors.phoneNumber }}
-                </p>
-              </div>
-
-              <div>
-                <label class="block text-gray-600 mb-1 text-sm font-medium"
-                  >Additional Notes</label
-                >
-                <textarea
-                  v-model="additionalNotes"
-                  rows="2"
-                  class="w-full text-sm px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
-                  placeholder="Any additional instructions..."
-                ></textarea>
+                  <MapPinOffIcon class="h-6 w-6 mx-auto mb-2 text-amber-500" />
+                  <p class="text-amber-800">No delivery locations available</p>
+                  <p class="text-sm text-amber-700 mt-1">Please choose pickup or contact the vendor</p>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Order Summary -->
-            <div class="mt-8 border-t border-gray-200 pt-4 hidden md:block">
-              <h3 class="font-semibold text-gray-800 mb-3">Order Summary</h3>
+        <!-- Right Column: Customer Details & Payment -->
+        <div class="w-full lg:w-5/12 animate-slide-in-right" style="--delay: 0.3s">
+          <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 transform transition-all duration-500 hover:shadow-2xl sticky top-4">
+            <div class="p-6 md:p-8">
+              <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                <UserIcon class="h-5 w-5 mr-2 text-rose-500" />
+                <span class="relative">
+                  Customer Details
+                  <span class="absolute -bottom-1 left-0 w-1/2 h-0.5 bg-rose-400 rounded-full"></span>
+                </span>
+              </h2>
 
-              <div class="space-y-2">
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-600">Subtotal</span>
-                  <span class="font-medium"
-                    >₦{{ formatPrice(cart.subtotal.value) }}</span
+              <div class="space-y-5">
+                <!-- Customer Name -->
+                <div class="animate-slide-in-right" style="--delay: 0.4s">
+                  <label class="block text-gray-700 mb-2 text-sm font-medium">
+                    Your Name <span class="text-rose-500">*</span>
+                  </label>
+                  <div class="relative">
+                    <input
+                      v-model="customerName"
+                      type="text"
+                      class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all duration-300"
+                      placeholder="Enter your full name"
+                    />
+                    <UserIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  </div>
+                  <div 
+                    v-if="validationErrors.customerName" 
+                    class="mt-1 text-sm text-rose-500 animate-shake"
                   >
+                    {{ validationErrors.customerName }}
+                  </div>
                 </div>
-                <!-- <div class="flex justify-between text-sm">
-              <span class="text-gray-600">Service Charge</span>
-              <span class="font-medium"
-                >₦{{ formatPrice(serviceCharge) }}</span
-              >
-            </div> -->
-                <div class="flex justify-between text-sm" v-if="deliveryMethod === 'delivery'">
-                  <span class="text-gray-600">Delivery</span>
-                  <span class="font-medium animate-highlight" key="delivery-fee">
-                    ₦{{ formatPrice(deliveryFee) }}
-                  </span>
+
+                <!-- Phone Number -->
+                <div class="animate-slide-in-right" style="--delay: 0.5s">
+                  <label class="block text-gray-700 mb-2 text-sm font-medium">
+                    Phone Number <span class="text-rose-500">*</span>
+                  </label>
+                  <div class="relative">
+                    <input
+                      v-model="phoneNumber"
+                      type="tel"
+                      class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all duration-300"
+                      placeholder="Enter your phone number"
+                    />
+                    <PhoneIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  </div>
+                  <div 
+                    v-if="validationErrors.phoneNumber" 
+                    class="mt-1 text-sm text-rose-500 animate-shake"
+                  >
+                    {{ validationErrors.phoneNumber }}
+                  </div>
                 </div>
-                <div class="flex justify-between text-sm">
-                  <span class="text-gray-600">Pack Fee (₦{{ packPrice }} × {{ cart.packs.value.length }})</span>
-                  <span class="font-medium">₦{{ formatPrice(calculatePackFees()) }}</span>
+
+                <!-- Delivery Address - Only shown for delivery -->
+                <div v-if="deliveryMethod === 'delivery'" class="animate-fade-in">
+                  <label class="block text-gray-700 mb-2 text-sm font-medium">
+                    Delivery Address <span class="text-rose-500">*</span>
+                  </label>
+                  <div class="relative">
+                    <textarea
+                      v-model="deliveryAddress"
+                      rows="3"
+                      class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all duration-300"
+                      placeholder="Enter your detailed delivery address"
+                    ></textarea>
+                    <MapPinIcon class="absolute left-3 top-5 h-5 w-5 text-gray-400" />
+                  </div>
+                  <div 
+                    v-if="validationErrors.deliveryAddress" 
+                    class="mt-1 text-sm text-rose-500 animate-shake"
+                  >
+                    {{ validationErrors.deliveryAddress }}
+                  </div>
                 </div>
+
+                <!-- Additional Notes -->
+                <div class="animate-slide-in-right" style="--delay: 0.6s">
+                  <label class="block text-gray-700 mb-2 text-sm font-medium">
+                    Additional Notes
+                  </label>
+                  <div class="relative">
+                    <textarea
+                      v-model="additionalNotes"
+                      rows="2"
+                      class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent transition-all duration-300"
+                      placeholder="Any special instructions or requests..."
+                    ></textarea>
+                    <ClipboardIcon class="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                  </div>
+                </div>
+
+                <!-- Save Order Checkbox -->
+                <div class="flex items-center animate-slide-in-right" style="--delay: 0.7s">
+                  <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                    <input 
+                      type="checkbox" 
+                      id="save-order" 
+                      v-model="saveOrder"
+                      class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-300 ease-in-out"
+                      :class="saveOrder ? 'transform translate-x-full border-rose-500' : 'border-gray-300'"
+                    />
+                    <label 
+                      for="save-order" 
+                      class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+                      :class="saveOrder ? 'bg-rose-100' : ''"
+                    ></label>
+                  </div>
+                  <label for="save-order" class="text-sm text-gray-700 cursor-pointer">
+                    Save this order for future purchases
+                  </label>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="mt-8 pt-6 border-t border-gray-200 animate-slide-in-right" style="--delay: 0.8s">
+                  <h3 class="font-semibold text-gray-800 mb-4">Order Summary</h3>
+
+                  <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-600">Subtotal</span>
+                      <span class="font-medium">₦{{ formatPrice(cart.subtotal.value) }}</span>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-600">Service Charge</span>
+                      <span class="font-medium">₦{{ formatPrice(serviceCharge) }}</span>
+                    </div>
+                    
+                    <div 
+                      v-if="deliveryMethod === 'delivery'" 
+                      class="flex justify-between items-center"
+                    >
+                      <span class="text-gray-600">Delivery Fee</span>
+                      <span 
+                        class="font-medium" 
+                        :class="{ 'animate-highlight': selectedLocation }"
+                      >
+                        ₦{{ formatPrice(deliveryFee) }}
+                      </span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-600">Pack Fee (₦{{ packPrice }} × {{ cart.packs.value.length }})</span>
+                      <span class="font-medium">₦{{ formatPrice(calculatePackFees()) }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center pt-4 border-t border-dashed border-gray-200 mt-2">
+                      <span class="text-lg font-semibold text-gray-800">Total</span>
+                      <span class="text-xl font-bold text-rose-600 animate-pulse-slow">
+                        ₦{{ formatPrice(calculateGrandTotal()) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3 mt-6 animate-slide-in-right" style="--delay: 0.9s">
+                  <button
+                    @click="cancelOrder"
+                    class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all duration-300 flex items-center justify-center transform hover:scale-98"
+                  >
+                    <XCircleIcon class="h-5 w-5 mr-2" />
+                    Cancel
+                  </button>
+                  <button
+                    @click="submitOrder"
+                    class="flex-1 px-4 py-3 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center"
+                    :disabled="!isFormValid || orderLoading"
+                    :class="{
+                      'opacity-50 cursor-not-allowed': !isFormValid || orderLoading,
+                    }"
+                  >
+                    <span v-if="orderLoading" class="flex items-center">
+                      <span class="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+                      Processing...
+                    </span>
+                    <template v-else>
+                      <ShoppingBagIcon class="h-5 w-5 mr-2" />
+                      Place Order
+                    </template>
+                  </button>
+                </div>
+
+                <!-- Error Message -->
                 <div
-                  class="flex justify-between mt-4 pt-4 border-t border-gray-200"
+                  v-if="error"
+                  class="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md animate-shake mt-4"
                 >
-                  <span class="text-lg font-semibold">Grand Total</span>
-                  <span
-                    class="text-lg font-bold text-orange-600 animate-pulse-slow"
-                    >₦{{ formatPrice(calculateGrandTotal()) }}</span
-                  >
+                  <div class="flex">
+                    <AlertTriangleIcon class="h-5 w-5 mr-2 flex-shrink-0" />
+                    <p>{{ error }}</p>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            <div class="mt-6">
-              <div class="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  id="save-order"
-                  v-model="saveOrder"
-                  class="h-4 w-4 text-orange-600 focus:ring-orange-500"
-                />
-                <label for="save-order" class="ml-2 text-gray-600 text-sm"
-                  >Save this order combination for future orders.</label
-                >
-              </div>
-
-              <div class="flex gap-3">
-                <button
-                  @click="cancelOrder"
-                  class="flex-1 px-4 py-3 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-all duration-300 flex items-center justify-center transform hover:scale-98"
-                >
-                  <XCircleIcon class="h-5 w-5 mr-1" />
-                  Cancel Order
-                </button>
-                <button
-                  @click="submitOrder"
-                  class="flex-1 px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center"
-                  :disabled="!isFormValid || orderLoading"
-                  :class="{
-                    'opacity-50 cursor-not-allowed':
-                      !isFormValid || orderLoading,
-                  }"
-                >
-                  <span v-if="orderLoading" class="flex items-center">
-                    <span
-                      class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"
-                    ></span>
-                    Processing...
-                  </span>
-                  <template v-else>
-                    <CheckIcon class="h-5 w-5 mr-1" />
-                    Place Order
-                  </template>
-                </button>
-              </div>
-
-              <div
-                v-if="error"
-                class="mt-4 p-3 bg-red-50 text-red-600 rounded-md text-sm animate-shake"
-              >
-                <AlertTriangleIcon class="h-4 w-4 inline-block mr-1" />
-                {{ error }}
               </div>
             </div>
           </div>
@@ -505,101 +593,174 @@
 
     <!-- Pack Note Modal -->
     <Teleport to="body">
-      <div
-        v-if="showPackNoteModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
-        @click="closePackNoteModal"
-      >
+      <Transition name="modal-fade">
         <div
-          class="bg-white rounded-md shadow-xl w-full max-w-md animate-fade-in-up"
-          @click.stop
+          v-if="showPackNoteModal"
+          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+          @click="closePackNoteModal"
         >
-          <div class="p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-              <ClipboardEditIcon class="h-5 w-5 mr-2 text-blue-500" />
-              Add Note to Pack
-            </h2>
+          <div
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-scale-up"
+            @click.stop
+          >
+            <div class="p-6 md:p-8">
+              <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                  <ClipboardEditIcon class="h-5 w-5 mr-2 text-amber-500" />
+                  Special Instructions
+                </h2>
+                <button 
+                  @click="closePackNoteModal" 
+                  class="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <XIcon class="h-5 w-5 text-gray-500" />
+                </button>
+              </div>
 
-            <div class="mb-6">
-              <label class="block text-gray-700 mb-2 font-medium"
-                >Special Instructions:</label
-              >
-              <textarea
-                v-model="packNote"
-                rows="3"
-                placeholder="E.g., Make it spicy, serve hot, etc."
-                class="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              ></textarea>
-            </div>
+              <div class="mb-6">
+                <label class="block text-gray-700 mb-2 text-sm font-medium">
+                  Add special instructions for this pack:
+                </label>
+                <textarea
+                  v-model="packNote"
+                  rows="4"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all duration-300"
+                  placeholder="E.g., Make it spicy, no onions, extra sauce, etc."
+                ></textarea>
+              </div>
 
-            <div class="flex justify-end gap-3">
-              <button
-                @click="closePackNoteModal"
-                class="px-4 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-300"
-              >
-                Cancel
-              </button>
-              <button
-                @click="savePackNote"
-                class="px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
-              >
-                Save Note
-              </button>
+              <div class="flex justify-end gap-3">
+                <button
+                  @click="closePackNoteModal"
+                  class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all duration-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  @click="savePackNote"
+                  class="px-4 py-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center"
+                >
+                  <CheckIcon class="h-4 w-4 mr-1" />
+                  Save Instructions
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Transition>
     </Teleport>
 
     <!-- Order Success Modal -->
-    <!-- calculateFormattedOrderTotal(order) -->
     <Teleport to="body">
-      <div
-        v-if="showOrderSuccessModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
-      >
+      <Transition name="modal-fade">
         <div
-          class="bg-white rounded-md shadow-xl w-full max-w-md animate-fade-in-up"
-          @click.stop
+          v-if="showOrderSuccessModal"
+          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
         >
-          <div class="p-6 text-center">
-            <div
-              class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-success-pop"
-            >
-              <CheckIcon class="h-10 w-10 text-green-500" />
+          <div
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-scale-up overflow-hidden"
+          >
+            <!-- Success Header -->
+            <div class="bg-gradient-to-r from-emerald-400 to-teal-500 p-6 text-white relative">
+              <div class="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full"></div>
+              <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
+              
+              <div class="relative">
+                <h2 class="text-2xl font-bold mb-2">Order Successful!</h2>
+                <p>Your order has been placed successfully.</p>
+              </div>
             </div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">
-              Order Placed Successfully!
-            </h2>
-            <p class="text-gray-600 mb-6">
-              Your order has been placed successfully. You will receive a
-              confirmation shortly.
-            </p>
-
-            <div class="flex flex-col gap-3">
-              <button
-                @click="chatWithVendor"
-                class="px-6 py-3 bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                </svg>
-                Chat with Vendor
-              </button>
-              <button
-                @click="goToHome"
-                class="px-6 py-3 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
-              >
-                Back to Menu
-              </button>
+            
+            <div class="p-6 md:p-8">
+              <div class="flex justify-center mb-6">
+                <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center animate-success-pop">
+                  <CheckIcon class="h-10 w-10 text-emerald-500" />
+                </div>
+              </div>
+              
+              <div class="text-center mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Thank you for your order!</h3>
+                <p class="text-gray-600">
+                  Your order has been received and will be processed shortly.
+                </p>
+                <div class="mt-4 p-3 bg-amber-50 rounded-lg text-sm text-amber-800 inline-block">
+                  <span class="font-medium">Order ID:</span> {{ orderResponse?.value?.orderId || 'Pending' }}
+                </div>
+              </div>
+              
+              <div class="space-y-3">
+                <button
+                  @click="chatWithVendor"
+                  class="w-full px-4 py-3 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                  Chat with Vendor
+                </button>
+                
+                <button
+                  @click="copyVendorNumber"
+                  class="w-full px-4 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center"
+                >
+                  <ClipboardCopyIcon class="h-5 w-5 mr-2" />
+                  Copy Vendor Number
+                </button>
+                
+                <button
+                  @click="goToHome"
+                  class="w-full px-4 py-3 bg-gradient-to-r from-amber-400 to-rose-500 hover:from-amber-500 hover:to-rose-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center"
+                >
+                  <HomeIcon class="h-5 w-5 mr-2" />
+                  Back to Menu
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Transition>
     </Teleport>
 
     <!-- Toast Container -->
-    <ToastContainer />
+    <div class="fixed bottom-4 right-4 z-50">
+      <Transition name="toast">
+        <div 
+          v-if="toastMessage" 
+          class="bg-white rounded-lg shadow-lg p-4 mb-3 flex items-center max-w-md animate-slide-in-right"
+          :class="[
+            toastType === 'success' ? 'border-l-4 border-emerald-500' : 
+            toastType === 'error' ? 'border-l-4 border-rose-500' : 
+            toastType === 'warning' ? 'border-l-4 border-amber-500' : 
+            'border-l-4 border-blue-500'
+          ]"
+        >
+          <div 
+            class="w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0"
+            :class="[
+              toastType === 'success' ? 'bg-emerald-100 text-emerald-500' : 
+              toastType === 'error' ? 'bg-rose-100 text-rose-500' : 
+              toastType === 'warning' ? 'bg-amber-100 text-amber-500' : 
+              'bg-blue-100 text-blue-500'
+            ]"
+          >
+            <CheckIcon v-if="toastType === 'success'" class="h-5 w-5" />
+            <XIcon v-else-if="toastType === 'error'" class="h-5 w-5" />
+            <AlertTriangleIcon v-else-if="toastType === 'warning'" class="h-5 w-5" />
+            <InfoIcon v-else class="h-5 w-5" />
+          </div>
+          <div>
+            <h4 class="font-medium text-gray-800">{{ toastTitle }}</h4>
+            <p class="text-sm text-gray-600">{{ toastMessage }}</p>
+          </div>
+          <button 
+            @click="clearToast" 
+            class="ml-auto p-1 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <XIcon class="h-4 w-4 text-gray-500" />
+          </button>
+        </div>
+      </Transition>
+    </div>
   </div>
 </template>
 
@@ -607,10 +768,10 @@
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useCart } from "~/composables/useCart";
-import { useToast } from "~/composables/useToast";
-import { useFetchVendorBySlug } from '@/composables/modules/vendor/useFetchVendorBySlug'
+import { useFetchVendorBySlug } from '@/composables/modules/vendor/useFetchVendorBySlug';
 import { useVendorDeliveryLocations } from "@/composables/modules/delivery/useVendorDeliveryLocations";
 import { useCreateOrder } from "@/composables/modules/order/useCreateOrder";
+import { useCustomToast } from "@/composables/core/useCustomToast";
 import {
   ArrowLeftIcon,
   ChevronDownIcon,
@@ -626,27 +787,33 @@ import {
   AlertTriangleIcon,
   MapPinIcon,
   MapPinOffIcon,
+  UserIcon,
+  PhoneIcon,
+  ClipboardIcon,
+  XIcon,
+  CreditCardIcon,
+  HomeIcon,
+  ClipboardCopyIcon,
+  InfoIcon,
+  CoffeeIcon,
+  CakeIcon,
+  SaladIcon,
+  UtensilsIcon
 } from "lucide-vue-next";
-import ToastContainer from "~/components/ToastContainer.vue";
-import { useCustomToast } from "@/composables/core/useCustomToast";
-// import { useFetchVendorById } from "@/composables/modules/vendor/useFetchVendorById";
-import { useFetchVendor } from "@/composables/modules/vendor/useFetchVendor"
 
-// Composables
-const { showToast } = useCustomToast();
+// Router
 const router = useRouter();
 const route = useRoute();
+
+// Composables
 const cart = useCart();
-const toast = useToast();
-const { createOrder, loading: orderLoading, error, orderResponse } = useCreateOrder();
-// const vendorObj = localStorage.getItem('selected-vendor') as any
-// const { vendor } = useFetchVendor();
-const { vendor, loading } = useFetchVendorBySlug()
-// const parsedVendor = JSON.parse(vendorObj)
-// const { vendor } = useFetchVendorById(parsedVendor._id as string);
+const { showToast: originalShowToast } = useCustomToast();
+const { vendor, loading: vendorLoading } = useFetchVendorBySlug();
 const { fetchVendorDeliveryLocations, loading: fetchingDeliveryLocations, vendorDeliveryLocations } = useVendorDeliveryLocations();
+const { createOrder, loading: orderLoading, error, orderResponse } = useCreateOrder();
 
 // State
+const isLoading = ref(true);
 const phoneNumber = ref("");
 const customerName = ref("");
 const deliveryAddress = ref("");
@@ -657,25 +824,30 @@ const showPackNoteModal = ref(false);
 const showOrderSuccessModal = ref(false);
 const packNoteIndex = ref(0);
 const packNote = ref("");
-const isLocationDropdownOpen = ref(false);
 const selectedLocationId = ref("");
 const selectedLocation = ref(null);
+const serviceCharge = ref(30);
 const validationErrors = ref({
   phoneNumber: "",
   customerName: "",
   location: "",
   deliveryAddress: "",
 });
-const orderSuccess = ref(false);
 const orderIds = ref<string[]>([]);
 
-// Pack settings from vendor
-const serviceCharge = ref(50);
-const packPrice = ref(0);
-const packLimit = ref(0);
+// Toast state
+const toastMessage = ref("");
+const toastTitle = ref("");
+const toastType = ref("info"); // success, error, warning, info
+const toastTimeout = ref(null);
 
-const localVendor = localStorage.getItem('selected-vendor')
-const parsedLocalVendorObj = JSON.parse(localVendor)
+// Pack settings from vendor
+const packPrice = ref(0);
+const packLimit = ref(10);
+
+// Get vendor from localStorage
+const localVendor = localStorage.getItem('selected-vendor');
+const parsedLocalVendorObj = localVendor ? JSON.parse(localVendor) : null;
 
 // Computed
 const deliveryFee = computed(() => {
@@ -712,12 +884,8 @@ const calculatePackFees = (): number => {
 };
 
 // Calculate grand total (subtotal + delivery fee + pack fees)
-// const calculateGrandTotal = (): number => {
-//   return cart.subtotal.value + serviceCharge.value + deliveryFee.value + calculatePackFees();
-// };
-
 const calculateGrandTotal = (): number => {
-  return cart.subtotal.value + deliveryFee.value + calculatePackFees();
+  return cart.subtotal.value + serviceCharge.value + deliveryFee.value + calculatePackFees();
 };
 
 const incrementItemQuantity = (packIndex: number, itemIndex: number) => {
@@ -742,10 +910,9 @@ const savePackNote = () => {
   const success = cart.updatePackNote(packNoteIndex.value, packNote.value);
   if (success) {
     showToast({
-      title: "Success",
-      message: "Note saved successfully",
-      toastType: "success",
-      duration: 3000,
+      title: "Note Saved",
+      message: "Your special instructions have been saved",
+      type: "success"
     });
     closePackNoteModal();
   }
@@ -768,8 +935,7 @@ const setDeliveryMethod = (method: 'pickup' | 'delivery') => {
     message: method === 'pickup' 
       ? "You'll pick up your order at the restaurant" 
       : "Your order will be delivered to your location",
-    toastType: "info",
-    duration: 2000,
+    type: "info"
   });
 };
 
@@ -787,8 +953,7 @@ const handleLocationChange = () => {
     showToast({
       title: "Delivery Location Selected",
       message: `Delivery to ${selectedLocation.value.name} costs ₦${formatPrice(selectedLocation.value.deliveryFee)}`,
-      toastType: "success",
-      duration: 3000,
+      type: "success"
     });
   }
 };
@@ -809,8 +974,7 @@ const cancelOrder = () => {
     showToast({
       title: "Order Cancelled",
       message: "Your order has been cancelled",
-      toastType: "info",
-      duration: 3000,
+      type: "info"
     });
   }
 };
@@ -868,24 +1032,21 @@ interface OrderData {
   notes: string;
 }
 
-
 const submitOrder = async () => {
   if (!validateForm()) {
     showToast({
-      title: "Warning",
+      title: "Form Incomplete",
       message: "Please fill in all required fields correctly",
-      toastType: "warning",
-      duration: 3000,
+      type: "warning"
     });
     return;
   }
 
   if (cart.totalItems.value === 0) {
     showToast({
-      title: "Warning",
-      message: "Your cart is empty",
-      toastType: "warning",
-      duration: 3000,
+      title: "Empty Cart",
+      message: "Please add items to your cart before checking out",
+      type: "warning"
     });
     return;
   }
@@ -919,47 +1080,53 @@ const submitOrder = async () => {
     // Add pack-specific notes if needed
     const packsWithNotes = cart.packs.value.filter(pack => pack.items.length > 0 && pack.note);
     if (packsWithNotes.length > 0) {
-      const packNotes = packsWithNotes.map(pack => pack.note).join('. ');
+      const packNotes = packsWithNotes.map((pack, index) => `Pack ${index + 1}: ${pack.note}`).join('. ');
       orderData.notes = orderData.notes
         ? `${orderData.notes}. ${packNotes}`
         : packNotes;
     }
 
-    console.log(orderData, 'Order payload');
-
-    if(orderData.location == ''){
-      delete orderData.location
+    // Remove empty optional fields
+    if (orderData.location === "") {
+      delete orderData.location;
     }
 
-    if(orderData.address == ''){
-      delete orderData.address
+    if (orderData.address === "") {
+      delete orderData.address;
     }
     
     // Submit the order
     const response = await createOrder(orderData);
     if (response && response?._id) {
       orderIds.value = [response?._id];
-    }
-
-    // Show success message with animation
-    chatWithVendor()
-    // showOrderSuccessModal.value = true;
-
-    // If save order is checked, we would save it to the user's profile
-    if (saveOrder.value) {
-      console.log("Saving order for future use");
+      
+      // If save order is checked, we would save it to the user's profile
+      if (saveOrder.value) {
+        console.log("Saving order for future use");
+      }
+      
+      // Clear the cart immediately after successful order
+      // cart.clearCart();
+      
+      // Show success toast
+      showToast({
+        title: "Order Successful",
+        message: "Your order has been placed successfully. Redirecting to WhatsApp...",
+        type: "success"
+      });
+      
+      // Immediately redirect to WhatsApp instead of showing success modal
+      chatWithVendor();
     }
   } catch (err) {
     console.error("Error submitting order:", err);
     showToast({
-      title: "Error",
+      title: "Order Failed",
       message: "Failed to submit order. Please try again.",
-      toastType: "error",
-      duration: 3000,
+      type: "error"
     });
   }
 };
-
 
 const chatWithVendor = () => {
   // Get vendor details from local storage
@@ -975,55 +1142,62 @@ const chatWithVendor = () => {
 
   // If no vendor data or phone number, use a fallback approach
   const vendorPhone = vendorData?.phoneNumber || "";
-  const vendorName = vendorData?.restaurantName || "Vendor";
   
-  // Create the message in the new format
-  let message = `ORDER FROM SATISFY\n`;
-  message += `ORDER DETAILS\n`;
-  message += `Order ID : ${orderResponse?.value?.orderId || 'Pending'}\n`;
-  message += `Delivery Method : ${deliveryMethod.value}\n`;
+  // Create a more compact message format
+  let message = `🛍️ ORDER FROM SATISFY\n`;
+  message += `📋 Order ID: ${orderResponse?.value?.orderId || 'Pending'}\n`;
+  message += `🚚 Delivery: ${deliveryMethod.value === 'delivery' ? '✅' : '❌'}\n\n`;
   
-  // Add items from each pack with the new format, using pack icon
+  // Add items from each pack with a more compact format
   cart.packs.value.forEach((pack, packIndex) => {
     if (pack.items.length > 0) {
-      message += `--🍱--\n`;
-      message += `PACK${packIndex + 1}\n`;
-      message += `--🍱--\n`;
+      message += `📦 PACK ${packIndex + 1}:\n`;
       
-      // Add each item in the pack with the new format
+      // Add each item in the pack
       pack.items.forEach(item => {
-        message += `${item.name} | qty:${item.quantity}\n`;
+        message += `- ${item.name} x${item.quantity}\n`;
       });
+      
+      if (pack.note) {
+        message += `Note: ${pack.note}\n`;
+      }
+      
+      message += '\n';
     }
   });
   
-  // Add order summary with the new format
-  message += `SUB TOTAL : ₦${formatPrice(cart.subtotal.value)}\n`;
+  // Add order summary
+  message += `💰 SUMMARY:\n`;
+  message += `Subtotal: ₦${formatPrice(cart.subtotal.value)}\n`;
   
   if (deliveryMethod.value === 'delivery' && selectedLocation.value) {
-    message += `DELIVERY PRICE : ₦${formatPrice(selectedLocation.value.deliveryFee)}\n`;
+    message += `Delivery: ₦${formatPrice(selectedLocation.value.deliveryFee)}\n`;
   }
   
-  message += `TOTAL PRICE : ₦${formatPrice(calculateGrandTotal())}\n`;
-  
-  // Add customer details section with the new format
-  message += `------CUSTOMER DETAILS------\n`;
-  message += `Name : ${customerName.value}\n`;
-  
-  if (selectedLocation.value) {
-    message += `Location : ${selectedLocation.value.name}\n`;
+  if (calculatePackFees() > 0) {
+    message += `Pack Fee: ₦${formatPrice(calculatePackFees())}\n`;
   }
   
-  if (deliveryMethod.value === 'delivery' && deliveryAddress.value) {
-    message += `Address : ${deliveryAddress.value}\n`;
+  message += `TOTAL: ₦${formatPrice(calculateGrandTotal())}\n\n`;
+  
+  // Add customer details section
+  message += `👤 CUSTOMER INFO:\n`;
+  message += `Name: ${customerName.value}\n`;
+  message += `Phone: ${phoneNumber.value}\n`;
+  
+  if (deliveryMethod.value === 'delivery') {
+    if (selectedLocation.value) {
+      message += `Location: ${selectedLocation.value.name}\n`;
+    }
+    
+    if (deliveryAddress.value) {
+      message += `Address: ${deliveryAddress.value}\n`;
+    }
   }
   
-  message += `Phone number : ${phoneNumber.value}\n`;
-  
-  // Add price confirmation link with satisfy instead of cttaste
-  message += `---PRICE CONFIRMATION---\n`;
-  const orderId = orderResponse?.value?.orderId || 'Pending';
-  message += `https://satisfy.com/price/11839/${orderId}\n`;
+  if (additionalNotes.value) {
+    message += `\n📝 Additional Notes: ${additionalNotes.value}\n`;
+  }
   
   // Encode the message for WhatsApp URL
   const encodedMessage = encodeURIComponent(message);
@@ -1038,140 +1212,101 @@ const chatWithVendor = () => {
     if (!formattedPhone.startsWith("234") && formattedPhone.startsWith("0")) {
       // Replace leading 0 with 234 (Nigeria's country code)
       formattedPhone = "234" + formattedPhone.substring(1);
+    } else if (!formattedPhone.startsWith("234") && !formattedPhone.startsWith("+")) {
+      // Add country code if missing
+      formattedPhone = "234" + formattedPhone;
     }
   }
   
-  // Open WhatsApp with the message and vendor's phone number
+  // Use the wa.me WhatsApp URL format
   const whatsappUrl = formattedPhone 
     ? `https://wa.me/${formattedPhone}?text=${encodedMessage}` 
     : `https://wa.me/?text=${encodedMessage}`;
   
-  window.open(whatsappUrl, '_blank');
-
-  // Clear cart after successful order
+  // Immediately redirect to WhatsApp without delay
+  window.location.href = whatsappUrl;
   cart.clearCart();
-  
-  // Close the success modal
-  showOrderSuccessModal.value = false;
-  
-  // Navigate back to menu
-  router.push(`/${route.params.id}`);
+
+  // Set a fallback for mobile devices that might not have WhatsApp installed
+  setTimeout(() => {
+    // If we're still on the same page after 1.5 seconds, offer alternative options
+    showToast({
+      title: "WhatsApp not opening?",
+      message: "Try copying the vendor's number manually",
+      type: "warning"
+    });
+    
+    // Navigate back to menu
+    router.push(`/${route.params.id}`);
+  }, 1500);
 };
 
-// const chatWithVendor = () => {
-//   // Get vendor details from local storage
-//   let vendorData = null;
-//   try {
-//     const vendorString = localStorage.getItem("selected-vendor");
-//     if (vendorString) {
-//       vendorData = JSON.parse(vendorString);
-//     }
-//   } catch (error) {
-//     console.error("Error retrieving vendor data:", error);
-//   }
-
-//   // If no vendor data or phone number, use a fallback approach
-//   const vendorPhone = vendorData?.phoneNumber || "";
-//   const vendorName = vendorData?.restaurantName || "Vendor";
-  
-//   // Create an exciting and user-friendly message
-//   let message = `🎉 *NEW ORDER FOR ${vendorName.toUpperCase()}!* 🎉\n\n`;
-  
-//   // Add a friendly greeting
-//   message += `Hi there! You've got a delicious new order from ${customerName.value}! 😋\n\n`;
-  
-//   // Add order details with emojis and formatting
-//   message += `📋 *ORDER DETAILS* (${cart.totalItems.value} items) 📋\n\n`;
-
-//   message += `📌 Order ID: ${orderResponse?.value?.orderId || 'Pending'}\n`;
-  
-//   // Add items from each pack with friendly formatting
-//   let packCounter = 0;
-//   cart.packs.value.forEach((pack, packIndex) => {
-//     if (pack.items.length > 0) {
-//       packCounter++;
-//       message += `🍱 *PACK ${packCounter}* (${pack.items.length} ${pack.items.length === 1 ? 'item' : 'items'}) 🍱\n\n`;
+const copyVendorNumber = () => {
+  try {
+    const vendorString = localStorage.getItem("selected-vendor");
+    if (vendorString) {
+      const vendorData = JSON.parse(vendorString);
+      const vendorPhone = vendorData?.phoneNumber || "";
       
-//       // Add each item in the pack with exciting format
-//       pack.items.forEach(item => {
-//         message += `🔸 *${item.name}*\n`;
-//         message += `   ₦${formatPrice(item.price)} × ${item.quantity} = ₦${formatPrice(item.price * item.quantity)}\n\n`;
-//       });
-      
-//       // Add pack note if exists
-//       if (pack.note) {
-//         message += `📝 *Special Request:* ${pack.note}\n\n`;
-//       }
-//     }
-//   });
-  
-//   // Add order summary section with eye-catching format
-//   message += `💰 *ORDER SUMMARY* 💰\n\n`;
-//   message += `📌 Subtotal: ₦${formatPrice(cart.subtotal.value)}\n`;
-//   message += `📌 Service Charge: ₦${formatPrice(serviceCharge.value)}\n`;
-  
-//   if (deliveryMethod.value === 'delivery' && selectedLocation.value) {
-//     message += `📌 Delivery Fee (${selectedLocation.value.name}): ₦${formatPrice(selectedLocation.value.deliveryFee)}\n`;
-//   } else {
-//     message += `📌 Pickup: Free\n`;
-//   }
-  
-//   message += `📌 Pack Fee (₦${packPrice.value} × ${cart.packs.value.length}): ₦${formatPrice(calculatePackFees())}\n`;
-//   message += `🔥 *GRAND TOTAL: ₦${formatPrice(calculateGrandTotal())}* 🔥\n\n`;
-  
-//   // Add customer details section with friendly format
-//   message += `👤 *CUSTOMER DETAILS* 👤\n\n`;
-//   message += `🙋 Name: ${customerName.value}\n`;
-//   message += `📞 Phone: ${phoneNumber.value}\n`;
-  
-//   if (deliveryMethod.value === 'delivery' && selectedLocation.value) {
-//     message += `📍 Location: ${selectedLocation.value.name}\n`;
-//     message += `🏠 Delivery Address: ${deliveryAddress.value}\n`;
-//   }
-  
-//   message += `🚚 Delivery Method: ${deliveryMethod.value === 'delivery' ? '🚚 Delivery' : '🏪 Pickup'}\n\n`;
-  
-//   // Add additional notes if provided
-//   if (additionalNotes.value) {
-//     message += `📝 *Additional Notes:* ${additionalNotes.value}\n\n`;
-//   }
-  
-//   // Add a friendly closing message
-//   message += `⏰ Order placed at: ${new Date().toLocaleTimeString()}\n\n`;
-//   message += `Thank you for your prompt attention! We're excited to receive this delicious order! 🙏\n`;
-  
-//   // Encode the message for WhatsApp URL
-//   const encodedMessage = encodeURIComponent(message);
-  
-//   // Format the phone number correctly for WhatsApp
-//   let formattedPhone = "";
-//   if (vendorPhone) {
-//     // Remove any non-digit characters
-//     formattedPhone = vendorPhone.replace(/\D/g, "");
-    
-//     // Ensure it starts with country code (if not already)
-//     if (!formattedPhone.startsWith("234") && formattedPhone.startsWith("0")) {
-//       // Replace leading 0 with 234 (Nigeria's country code)
-//       formattedPhone = "234" + formattedPhone.substring(1);
-//     }
-//   }
-  
-//   // Open WhatsApp with the message and vendor's phone number
-//   const whatsappUrl = formattedPhone 
-//     ? `https://wa.me/${formattedPhone}?text=${encodedMessage}` 
-//     : `https://wa.me/?text=${encodedMessage}`;
-  
-//   window.open(whatsappUrl, '_blank');
+      if (vendorPhone) {
+        navigator.clipboard.writeText(vendorPhone);
+        showToast({
+          title: "Number Copied",
+          message: "Vendor phone number copied to clipboard",
+          type: "success"
+        });
+      } else {
+        showToast({
+          title: "No Number Available",
+          message: "Vendor phone number not available",
+          type: "error"
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error copying vendor number:", error);
+    showToast({
+      title: "Error",
+      message: "Failed to copy vendor number",
+      type: "error"
+    });
+  }
+};
 
-//   // Clear cart after successful order
-//   cart.clearCart();
+// Custom toast implementation
+const showToast = ({ title, message, type = "info" }) => {
+  // Clear any existing timeout
+  if (toastTimeout.value) {
+    clearTimeout(toastTimeout.value);
+  }
   
-//   // Close the success modal
-//   showOrderSuccessModal.value = false;
+  // Set toast data
+  toastTitle.value = title;
+  toastMessage.value = message;
+  toastType.value = type;
   
-//   // Navigate back to menu
-//   router.push(`/${route.params.id}`);
-// };
+  // Auto-hide after 5 seconds
+  toastTimeout.value = setTimeout(() => {
+    clearToast();
+  }, 5000);
+  
+  // Also use the original toast system for compatibility
+  originalShowToast({
+    title,
+    message,
+    toastType: type,
+    duration: 5000,
+  });
+};
+
+const clearToast = () => {
+  toastMessage.value = "";
+  toastTitle.value = "";
+  if (toastTimeout.value) {
+    clearTimeout(toastTimeout.value);
+    toastTimeout.value = null;
+  }
+};
 
 // Initialize pack settings from vendor object
 const initializePackSettings = () => {
@@ -1180,36 +1315,12 @@ const initializePackSettings = () => {
     packPrice.value = parsedLocalVendorObj.packSettings.price || 0;
     
     // Set pack limit from vendor's packSettings
-    packLimit.value = parsedLocalVendorObj.packSettings.limit || 0;
-    
-    console.log('Initialized pack settings:', {
-      price: packPrice.value,
-      limit: packLimit.value
-    });
+    packLimit.value = parsedLocalVendorObj.packSettings.limit || 10;
   }
 };
 
-// Watch for delivery method changes to reset validation errors
-watch(deliveryMethod, () => {
-  if (deliveryMethod.value === "pickup") {
-    validationErrors.value.location = "";
-    validationErrors.value.deliveryAddress = "";
-    selectedLocation.value = null;
-    selectedLocationId.value = "";
-  }
-});
-
 // Lifecycle hooks
 onMounted(() => {
-  document.addEventListener('click', (e) => {
-    if (isLocationDropdownOpen.value) {
-      const target = e.target as HTMLElement;
-      if (!target.closest('.location-dropdown')) {
-        isLocationDropdownOpen.value = false;
-      }
-    }
-  });
-  
   // Initialize cart from localStorage
   cart.initCart();
 
@@ -1217,10 +1328,9 @@ onMounted(() => {
   if (cart.totalItems.value === 0) {
     router.push(`/${route.params.id}`);
     showToast({
-      title: "Warning",
+      title: "Empty Cart",
       message: "Your cart is empty",
-      toastType: "warning",
-      duration: 3000,
+      type: "warning"
     });
   }
   
@@ -1231,46 +1341,69 @@ onMounted(() => {
   
   // Initialize pack settings from vendor object
   initializePackSettings();
+  
+  // Simulate loading time for better UX
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 1500);
 });
 
 // Watch for vendor changes to fetch delivery locations and update pack settings
 watch(
-  () => parsedLocalVendorObj,
-  async (newVendor) => {
-    console.log(parsedLocalVendorObj, 'vendor again')
-    if (parsedLocalVendorObj && parsedLocalVendorObj?._id) {
-      await fetchVendorDeliveryLocations(parsedLocalVendorObj?._id);
-      initializePackSettings();
+  () => vendor.value,
+  (newVendor) => {
+    if (newVendor && newVendor._id) {
+      fetchVendorDeliveryLocations(newVendor._id);
+      
+      // Update pack settings if vendor has them
+      if (newVendor.packSettings) {
+        packPrice.value = newVendor.packSettings.price || 0;
+        packLimit.value = newVendor.packSettings.limit || 10;
+      }
+    }
+  },
+  { immediate: true, deep: true }
+);
+
+// Watch for loading states to update page loader
+watch(
+  [() => vendorLoading.value, () => fetchingDeliveryLocations.value, () => cart.loading.value],
+  ([isVendorLoading, isLocationsLoading, isCartLoading]) => {
+    // Hide loader when all data is loaded
+    if (!isVendorLoading && !isLocationsLoading && !isCartLoading) {
+      // Add a small delay to ensure smooth transition
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 500);
     }
   }
 );
-
-// watch(
-//   () => route.params.id,
-//   (newVendorId) => {
-//     console.log('i ma hgee', vendor.value)
-//     if (newVendorId) {
-//       vendor.value = null;
-//       // loading.value = true;
-//       error.value = null;
-//       useFetchVendorById();
-//     }
-//   },
-//   { immediate: true }
-// );
 </script>
 
 <style scoped>
-.animate-fade-in-up {
-  animation: fadeInUp 0.3s ease-out;
+/* Animations */
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s ease-out forwards;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft calc(0.5s + var(--delay, 0s)) ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight calc(0.5s + var(--delay, 0s)) ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.4s ease-out forwards;
 }
 
 .animate-bounce-slow {
-  animation: bounceSlow 2s ease-in-out infinite;
+  animation: bounceSlow 3s ease-in-out infinite;
 }
 
 .animate-pulse-slow {
@@ -1278,15 +1411,7 @@ watch(
 }
 
 .animate-success-pop {
-  animation: successPop 0.5s ease-out;
-}
-
-.animate-slide-in {
-  animation: slideIn 0.4s ease-out;
-}
-
-.animate-dropdown {
-  animation: dropdown 0.3s ease-out;
+  animation: successPop 0.5s ease-out forwards;
 }
 
 .animate-ping-slow {
@@ -1301,10 +1426,26 @@ watch(
   animation: highlight 1s ease-in-out;
 }
 
-@keyframes fadeInUp {
+.animate-float-staggered {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
+}
+
+.animate-progress {
+  animation: progress 2s ease-in-out infinite;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.4s ease-out forwards;
+}
+
+@keyframes fadeInDown {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
@@ -1321,9 +1462,41 @@ watch(
   }
 }
 
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes bounceSlow {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0);
   }
   50% {
@@ -1332,8 +1505,7 @@ watch(
 }
 
 @keyframes pulseSlow {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
   }
   50% {
@@ -1352,28 +1524,6 @@ watch(
   100% {
     transform: scale(1);
     opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes dropdown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -1396,10 +1546,85 @@ watch(
 
 @keyframes highlight {
   0% { background-color: transparent; }
-  30% { background-color: rgba(249, 115, 22, 0.2); }
+  30% { background-color: rgba(244, 63, 94, 0.2); }
   100% { background-color: transparent; }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes progress {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 70%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Transitions */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s ease;
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* Custom scrollbar */
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
@@ -1416,6 +1641,16 @@ watch(
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: rgba(156, 163, 175, 0.5);
   border-radius: 20px;
+}
+
+/* Toggle switch */
+.toggle-checkbox:checked {
+  right: 0;
+  border-color: #f43f5e;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+  background-color: #fecdd3;
 }
 
 .transform.hover\:scale-98:hover {

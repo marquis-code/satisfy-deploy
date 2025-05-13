@@ -30,5 +30,9 @@ export const order_api = {
   $_get_order_by_id: (id: any) => {
     let url = `/orders/${id}`;
     return GATEWAY_ENDPOINT.get(url);
+  },
+  $_get_orders_monthly_analysis: () => {
+    let url = `/orders/monthly-analysis`;
+    return GATEWAY_ENDPOINT.get(url);
   }
 };

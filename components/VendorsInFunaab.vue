@@ -1,29 +1,52 @@
 <template>
-  <section class="my-10">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-xl font-semibold">Most Recent Vendors</h2>
-      <NuxtLink to="/vendors" class="text-red-700 hover:text-red-800 flex items-center transition-colors duration-300">
-        View all
-        <ChevronRight size="20" />
+  <section class="my-10 overflow-hidden">
+    <!-- Animated Header with Gradient Underline -->
+    <div class="flex justify-between items-center mb-8 animate-fade-in">
+      <div class="relative">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">
+          Most Recent Vendors
+          <span class="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-full animate-width-expand"></span>
+        </h2>
+      </div>
+      <NuxtLink to="/vendors" class="group flex items-center space-x-1 text-red-600 hover:text-red-700 font-medium transition-all duration-300 transform hover:translate-x-1">
+        <span>View all</span>
+        <ChevronRight size="20" class="transition-transform duration-300 group-hover:translate-x-1" />
       </NuxtLink>
     </div>
     
-    <div class="relative mb-6">
+    <!-- Animated Search Bar -->
+    <div class="relative mb-8 animate-slide-up" style="--delay: 0.2s">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <Search 
+          class="text-gray-400 transition-colors duration-300"
+          :class="{'text-red-500': isSearching || searchQuery}"
+          size="20" 
+        />
+      </div>
       <input 
         v-model="searchQuery" 
         type="text" 
         placeholder="Search food or vendor" 
-        class="w-full pl-10 pr-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+        class="w-full pl-10 pr-16 py-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent shadow-sm hover:shadow-md transition-all duration-300"
         @input="handleSearch"
       />
-      <Search 
-        class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-        :class="{'text-red-500': isSearching}"
-        size="20" 
-      />
+      
+      <!-- Search Categories Pills -->
+      <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex space-x-2" v-if="!isSearching && !searchQuery">
+        <button 
+          v-for="(category, index) in popularCategories" 
+          :key="category"
+          @click="searchQuery = category; handleSearch()"
+          class="text-xs px-3 py-1 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-md"
+          :class="[categoryColors[index % categoryColors.length]]"
+          :style="`animation-delay: ${0.3 + index * 0.1}s`"
+        >
+          {{ category }}
+        </button>
+      </div>
       
       <!-- Animated search spinner -->
-      <div v-if="isSearching" class="absolute right-3 top-1/2 transform -translate-y-1/2">
+      <div v-if="isSearching" class="absolute right-3 top-1/2 transform -translate-y-1/2 animate-fade-in">
         <div class="flex items-center space-x-2">
           <div class="relative">
             <div class="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
@@ -36,315 +59,216 @@
       </div>
     </div>
     
-    <!-- Loading State -->
-    <div v-if="isLoading" class="py-10">
-      <div :class="'py-10'" class="flex flex-col items-center justify-center">
-        <div class="relative">
-          <div class="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+    <!-- Category Filters -->
+    <div class="mb-8 overflow-x-auto scrollbar-hide">
+      <div class="flex space-x-2 pb-2 animate-slide-up" style="--delay: 0.3s">
+        <button 
+          v-for="(category, index) in allCategories" 
+          :key="category"
+          @click="toggleCategoryFilter(category)"
+          class="whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105"
+          :class="[
+            selectedCategories.includes(category) 
+              ? 'bg-red-500 text-white shadow-md' 
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          ]"
+          :style="`animation-delay: ${0.4 + index * 0.05}s`"
+        >
+          {{ category }}
+        </button>
+      </div>
+    </div>
+    
+    <!-- Loading State with Animated Food Icons -->
+    <div v-if="isLoading" class="py-16 animate-fade-in">
+      <div class="flex flex-col items-center justify-center">
+        <div class="relative mb-6">
+          <div class="w-16 h-16  border-red-500 border-t-transparent rounded-full animate-spin"></div>
           <div class="absolute inset-0 flex items-center justify-center">
-            <Pizza class="text-orange-500" size="20" />
+            <Pizza class="text-orange-500 animate-bounce-slow" size="24" />
+          </div>
+          
+          <!-- Orbiting food icons -->
+          <div class="absolute top-0 left-0 w-full h-full animate-orbit" style="animation-delay: 0s">
+            <Coffee class="absolute -top-2 text-amber-500" size="16" />
+          </div>
+          <div class="absolute top-0 left-0 w-full h-full animate-orbit" style="animation-delay: 1s">
+            <Utensils class="absolute -top-2 text-green-500" size="16" />
+          </div>
+          <div class="absolute top-0 left-0 w-full h-full animate-orbit" style="animation-delay: 2s">
+            <Soup class="absolute -top-2 text-purple-500" size="16" />
           </div>
         </div>
-        <p class="mt-4 text-gray-600">Loading vendors...</p>
+        <p class="text-gray-600 font-medium animate-pulse">Discovering delicious options...</p>
       </div>
     </div>
     
     <!-- Search Results -->
-    <div v-else-if="searchQuery && !isSearching">
-      <div v-if="filteredVendors.length > 0">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div 
-            v-for="vendor in filteredVendors" 
+    <div v-else-if="searchQuery && !isSearching" class="animate-fade-in ">
+      <div class="" v-if="filteredVendors.length > 0">
+        <h3 class="text-xl font-bold mb-4 flex items-center">
+          <Search size="18" class="mr-2 text-red-500" />
+          Results for "{{ searchQuery }}"
+          <span class="ml-2 text-sm font-normal text-gray-500">({{ filteredVendors.length }} vendors found)</span>
+        </h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <VendorCard 
+            v-for="(vendor, index) in filteredVendors" 
             :key="vendor._id"
-            @click="handleSelectedVendor(vendor)"
-            class="vendor-card bg-white border border-gray-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-            :class="{'vendor-closed': !isVendorOpen(vendor)}"
-          >
-            <div class="relative cursor-pointer">
-              <img :src="vendor.displayImage" :alt="vendor.restaurantName" class="w-full h-48 cursor-pointer object-cover transition-all duration-300" />
-              <div class="absolute top-2 right-2 flex space-x-2">
-                <button class="bg-white rounded-full p-1.5 shadow-sm transition-transform duration-300 hover:scale-110">
-                  <Heart size="18" :class="favoriteVendors[vendor._id] ? 'text-red-500 fill-red-500' : 'text-gray-600'" @click.stop="toggleFavorite(vendor._id)" />
-                </button>
-              </div>
-              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                <div v-if="isVendorOpen(vendor)" class="absolute bottom-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded flex items-center animate-pulse">
-                  <CheckCircle size="14" class="mr-1" />
-                  Open Now
-                </div>
-                <div v-else class="absolute bottom-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded flex items-center">
-                  <Clock size="14" class="mr-1" />
-                  Closed
-                </div>
-              </div>
-            </div>
-            <div class="p-4">
-              <div class="flex justify-between items-start">
-                <h3 class="font-bold text-lg">{{ vendor.restaurantName }}</h3>
-              </div>
-              <p class="text-sm text-gray-500 mt-1">{{ getVendorDescription(vendor) }}</p>
-              
-              <div class="mt-3 flex items-center">
-                <span class="text-xs px-2 py-1 bg-gray-100 rounded-full">{{ vendor.category }}</span>
-                <span class="ml-2 text-xs text-gray-500">{{ formatLocation(vendor.locationName) }}</span>
-              </div>
-              
-              <div class="mt-3 text-sm">
-                <div class="flex items-center">
-                  <Clock size="14" class="mr-1 text-gray-500" />
-                  <span v-if="isVendorOpen(vendor)" class="text-green-600">
-                    Open until {{ getClosingTime(vendor) }}
-                  </span>
-                  <span v-else class="text-red-600">
-                    {{ getNextOpeningInfo(vendor) }}
-                  </span>
-                </div>
-              </div>
-              
-              <div class="mt-4 flex justify-between items-center">
-                <a href="#" class="text-sm text-red-700 hover:text-red-800 font-medium">View Menu</a>
-                <button 
-                  class="transition-all duration-300"
-                  :class="isVendorOpen(vendor) ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
-                  :disabled="!isVendorOpen(vendor)"
-                  @click.stop="isVendorOpen(vendor) ? handleOrder(vendor) : null"
-                  :title="isVendorOpen(vendor) ? 'Order Now' : 'Currently Closed'"
-                  >
-                  <span class="px-3 py-1 rounded-md text-sm block">
-                    {{ isVendorOpen(vendor) ? 'Order Now' : 'Closed' }}
-                  </span>
-                </button>
-              </div>
-            </div>
-            
-            <!-- Overlay for closed vendors -->
-            <div v-if="!isVendorOpen(vendor)" class="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center z-10 transition-opacity duration-300">
-              <div class="bg-white/80 p-3 rounded-lg shadow-lg text-center transform transition-transform duration-300 animate-bounce-slow">
-                <Clock size="24" class="mx-auto mb-2 text-red-500" />
-                <p class="font-bold text-red-600">Currently Closed</p>
-                <p class="text-sm text-gray-600">{{ getNextOpeningInfo(vendor) }}</p>
-              </div>
-            </div>
-          </div>
+            :vendor="vendor"
+            :index="index"
+            :is-vendor-open="isVendorOpen(vendor)"
+            :favorite="favoriteVendors[vendor._id]"
+            @toggle-favorite="toggleFavorite"
+            @select-vendor="handleSelectedVendor"
+            @order="handleOrder"
+            :get-closing-time="getClosingTime"
+            :get-next-opening-info="getNextOpeningInfo"
+            :get-vendor-description="getVendorDescription"
+            :format-location="formatLocation"
+          />
         </div>
       </div>
-      <div v-else>
-        <div class="py-10 text-center">
-          <div class="relative max-w-xs mx-auto mb-6">
-            <img src="/illustrations/no-results.svg" alt="Empty state illustration" class="w-full" />
-            <Pizza class="absolute top-0 right-0 text-red-500" size="32" />
-            <Coffee class="absolute bottom-0 left-0 text-orange-500" size="32" />
-          </div>
-          <h3 class="text-xl font-bold mb-2">No results found</h3>
-          <p class="text-gray-500 mb-6 max-w-md mx-auto">We couldn't find any vendors matching '{{ searchQuery }}'</p>
-          
-          <div class="max-w-3xl mx-auto">
-            <h3 class="text-xl font-bold mb-4">You may also like</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
-              <div 
-                v-for="vendor in suggestedVendors" 
-                :key="vendor._id" 
-                @click="handleSelectedVendor(vendor)"
-                class="vendor-card bg-white border border-gray-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-                :class="{'vendor-closed': !isVendorOpen(vendor)}"
-              >
-                <div class="relative">
-                  <img :src="vendor?.displayImage" :alt="vendor.restaurantName" class="w-full h-32 object-cover transition-all duration-300" />
-                  <div class="absolute top-2 right-2">
-                    <button class="bg-white rounded-full p-1.5 shadow-sm transition-transform duration-300 hover:scale-110">
-                      <Heart size="18" :class="favoriteVendors[vendor._id] ? 'text-red-500 fill-red-500' : 'text-gray-600'" @click.stop="toggleFavorite(vendor._id)" />
-                    </button>
-                  </div>
-                  <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                    <div v-if="isVendorOpen(vendor)" class="absolute bottom-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded flex items-center animate-pulse">
-                      <CheckCircle size="14" class="mr-1" />
-                      Open
-                    </div>
-                    <div v-else class="absolute bottom-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded flex items-center">
-                      <Clock size="14" class="mr-1" />
-                      Closed
-                    </div>
-                  </div>
-                </div>
-                <div class="p-3">
-                  <h4 class="font-bold">{{ vendor.restaurantName }}</h4>
-                  <p class="text-sm text-gray-500">{{ getVendorDescription(vendor) }}</p>
-                  <div class="flex items-center mt-2">
-                    <span class="text-xs px-2 py-1 bg-gray-100 rounded-full">{{ vendor.category }}</span>
-                  </div>
-                  <div class="mt-2 text-xs">
-                    <div class="flex items-center">
-                      <Clock size="12" class="mr-1 text-gray-500" />
-                      <span v-if="isVendorOpen(vendor)" class="text-green-600">
-                        Open until {{ getClosingTime(vendor) }}
-                      </span>
-                      <span v-else class="text-red-600">
-                        {{ getNextOpeningInfo(vendor) }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Overlay for closed vendors -->
-                <div v-if="!isVendorOpen(vendor)" class="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center z-10 transition-opacity duration-300">
-                  <div class="bg-white/80 p-2 rounded-lg shadow-lg text-center transform transition-transform duration-300 animate-bounce-slow">
-                    <Clock size="20" class="mx-auto mb-1 text-red-500" />
-                    <p class="font-bold text-sm text-red-600">Currently Closed</p>
-                    <p class="text-xs text-gray-600">{{ getNextOpeningInfo(vendor) }}</p>
-                  </div>
+      <div v-else class="py-10 animate-fade-in">
+        <div class="w-full mx-auto text-center">
+          <div class="relative max-w-xs mx-auto mb-8">
+            <div class="w-full h-48 bg-gray-100 rounded-lg overflow-hidden relative">
+              <div class="absolute inset-0 bg-gradient-to-br from-red-50 to-orange-50"></div>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <Search size="48" class="text-gray-300 mb-4" />
+                <div class="flex space-x-4">
+                  <Pizza class="text-red-400 animate-float" size="24" style="animation-delay: 0s" />
+                  <Coffee class="text-amber-400 animate-float" size="24" style="animation-delay: 0.5s" />
+                  <Utensils class="text-orange-400 animate-float" size="24" style="animation-delay: 1s" />
                 </div>
               </div>
+            </div>
+          </div>
+          <h3 class="text-2xl font-bold mb-2">No results found</h3>
+          <p class="text-gray-500 mb-8">We couldn't find any vendors matching '{{ searchQuery }}'</p>
+          
+          <div class="mx-auto container w-full">
+            <h3 class="text-xl font-bold mb-6 flex items-center justify-center">
+              <Sparkles size="20" class="mr-2 text-amber-500" />
+              You may also like
+            </h3>
+            
+            <div class="grid grid-cols-1 w-full sm:grid-cols-2  lg:grid-cols-3 gap-6">
+              <VendorCard 
+                v-for="(vendor, index) in suggestedVendors" 
+                :key="vendor._id"
+                :vendor="vendor"
+                :index="index"
+                :is-vendor-open="isVendorOpen(vendor)"
+                :favorite="favoriteVendors[vendor._id]"
+                @toggle-favorite="toggleFavorite"
+                @select-vendor="handleSelectedVendor"
+                @order="handleOrder"
+                :get-closing-time="getClosingTime"
+                :get-next-opening-info="getNextOpeningInfo"
+                :get-vendor-description="getVendorDescription"
+                :format-location="formatLocation"
+                :is-suggested="true"
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
     
-    <!-- All Vendors Grid -->
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div 
-        v-for="vendor in recentVendors" 
-        :key="vendor._id"
-        @click="handleSelectedVendor(vendor)"
-        class="vendor-card bg-white border border-gray-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 relative"
-        :class="{'vendor-closed': !isVendorOpen(vendor)}"
-      >
-        <div class="relative">
-          <img :src="vendor?.displayImage" :alt="vendor.restaurantName" class="w-full h-48 object-cover transition-all duration-300" />
-          <div class="absolute top-2 right-2 flex space-x-2">
-            <button class="bg-white rounded-full p-1.5 shadow-sm transition-transform duration-300 hover:scale-110">
-              <Heart size="18" :class="favoriteVendors[vendor._id] ? 'text-red-500 fill-red-500' : 'text-gray-600'" @click.stop="toggleFavorite(vendor._id)" />
-            </button>
-          </div>
-          <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-            <div v-if="isVendorOpen(vendor)" class="absolute bottom-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded flex items-center animate-pulse">
-              <CheckCircle size="14" class="mr-1" />
-              Open Now
-            </div>
-            <div v-else class="absolute bottom-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded flex items-center">
-              <Clock size="14" class="mr-1" />
-              Closed
-            </div>
-          </div>
-        </div>
-        <div class="p-4">
-          <div class="flex justify-between items-start">
-            <h3 class="font-bold text-lg">{{ vendor.restaurantName }}</h3>
-          </div>
-          <p class="text-sm text-gray-500 mt-1">{{ getVendorDescription(vendor) }}</p>
-          
-          <div class="mt-3 flex items-center">
-            <span class="text-xs px-2 py-1 bg-gray-100 rounded-full">{{ vendor.category }}</span>
-            <span class="ml-2 text-xs text-gray-500">{{ formatLocation(vendor.locationName) }}</span>
-          </div>
-          
-          <div class="mt-3 text-sm">
-            <div class="flex items-center">
-              <Clock size="14" class="mr-1 text-gray-500" />
-              <span v-if="isVendorOpen(vendor)" class="text-green-600">
-                Open until {{ getClosingTime(vendor) }}
-              </span>
-              <span v-else class="text-red-600">
-                {{ getNextOpeningInfo(vendor) }}
-              </span>
-            </div>
-          </div>
-          
-          <div class="mt-4 flex justify-between items-center">
-            <a href="#" class="text-sm text-red-700 hover:text-red-800 font-medium">View Menu</a>
-            <button 
-              class="transition-all duration-300"
-              :class="isVendorOpen(vendor) ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
-              :disabled="!isVendorOpen(vendor)"
-              @click.stop="isVendorOpen(vendor) ? handleOrder(vendor) : null"
-              :title="isVendorOpen(vendor) ? 'Order Now' : 'Currently Closed'"
-              >
-              <span class="px-3 py-1 rounded-md text-sm block">
-                {{ isVendorOpen(vendor) ? 'Order Now' : 'Closed' }}
-              </span>
-            </button>
-          </div>
-        </div>
-        
-        <!-- Overlay for closed vendors -->
-        <div v-if="!isVendorOpen(vendor)" class="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center z-10 transition-opacity duration-300">
-          <div class="bg-white/80 p-3 rounded-lg shadow-lg text-center transform transition-transform duration-300 animate-bounce-slow">
-            <Clock size="24" class="mx-auto mb-2 text-red-500" />
-            <p class="font-bold text-red-600">Currently Closed</p>
-            <p class="text-sm text-gray-600">{{ getNextOpeningInfo(vendor) }}</p>
-          </div>
-        </div>
+    <!-- All Vendors Grid with Staggered Animation -->
+    <div v-else>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <VendorCard 
+          v-for="(vendor, index) in filteredRecentVendors" 
+          :key="vendor._id"
+          :vendor="vendor"
+          :index="index"
+          :is-vendor-open="isVendorOpen(vendor)"
+          :favorite="favoriteVendors[vendor._id]"
+          @toggle-favorite="toggleFavorite"
+          @select-vendor="handleSelectedVendor"
+          @order="handleOrder"
+          :get-closing-time="getClosingTime"
+          :get-next-opening-info="getNextOpeningInfo"
+          :get-vendor-description="getVendorDescription"
+          :format-location="formatLocation"
+        />
       </div>
     </div>
 
-    <CoreModal :isOpen="isCloseModalOpen" @close="isCloseModalOpen = false">
-      <div class="p-6 rounded-md w-5/12 relative" @click.stop>
-        <div
-          class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
-        >
-          <div
-            class="bg-white rounded-md p-6 shadow-lg w-full space-y-4 max-w-md relative text-center"
-          >
-            <div class="flex justify-center items-center mb-4">
-              <div class="">
-                <svg
-                  width="65"
-                  height="64"
-                  viewBox="0 0 65 64"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    x="0.923828"
-                    width="63.1513"
-                    height="64"
-                    rx="31.5756"
-                    fill="#0F973D"
-                  />
-                  <path
-                    d="M44.1631 32.3596C44.1631 25.7418 38.7982 20.377 32.1804 20.377C25.5626 20.377 20.1978 25.7418 20.1978 32.3596C20.1978 38.9774 25.5626 44.3423 32.1804 44.3423C38.7982 44.3423 44.1631 38.9774 44.1631 32.3596Z"
-                    stroke="white"
-                    stroke-width="1.7974"
-                  />
-                  <path
-                    d="M27.584 32.9633L30.5297 35.9839L37.0103 28.7344"
-                    stroke="white"
-                    stroke-width="1.7974"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+    <!-- Vendor Closed Modal with Animation -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="isCloseModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm" @click="isCloseModalOpen = false">
+          <div class="bg-white rounded-2xl p-6 shadow-xl w-full max-w-md relative animate-modal-pop" @click.stop>
+            <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-white rounded-full p-4 shadow-lg">
+              <div class="relative">
+                <Clock size="32" class="text-red-500" />
+                <div class="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full animate-ping-slow"></div>
               </div>
             </div>
-            <p class="text-xl font-semibold text-[#667185] mb-4">
-              Restaurant Closed
-            </p>
-            <p class="text-[#667185] mb-6 leading-snug">
-              Sorry, this restaurant is currently closed. Please check back later for availability.
-            </p>
-            <div class="pt-6">
-              <button
-                @click="isCloseModalOpen = false"
-                class="bg-[#292929] text-[#EAEAEA] w-full py-3.5 rounded-md"
-              >
-                Close
-              </button>
+            
+            <div class="mt-6 text-center">
+              <h3 class="text-2xl font-bold text-gray-800 mb-4">Restaurant Closed</h3>
+              <p class="text-gray-600 mb-6">
+                Sorry, this restaurant is currently closed. Please check back later for availability.
+              </p>
+              
+              <div class="flex justify-center space-x-4">
+                <button @click="isCloseModalOpen = false" class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-all duration-300 transform hover:scale-105">
+                  Close
+                </button>
+                <button @click="showAllOpenVendors" class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center">
+                  <CheckCircle size="18" class="mr-2" />
+                  Show Open Vendors
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </CoreModal>
+      </Transition>
+    </Teleport>
+    
+    <!-- Scroll to top button -->
+    <button 
+      v-show="showScrollTop"
+      @click="scrollToTop" 
+      class="fixed bottom-6 right-6 bg-red-500 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:bg-red-600 hover:shadow-xl transform hover:scale-110 z-40"
+      aria-label="Scroll to top"
+    >
+      <ChevronUp size="24" />
+    </button>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, onMounted } from 'vue';
-import { useFormattedString } from '@/composables/core/useFormatVendorName'
-import { ChevronRight, Search, Heart, CheckCircle, Star, Pizza, Coffee, Clock } from 'lucide-vue-next';
-import { useFetchVendors } from '@/composables/modules/vendor/useFetchVendors'
-const router = useRouter()
-const isCloseModalOpen = ref(false)
-const { formatString } = useFormattedString()
+import { ref, computed, reactive, onMounted, onUnmounted, watch } from 'vue';
+import { useFormattedString } from '@/composables/core/useFormatVendorName';
+import { 
+  ChevronRight, 
+  ChevronUp,
+  Search, 
+  Heart, 
+  CheckCircle, 
+  Star, 
+  Pizza, 
+  Coffee, 
+  Clock,
+  Utensils,
+  Soup,
+  Sparkles,
+  MapPin
+} from 'lucide-vue-next';
+import { useFetchVendors } from '@/composables/modules/vendor/useFetchVendors';
+import VendorCard from './VendorCard.vue';
+
+const router = useRouter();
+const isCloseModalOpen = ref(false);
+const { formatString } = useFormattedString();
+const showScrollTop = ref(false);
+const selectedVendor = ref(null);
 
 // Define the working hours interface
 interface WorkingHour {
@@ -375,16 +299,8 @@ interface Vendor {
     price: number;
     _id: string;
   };
+  slug?: string;
 }
-
-const recentVendors = computed(() => {
-  if (Array.isArray(vendors?.value) && vendors?.value.length > 0) {
-    return vendors?.value
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort by latest first
-      .slice(0, 4); // Get the first 6 elements
-  }
-  return []; // Return an empty array if no vendors
-});
 
 const { vendors, loading: isLoading } = useFetchVendors();
 
@@ -394,13 +310,102 @@ const searchTimeout = ref<number | null>(null);
 const favoriteVendors = reactive<Record<string, boolean>>({});
 const currentDay = ref('');
 const currentTime = ref('');
+const selectedCategories = ref<string[]>([]);
+
+// Category colors for pills
+const categoryColors = [
+  'bg-red-100 text-red-700',
+  'bg-orange-100 text-orange-700',
+  'bg-amber-100 text-amber-700',
+  'bg-green-100 text-green-700',
+  'bg-blue-100 text-blue-700',
+  'bg-purple-100 text-purple-700',
+];
+
+// Popular search categories
+const popularCategories = ['Pizza', 'Burger', 'Sushi', 'Vegan'];
+
+// All available categories
+const allCategories = computed(() => {
+  const categories = new Set<string>();
+  vendors.value?.forEach((vendor: Vendor) => {
+    if (vendor.category) {
+      categories.add(vendor.category);
+    }
+  });
+  return Array.from(categories);
+});
+
+// Toggle category filter
+const toggleCategoryFilter = (category: string) => {
+  if (selectedCategories.value.includes(category)) {
+    selectedCategories.value = selectedCategories.value.filter(c => c !== category);
+  } else {
+    selectedCategories.value.push(category);
+  }
+};
+
+// Filtered vendors based on selected categories
+const filteredRecentVendors = computed(() => {
+  let filtered = recentVendors.value;
+  
+  if (selectedCategories.value.length > 0) {
+    filtered = filtered.filter((vendor: Vendor) => 
+      selectedCategories.value.includes(vendor.category)
+    );
+  }
+  
+  return filtered;
+});
+
+// Recent vendors computation
+const recentVendors = computed(() => {
+  if (Array.isArray(vendors?.value) && vendors?.value.length > 0) {
+    return vendors?.value
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // Sort by latest first
+      .slice(0, 8); // Get the first 8 elements
+  }
+  return []; // Return an empty array if no vendors
+});
 
 // Initialize current day and time
 onMounted(() => {
   updateCurrentDateTime();
   // Update time every minute
   setInterval(updateCurrentDateTime, 60000);
+  
+  // Add scroll event listener for scroll-to-top button
+  window.addEventListener('scroll', handleScroll);
+  
+  // Initialize with random favorites for demo
+  if (vendors.value?.length) {
+    vendors.value.forEach((vendor: Vendor) => {
+      if (Math.random() > 0.7) { // 30% chance to be favorited
+        favoriteVendors[vendor._id] = true;
+      }
+    });
+  }
 });
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+  if (searchTimeout.value) {
+    clearTimeout(searchTimeout.value);
+  }
+});
+
+// Handle scroll for scroll-to-top button
+const handleScroll = () => {
+  showScrollTop.value = window.scrollY > 300;
+};
+
+// Scroll to top function
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+};
 
 // Function to update current date and time
 const updateCurrentDateTime = () => {
@@ -514,18 +519,24 @@ const handleSearch = () => {
   }
   
   searchTimeout.value = window.setTimeout(() => {
-    isLoading.value = true;
-    
     // Simulate API call delay
     setTimeout(() => {
       isSearching.value = false;
-      isLoading.value = false;
-    }, 1500);
-  }, 500);
+    }, 800);
+  }, 300);
 };
 
 const toggleFavorite = (vendorId: string) => {
   favoriteVendors[vendorId] = !favoriteVendors[vendorId];
+  
+  // Add a little animation to the heart
+  const heartEl = document.querySelector(`[data-vendor-id="${vendorId}"] .heart-icon`);
+  if (heartEl) {
+    heartEl.classList.add('animate-heart-beat');
+    setTimeout(() => {
+      heartEl.classList.remove('animate-heart-beat');
+    }, 1000);
+  }
 };
 
 // Helper function to get a description for a vendor
@@ -543,7 +554,7 @@ const filteredVendors = computed(() => {
   
   const query = searchQuery.value.toLowerCase();
   
-  return vendors?.value?.slice(0, 3).filter((vendor: Vendor) => 
+  return vendors?.value?.filter((vendor: Vendor) => 
     vendor.restaurantName.toLowerCase().includes(query) ||
     vendor.category.toLowerCase().includes(query) ||
     vendor.locationName.toLowerCase().includes(query) ||
@@ -552,13 +563,16 @@ const filteredVendors = computed(() => {
 });
 
 const suggestedVendors = computed(() => {
-  // Since we don't have ratings, we'll just return random vendors
+  // Return random vendors that are currently open
   return [...vendors.value]
+    .filter((vendor: Vendor) => isVendorOpen(vendor))
     .sort(() => 0.5 - Math.random())
-    .slice(0, 4);
+    .slice(0, 3);
 });
 
 const handleSelectedVendor = (vendor: Vendor) => {
+  selectedVendor.value = vendor;
+  
   if(!isVendorOpen(vendor)){
     isCloseModalOpen.value = true;
   } else {
@@ -571,34 +585,105 @@ const handleSelectedVendor = (vendor: Vendor) => {
 const handleOrder = (vendor: Vendor) => {
   localStorage.setItem('selected-vendor', JSON.stringify(vendor));
   const formatted = formatString(vendor.restaurantName);
-  router.push(`/${vendor.slug}`);
+  router.push(`/${vendor.slug || formatted}`);
+};
+
+const showAllOpenVendors = () => {
+  isCloseModalOpen.value = false;
+  selectedCategories.value = [];
+  searchQuery.value = '';
+  
+  // Scroll to the first open vendor with a highlight effect
+  setTimeout(() => {
+    const openVendors = vendors.value.filter((vendor: Vendor) => isVendorOpen(vendor));
+    if (openVendors.length > 0) {
+      const firstOpenVendor = document.querySelector(`[data-vendor-id="${openVendors[0]._id}"]`);
+      if (firstOpenVendor) {
+        firstOpenVendor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstOpenVendor.classList.add('highlight-vendor');
+        setTimeout(() => {
+          firstOpenVendor.classList.remove('highlight-vendor');
+        }, 2000);
+      }
+    }
+  }, 100);
 };
 </script>
 
 <style scoped>
-.vendor-card {
-  transform: translateY(0);
-  transition: all 0.3s ease;
+/* Base animations */
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
 }
 
-.vendor-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out forwards;
+  opacity: 0;
 }
 
-.vendor-closed {
-  filter: grayscale(20%);
-}
-
-.vendor-closed:hover {
-  filter: grayscale(0%);
+.animate-width-expand {
+  animation: widthExpand 0.8s ease-out forwards;
 }
 
 .animate-bounce-slow {
-  animation: bounce-slow 3s infinite;
+  animation: bounceSlow 2s ease-in-out infinite;
 }
 
-@keyframes bounce-slow {
+.animate-ping-slow {
+  animation: pingSlow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-orbit {
+  animation: orbit 8s linear infinite;
+}
+
+.animate-heart-beat {
+  animation: heartBeat 0.5s ease-in-out;
+}
+
+.animate-modal-pop {
+  animation: modalPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.highlight-vendor {
+  animation: highlightVendor 2s ease-in-out;
+}
+
+/* Keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes widthExpand {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes bounceSlow {
   0%, 100% {
     transform: translateY(0);
   }
@@ -606,4 +691,96 @@ const handleOrder = (vendor: Vendor) => {
     transform: translateY(-10px);
   }
 }
+
+@keyframes pingSlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(20px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(20px) rotate(-360deg);
+  }
+}
+
+@keyframes heartBeat {
+  0% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.3);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.3);
+  }
+  70% {
+    transform: scale(1);
+  }
+}
+
+@keyframes modalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes highlightVendor {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0.3);
+  }
+}
+
+/* Modal transitions */
+
+/* Modal transitions */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
 </style>
+
+<!-- VendorCard Component -->

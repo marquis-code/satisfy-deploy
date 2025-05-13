@@ -49,16 +49,6 @@
             </div>
           </div>
           
-          <!-- App Stores -->
-          <!-- <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <p class="text-gray-700 font-medium">Download our mobile app:</p>
-            <button class="bg-white p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-              <img src="/images/app-store.svg" alt="App Store" class="h-8" />
-            </button>
-            <button class="bg-white p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-              <img src="/images/play-store.svg" alt="Play Store" class="h-8" />
-            </button>
-          </div> -->
         </div>
       </div>
     </div>

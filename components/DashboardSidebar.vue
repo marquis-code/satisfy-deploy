@@ -372,7 +372,8 @@ const navItems = reactive<NavItem[]>([
     key: "orders",
     children: [
       { label: "Today Orders", path: "/dashboard/order/today" },
-      { label: "All Orders", path: "/dashboard/order/all" }
+      { label: "All Orders", path: "/dashboard/order/all" },
+      { label: "Analytics", path: "/dashboard/order/analytics" },
     ]
   },
   { 

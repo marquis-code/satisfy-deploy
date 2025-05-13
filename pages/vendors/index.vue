@@ -576,7 +576,7 @@ const handleSelectedVendor = (vendor: Vendor) => {
 const handleOrder = (vendor: Vendor) => {
   localStorage.setItem('selected-vendor', JSON.stringify(vendor));
   const formatted = formatString(vendor.restaurantName);
-  router.push(`/${formatted}/menu`);
+  router.push(`/${vendor?.slug}`);
 };
 </script>
 
