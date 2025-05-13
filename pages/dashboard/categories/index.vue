@@ -1,13 +1,10 @@
 <template>
   <div class="min-h-screen">
-    <!-- Background decorative elements -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
       <div class="absolute -top-24 -right-24 w-96 h-96 bg-orange-100 rounded-full opacity-20 blur-3xl"></div>
       <div class="absolute top-1/3 -left-24 w-80 h-80 bg-blue-100 rounded-full opacity-20 blur-3xl"></div>
       <div class="absolute bottom-0 right-1/4 w-64 h-64 bg-purple-100 rounded-full opacity-20 blur-3xl"></div>
     </div>
-
-    <!-- {{categoriesList}} -->
 
     <div class="max-w-7xl mx-auto relative z-10">
       <!-- Header with animated gradient -->

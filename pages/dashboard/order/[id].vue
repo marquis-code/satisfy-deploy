@@ -76,19 +76,6 @@
               <span class="font-medium w-24">Date:</span> 
               <span class="text-gray-900">{{ formatDate(order?.createdAt || '') }}</span>
             </p>
-            <!-- <p class="text-gray-700 mb-2 flex items-center">
-              <span class="font-medium w-24">Status:</span> 
-              <span 
-                :class="{
-                  'text-green-600': order?.status === 'accepted',
-                  'text-red-600': order?.status === 'rejected',
-                  'text-yellow-600': order?.status === 'pending'
-                }"
-                class="font-medium"
-              >
-                {{ order?.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : 'Pending' }}
-              </span>
-            </p> -->
             <p class="text-gray-700 mb-2 flex items-center">
               <span class="font-medium w-24">Delivery:</span> 
               <span class="text-gray-900 capitalize">{{ order?.deliveryType || 'N/A' }}</span>
